@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MySocketTool
+namespace SocketTool
 {
     public partial class myTool : Form
     {
@@ -21,7 +21,7 @@ namespace MySocketTool
         private CancellationTokenSource CancellTS;
         private ListBox.SelectedObjectCollection selectedClientList;
         private ElyTCPServer elyTcpServer;
-        private ElyTCPServer elyTlsServer;
+        private ElyTLSServer elyTlsServer;
         private ElyUDP elyUdpServer;
         private ElyUDP elyDtlsServer;
         private int SendTimerSpanMs = 0;
@@ -42,8 +42,7 @@ namespace MySocketTool
             string LocalIP = GetLocalIPAddress();
             sIpaddr1.Text = LocalIP;
             sIpaddr2.Text = LocalIP;
-            // Set default STL version TLS 1.2
-            this.TlsVer.SelectedIndex = 2;
+            this.TlsVer.SelectedIndex = 0;
         }
         private static string GetLocalIPAddress()
         {
@@ -246,6 +245,19 @@ namespace MySocketTool
                     }
                     else if (sTLSOnoff.Checked)
                     {
+                        string pfxCertFile = CertFilePath.Text;
+                        string pfxCertkey = TlsPassWd.Text;
+                        bool Maumutually = MutualAuth.Checked;
+                        bool AcceptInvalidCert = IgnoreCert.Checked;
+                        string TlsVer = this.TlsVer.Text;
+                        elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
+                                                         pfxCertFile, pfxCertkey,
+                                                         Maumutually, AcceptInvalidCert, TlsVer,
+                                                         ConnectedFDback,
+                                                         DisconnectedFDback,
+                                                         DataReceivedFDback,
+                                                         MessageOutPutHandler);
+                        MessageOutPutHandler($"Start TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
                     }
                     IsTCPListening = true;
                     sListen1.Text = "已开启";
@@ -271,10 +283,14 @@ namespace MySocketTool
                 if (elyTcpServer != null)
                 {
                     elyTcpServer.Dispose();
+                    MessageOutPutHandler($"Stop TCP Server[{ListenerIp}:{ListenerPort}] Successfully!");
                 }
-                // 取消控件未执行的委托
-
-                MessageOutPutHandler($"Stop TCP Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                if (elyTlsServer != null)
+                {
+                    elyTlsServer.Dispose();
+                    MessageOutPutHandler($"Stop TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                }
+                // 取消控件未执行的委托           
 
                 sIpaddr1.Enabled = true;
                 sPort1.Enabled = true;
@@ -714,11 +730,6 @@ namespace MySocketTool
                 NoMutualAuth.Checked = false;
             else
                 MutualAuth.Checked = true;
-        }
-
-        private void SSLCfg_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void NoIgnoreCert_Click(object sender, EventArgs e)

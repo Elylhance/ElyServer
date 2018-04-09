@@ -32,7 +32,14 @@ namespace MySocketClient
         { get{ return nstream; }}
 
         public SslStream Sstream
-        { get{ return sstream; }}
+        {
+            get { return sstream; }
+            set
+            {
+                sstream = value;
+                ipPortStr.Replace("TCP","TLS");
+            }
+        }
 
         public string IpPortStr
         { get{ return ipPortStr; }}
@@ -44,12 +51,12 @@ namespace MySocketClient
                 /// 非托管资源，句柄，窗体组件...
                 if (Sstream != null)
                 {
-                    Sstream.Close();
+                    Sstream.Dispose();
                 }
 
                 if (Nstream != null)
                 {
-                    Nstream.Close();
+                    Nstream.Dispose();
                 }
 
                 if (TcpHandle != null)

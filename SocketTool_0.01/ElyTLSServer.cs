@@ -3,33 +3,41 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace MySocketServer
 {
     /// <summary>
     /// Elyenhance TCP server
     /// </summary>
-    class ElyTCPServer:IDisposable
+    class ElyTLSServer : IDisposable
     {
         #region private-variable
         private bool _debug = false;
         private TcpListener iTcpListener;
+        private bool iAcceptInvalidCert;
+        private bool iMaumutually;
+        private string iTlsVer;
         private bool AlreadyDisposed = false; // 要检测冗余调用
         private CancellationTokenSource TokenSource;
         private CancellationToken Token;
         private int CurrentClientNum = 0;
         private int maxClientNum = 100;
-        private ConcurrentDictionary<string,ElyClient> ClientList;
+        private ConcurrentDictionary<string, ElyClient> ClientList;
         private Func<string, bool> iConnectedFDback = null;
         private Func<string, bool> iDisconnectedFDback = null;
         private Func<string, byte[], bool> iDataReceivedFDback = null;
+        private Func<string, bool> InfoPrinter;
+        private X509Certificate2 SslCertificate;
 
         public int MaxClientNum
         {
@@ -40,24 +48,36 @@ namespace MySocketServer
 
         #region Construct&Factory
         /// <summary>
-        /// Ely TCP server 初始化构造函数
+        /// Ely TLS server 构造函数
         /// </summary>
-        /// <param name="listenerIp"> 服务器本地IP地址</param>
-        /// <param name="listenerPort"> 服务器本地端口</param>
+        /// <param name="listenerIp">服务器本地IP地址</param>
+        /// <param name="listenerPort">服务器本地端口</param>
+        /// <param name="pfxCertFile"> 证书文件名称</param>
+        /// <param name="pfxCertkey"> 证书访问密码</param>
+        /// <param name="Maumutually"> 服务器与客户端均需证书认证</param>
+        /// <param name="AcceptInvalidCert"> 是否接受无效证书</param>
+        /// <param name="TlsVer"> Tls版本设置</param>
         /// <param name="ConnectedFDback"> 有新客户端接入输出信息</param>
         /// <param name="DisconnectedFDback"> 客户端断开连接输出信息</param>
         /// <param name="DataReceivedFDback"> 收到客户端的数据输出</param>
-        /// <param name="ExceptionCatcher"> 异常信息处理</param>
-        /// <param name="debug"> 输出Debug信息</param>
-        public ElyTCPServer(
+        /// <param name="PromptInfoPrinter"> 异常信息处理</param>
+        public ElyTLSServer(
             string listenerIp,
             string listenerPort,
+            string pfxCertFile,
+            string pfxCertkey,
+            bool   Maumutually,
+            bool   AcceptInvalidCert,
+            string TlsVer, 
             Func<string, bool> ConnectedFDback,
             Func<string, bool> DisconnectedFDback,
             Func<string, byte[], bool> DataReceivedFDback,
-            bool debug)
+            Func<string, bool> PromptInfoPrinter)
         {
-            _debug = debug;
+            iTlsVer = TlsVer;
+            iMaumutually = Maumutually;
+            iAcceptInvalidCert = AcceptInvalidCert;
+            InfoPrinter = PromptInfoPrinter;
             iConnectedFDback = ConnectedFDback;
             iDisconnectedFDback = DisconnectedFDback;
             iDataReceivedFDback = DataReceivedFDback;
@@ -72,22 +92,32 @@ namespace MySocketServer
             {
                 throw new ArgumentOutOfRangeException();
             }
+
+            SslCertificate = null;
+            if (string.IsNullOrEmpty(pfxCertkey))
+            {
+                SslCertificate = new X509Certificate2(pfxCertFile);
+            }
+            else
+            {
+                SslCertificate = new X509Certificate2(pfxCertFile, pfxCertkey);
+            }
+
+            try
+            {
+                iTcpListener = new TcpListener(tcpIpaddr, port);
+                iTcpListener.Start();
+            }
+            catch (SocketException)
+            {
+                throw new Exception("IP 地址不可用或端口已被占用");
+            }
+
             /// 生成取消监听的Token
             TokenSource = new CancellationTokenSource();
             Token = TokenSource.Token;
-            /// 存储IpPort字符串与client的可并发字典(线程安全的)
+            /// 存储IpPort字符串与client的线程安全字典，有点耗内存
             ClientList = new ConcurrentDictionary<string, ElyClient>();
-
-            iTcpListener = new TcpListener(tcpIpaddr, port);
-            iTcpListener.Start();
-/*
-            catch (SocketException)
-            {
-                if (iTcpListener != null)
-                    iTcpListener.Server.Dispose();
-                throw new Exception("IP 地址不可用或端口已被占用");
-            }
-*/
             /// 此构造函数由UI调用，另起一个Task循环监听接入请求，以免UI卡住
             Task.Run(() => AccecptConnection(), Token);
         }
@@ -127,8 +157,22 @@ namespace MySocketServer
                     TcpClient tcpClient = await iTcpListener.AcceptTcpClientAsync();
                     #endregion
 
-                    ElyClient tcpC = new ElyClient(tcpClient);
-                    Task unwait = Task.Run(() => HandleConnectedClient(tcpC), Token);
+                    ElyClient sslC = new ElyClient(tcpClient);
+                    if (iAcceptInvalidCert)
+                    {
+                        sslC.Sstream = new SslStream(sslC.Nstream, false, new RemoteCertificateValidationCallback(AcceptInvalidCert));
+                    }
+                    else
+                    {
+                        sslC.Sstream = new SslStream(sslC.Nstream, false);
+                    }
+                    Task unwait = Task.Run(() => {
+                        Task<bool> ret = StartSslConnection(sslC);
+                        if (ret.Result)
+                        {
+                            HandleConnectedClient(sslC);
+                        }
+                    }, Token);
                 }
                 catch (SocketException)
                 {
@@ -137,7 +181,54 @@ namespace MySocketServer
             }
             this.Dispose();
         }
-
+        private async Task<bool> StartSslConnection(ElyClient sslC)
+        {
+            try
+            {
+                SslProtocols UserProto = GetUserSetProtocalType();
+                await sslC.Sstream.AuthenticateAsServerAsync(SslCertificate, iMaumutually, UserProto, false);
+                if (!sslC.Sstream.IsEncrypted)
+                {
+                    InfoPrinter?.Invoke($"{sslC.IpPortStr}此连接未进行加密处理");
+                    sslC.Dispose();
+                    return false;
+                }
+                if (!sslC.Sstream.IsAuthenticated)
+                {
+                    InfoPrinter?.Invoke($"{sslC.IpPortStr}身份验证失败");
+                    sslC.Dispose();
+                    return false;
+                }
+                if (iMaumutually && !sslC.Sstream.IsMutuallyAuthenticated)
+                {
+                    InfoPrinter?.Invoke($"{sslC.IpPortStr}双向认证失败");
+                    sslC.Dispose();
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                InfoPrinter?.Invoke($"Error:[{sslC.IpPortStr}]{ex.Message}");
+                sslC.Dispose();
+                return false;
+            }
+        }
+        private SslProtocols GetUserSetProtocalType()
+        {
+            switch (iTlsVer)
+            {
+                case "TLS v1.0":
+                    return SslProtocols.Tls;
+                case "TLS v1.1":
+                    return SslProtocols.Tls11;
+                case "TLS v1.2":
+                    return SslProtocols.Tls12;
+                case "Default":
+                default:
+                    return SslProtocols.Default;
+            }
+        }
         private void HandleConnectedClient(ElyClient tcpC)
         {
             AddClient(tcpC);
@@ -145,7 +236,7 @@ namespace MySocketServer
             {
                 Task<bool> unwaited = Task.Run(() => iConnectedFDback(tcpC.IpPortStr));
             }
-            Task.Run(()=> DataReceiver(tcpC),Token);
+            Task.Run(() => DataReceiver(tcpC), Token);
         }
         private async Task DataReceiver(ElyClient tcpC)
         {
@@ -181,13 +272,14 @@ namespace MySocketServer
             {
                 throw new ArgumentException("客户端已断开");
             }
-            if (!client.Nstream.CanRead)
+            if (!client.Sstream.CanRead)
             {
                 return null;
             }
             #endregion        
 
             #region Read-Data
+            //client.Sstream.ReadTimeout = 
             using (MemoryStream dataMs = new MemoryStream())
             {
                 int read = 0;
@@ -195,19 +287,21 @@ namespace MySocketServer
                 long bufferSize = 2048;
 
                 buffer = new byte[bufferSize];
-                //Caller 捕获此函数的异常
-                while (client.Nstream.DataAvailable 
-                    && (read = await client.Nstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((client.Sstream.Length > 0) && (read = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
+                    InfoPrinter?.Invoke($"client.Sstream.Length={client.Sstream.Length}");
                     dataMs.Write(buffer, 0, read);
                 }
-                contentBytes = dataMs.ToArray(); 
+                contentBytes = dataMs.ToArray();
             }
 
             #endregion
             return contentBytes;
         }
-
+        private bool AcceptInvalidCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return iAcceptInvalidCert;
+        }
         private bool isConnected(ElyClient tcpC)
         {
             if (!tcpC.TcpHandle.Connected)
@@ -237,7 +331,7 @@ namespace MySocketServer
             {
                 return false;
             }
-            
+
         }
 
         private void AddClient(ElyClient tcpC)
@@ -279,8 +373,8 @@ namespace MySocketServer
         {
             try
             {
-                await ElyC.Nstream.WriteAsync(data, 0, data.Length);
-                await ElyC.Nstream.FlushAsync();
+                await ElyC.Sstream.WriteAsync(data, 0, data.Length);
+                await ElyC.Sstream.FlushAsync();
                 return true;
             }
             catch (Exception)
@@ -333,8 +427,9 @@ namespace MySocketServer
             }
         }
 
-        ~ElyTCPServer() {
-          Dispose(false);
+        ~ElyTLSServer()
+        {
+            Dispose(false);
         }
         public void Dispose()
         {
