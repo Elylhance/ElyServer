@@ -80,7 +80,22 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Client = new System.Windows.Forms.TabPage();
             this.SSLCfg = new System.Windows.Forms.TabPage();
+            this.MutualAuth = new System.Windows.Forms.CheckBox();
+            this.NoMutualAuth = new System.Windows.Forms.CheckBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.NoIgnoreCert = new System.Windows.Forms.CheckBox();
+            this.IgnoreCert = new System.Windows.Forms.CheckBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.SelectCert = new System.Windows.Forms.Button();
+            this.CertFilePath = new System.Windows.Forms.TextBox();
+            this.TlsVer = new System.Windows.Forms.ComboBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.TabCtrl.SuspendLayout();
             this.Server.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
@@ -90,6 +105,8 @@
             this.sNetCfg.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.SSLCfg.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabCtrl
@@ -586,6 +603,8 @@
             // 
             // sPort1
             // 
+            this.sPort1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.sPort1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.sPort1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.sPort1.DisplayMember = "uint16";
             this.sPort1.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -765,13 +784,144 @@
             // 
             // SSLCfg
             // 
-            this.SSLCfg.Font = new System.Drawing.Font("黑体", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.SSLCfg.Controls.Add(this.groupBox2);
+            this.SSLCfg.Controls.Add(this.textBox1);
+            this.SSLCfg.Controls.Add(this.label17);
+            this.SSLCfg.Controls.Add(this.MutualAuth);
+            this.SSLCfg.Controls.Add(this.NoMutualAuth);
+            this.SSLCfg.Controls.Add(this.label16);
+            this.SSLCfg.Controls.Add(this.NoIgnoreCert);
+            this.SSLCfg.Controls.Add(this.IgnoreCert);
+            this.SSLCfg.Controls.Add(this.label15);
+            this.SSLCfg.Controls.Add(this.TlsVer);
+            this.SSLCfg.Controls.Add(this.label13);
+            this.SSLCfg.Controls.Add(this.groupBox1);
+            this.SSLCfg.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.SSLCfg.Location = new System.Drawing.Point(4, 29);
             this.SSLCfg.Name = "SSLCfg";
             this.SSLCfg.Size = new System.Drawing.Size(936, 535);
             this.SSLCfg.TabIndex = 2;
             this.SSLCfg.Text = "SSL配置";
             this.SSLCfg.UseVisualStyleBackColor = true;
+            this.SSLCfg.Click += new System.EventHandler(this.SSLCfg_Click);
+            // 
+            // MutualAuth
+            // 
+            this.MutualAuth.AutoSize = true;
+            this.MutualAuth.Location = new System.Drawing.Point(190, 115);
+            this.MutualAuth.Name = "MutualAuth";
+            this.MutualAuth.Size = new System.Drawing.Size(47, 18);
+            this.MutualAuth.TabIndex = 8;
+            this.MutualAuth.Text = "YES";
+            this.MutualAuth.UseVisualStyleBackColor = true;
+            this.MutualAuth.Click += new System.EventHandler(this.MutualAuth_Click);
+            // 
+            // NoMutualAuth
+            // 
+            this.NoMutualAuth.AutoSize = true;
+            this.NoMutualAuth.Checked = true;
+            this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.NoMutualAuth.Location = new System.Drawing.Point(116, 115);
+            this.NoMutualAuth.Name = "NoMutualAuth";
+            this.NoMutualAuth.Size = new System.Drawing.Size(40, 18);
+            this.NoMutualAuth.TabIndex = 7;
+            this.NoMutualAuth.Text = "NO";
+            this.NoMutualAuth.UseVisualStyleBackColor = true;
+            this.NoMutualAuth.Click += new System.EventHandler(this.NoMutualAuth_Click);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(38, 117);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(77, 14);
+            this.label16.TabIndex = 6;
+            this.label16.Text = "双向认证：";
+            // 
+            // NoIgnoreCert
+            // 
+            this.NoIgnoreCert.AutoSize = true;
+            this.NoIgnoreCert.Location = new System.Drawing.Point(116, 69);
+            this.NoIgnoreCert.Name = "NoIgnoreCert";
+            this.NoIgnoreCert.Size = new System.Drawing.Size(40, 18);
+            this.NoIgnoreCert.TabIndex = 5;
+            this.NoIgnoreCert.Text = "NO";
+            this.NoIgnoreCert.UseVisualStyleBackColor = true;
+            this.NoIgnoreCert.Click += new System.EventHandler(this.NoIgnoreCert_Click);
+            // 
+            // IgnoreCert
+            // 
+            this.IgnoreCert.AutoSize = true;
+            this.IgnoreCert.Checked = true;
+            this.IgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IgnoreCert.Location = new System.Drawing.Point(190, 69);
+            this.IgnoreCert.Name = "IgnoreCert";
+            this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
+            this.IgnoreCert.TabIndex = 5;
+            this.IgnoreCert.Text = "YES";
+            this.IgnoreCert.UseVisualStyleBackColor = true;
+            this.IgnoreCert.Click += new System.EventHandler(this.IgnoreCert_Click);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(38, 71);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(77, 14);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "忽略证书：";
+            // 
+            // SelectCert
+            // 
+            this.SelectCert.Location = new System.Drawing.Point(363, 397);
+            this.SelectCert.Name = "SelectCert";
+            this.SelectCert.Size = new System.Drawing.Size(84, 23);
+            this.SelectCert.TabIndex = 3;
+            this.SelectCert.Text = "选择证书";
+            this.SelectCert.UseVisualStyleBackColor = true;
+            this.SelectCert.Click += new System.EventHandler(this.SelectCert_Click);
+            // 
+            // CertFilePath
+            // 
+            this.CertFilePath.Location = new System.Drawing.Point(112, 162);
+            this.CertFilePath.Multiline = true;
+            this.CertFilePath.Name = "CertFilePath";
+            this.CertFilePath.Size = new System.Drawing.Size(335, 224);
+            this.CertFilePath.TabIndex = 2;
+            this.CertFilePath.Text = "显示文件名还是证书内容？";
+            // 
+            // TlsVer
+            // 
+            this.TlsVer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.TlsVer.FormattingEnabled = true;
+            this.TlsVer.Items.AddRange(new object[] {
+            "TLS v1.0",
+            "TLS v1.1",
+            "TLS v1.2"});
+            this.TlsVer.Location = new System.Drawing.Point(116, 21);
+            this.TlsVer.Name = "TlsVer";
+            this.TlsVer.Size = new System.Drawing.Size(121, 22);
+            this.TlsVer.TabIndex = 1;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label14.Location = new System.Drawing.Point(38, 161);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(77, 14);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "证书文件：";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label13.Location = new System.Drawing.Point(38, 25);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 14);
+            this.label13.TabIndex = 0;
+            this.label13.Text = "协议版本：";
             // 
             // tabPage1
             // 
@@ -782,6 +932,45 @@
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "PingTool";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(38, 441);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(77, 14);
+            this.label17.TabIndex = 9;
+            this.label17.Text = "证书密钥：";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(112, 439);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(335, 23);
+            this.textBox1.TabIndex = 10;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.SelectCert);
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.CertFilePath);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(465, 535);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "TLS配置";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.groupBox2.Location = new System.Drawing.Point(471, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(465, 535);
+            this.groupBox2.TabIndex = 12;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "DTLS配置";
             // 
             // myTool
             // 
@@ -810,6 +999,10 @@
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.SSLCfg.ResumeLayout(false);
+            this.SSLCfg.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -867,6 +1060,21 @@
         private System.Windows.Forms.TextBox TimerSpan2;
         private System.Windows.Forms.TabPage tabPage1;
         public System.Windows.Forms.TabControl TabCtrl;
+        private System.Windows.Forms.ComboBox TlsVer;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button SelectCert;
+        private System.Windows.Forms.TextBox CertFilePath;
+        private System.Windows.Forms.CheckBox IgnoreCert;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.CheckBox NoIgnoreCert;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckBox NoMutualAuth;
+        private System.Windows.Forms.CheckBox MutualAuth;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 

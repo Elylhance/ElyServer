@@ -1,6 +1,7 @@
 ﻿using MySocketServer;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -41,6 +42,8 @@ namespace MySocketTool
             string LocalIP = GetLocalIPAddress();
             sIpaddr1.Text = LocalIP;
             sIpaddr2.Text = LocalIP;
+            // Set default STL version TLS 1.2
+            this.TlsVer.SelectedIndex = 2;
         }
         private static string GetLocalIPAddress()
         {
@@ -610,9 +613,11 @@ namespace MySocketTool
                 }
             }
         }
+
         #endregion
 
         #region KeyPressEvent
+        // Range: 0~9, BackSpace
         private void ComboBoxPort_KeyPress(object sender, KeyPressEventArgs e)
         {
             ComboBox ComboBox = sender as ComboBox;
@@ -626,6 +631,7 @@ namespace MySocketTool
                 e.Handled = true;
             }
         }
+        // Range: 0~9, BackSpace and dot
         private void ComboBoxIP_KeyPress(object sender, KeyPressEventArgs e)
         {
             ComboBox ComboBox = sender as ComboBox;
@@ -639,6 +645,7 @@ namespace MySocketTool
                 e.Handled = true;
             }
         }
+        // Range: 0~9, BackSpace
         private void TimerSpan_KeyPress(object sender, KeyPressEventArgs e)
         {
             TextBox textBox = sender as TextBox;
@@ -650,6 +657,27 @@ namespace MySocketTool
             }
         }
 
+        private void SelectCert_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = "c:\\";
+            openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string FileName = openFileDialog.FileName;
+                CertFilePath.Text = FileName;
+                /*
+                using (FileStream fileOpen = new FileStream(FileName, FileMode.Open, FileAccess.Read))
+                {
+                    //CertFilePath.Text = fileOpen.BeginRead();
+
+                }
+                */
+            }
+        }
+        // Ctrl^A
         private void Ctrl_A_KeyPress(object sender, KeyPressEventArgs e)
         {
             TextBox textBox = sender as TextBox;
@@ -660,6 +688,45 @@ namespace MySocketTool
                 textBox.SelectAll();
                 e.Handled = true;
             }
+        }
+        #endregion
+
+        #region SSL_setup
+        private void IgnoreCert_Click(object sender, EventArgs e)
+        {
+            if (IgnoreCert.Checked == true)
+                NoIgnoreCert.Checked = false;
+            else
+                IgnoreCert.Checked = true;
+        }
+
+        private void NoMutualAuth_Click(object sender, EventArgs e)
+        {
+            if (NoMutualAuth.Checked == true)
+                MutualAuth.Checked = false;
+            else
+                NoMutualAuth.Checked = true;
+        }
+
+        private void MutualAuth_Click(object sender, EventArgs e)
+        {
+            if (MutualAuth.Checked == true)
+                NoMutualAuth.Checked = false;
+            else
+                MutualAuth.Checked = true;
+        }
+
+        private void SSLCfg_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NoIgnoreCert_Click(object sender, EventArgs e)
+        {
+            if (NoIgnoreCert.Checked == true)
+                IgnoreCert.Checked = false;
+            else
+                NoIgnoreCert.Checked = true;
         }
         #endregion
 
