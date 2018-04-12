@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MySocketServer
 {
@@ -36,7 +37,7 @@ namespace MySocketServer
         private Func<string, bool> iConnectedFDback = null;
         private Func<string, bool> iDisconnectedFDback = null;
         private Func<string, byte[], bool> iDataReceivedFDback = null;
-        private Func<string, bool> InfoPrinter;
+        private Func<string, bool> iPromptMsgPrinter;
         private X509Certificate2 SslCertificate;
 
         public int MaxClientNum
@@ -60,7 +61,7 @@ namespace MySocketServer
         /// <param name="ConnectedFDback"> 有新客户端接入输出信息</param>
         /// <param name="DisconnectedFDback"> 客户端断开连接输出信息</param>
         /// <param name="DataReceivedFDback"> 收到客户端的数据输出</param>
-        /// <param name="PromptInfoPrinter"> 异常信息处理</param>
+        /// <param name="PromptMsgPrinter"> 异常信息处理</param>
         public ElyTLSServer(
             string listenerIp,
             string listenerPort,
@@ -72,12 +73,12 @@ namespace MySocketServer
             Func<string, bool> ConnectedFDback,
             Func<string, bool> DisconnectedFDback,
             Func<string, byte[], bool> DataReceivedFDback,
-            Func<string, bool> PromptInfoPrinter)
+            Func<string, bool> PromptMsgPrinter)
         {
             iTlsVer = TlsVer;
             iMaumutually = Maumutually;
             iAcceptInvalidCert = AcceptInvalidCert;
-            InfoPrinter = PromptInfoPrinter;
+            iPromptMsgPrinter = PromptMsgPrinter;
             iConnectedFDback = ConnectedFDback;
             iDisconnectedFDback = DisconnectedFDback;
             iDataReceivedFDback = DataReceivedFDback;
@@ -112,7 +113,6 @@ namespace MySocketServer
             {
                 throw new Exception("IP 地址不可用或端口已被占用");
             }
-
             /// 生成取消监听的Token
             TokenSource = new CancellationTokenSource();
             Token = TokenSource.Token;
@@ -157,22 +157,17 @@ namespace MySocketServer
                     TcpClient tcpClient = await iTcpListener.AcceptTcpClientAsync();
                     #endregion
 
-                    ElyClient sslC = new ElyClient(tcpClient);
+                    ElyClient sslClient = new ElyClient(tcpClient);
                     if (iAcceptInvalidCert)
                     {
-                        sslC.Sstream = new SslStream(sslC.Nstream, false, new RemoteCertificateValidationCallback(AcceptInvalidCert));
+                        sslClient.Sstream = new SslStream(sslClient.Nstream, false, new RemoteCertificateValidationCallback(AcceptInvalidCert));
                     }
                     else
                     {
-                        sslC.Sstream = new SslStream(sslC.Nstream, false);
+                        sslClient.Sstream = new SslStream(sslClient.Nstream, false);
                     }
-                    Task unwait = Task.Run(() => {
-                        Task<bool> ret = StartSslConnection(sslC);
-                        if (ret.Result)
-                        {
-                            HandleConnectedClient(sslC);
-                        }
-                    }, Token);
+                    sslClient.IpPortStr = sslClient.IpPortStr.Replace("TCP", "TLS");
+                    Task unwait = Task.Run(()=>StartSslConnection(sslClient), Token);
                 }
                 catch (SocketException)
                 {
@@ -189,27 +184,31 @@ namespace MySocketServer
                 await sslC.Sstream.AuthenticateAsServerAsync(SslCertificate, iMaumutually, UserProto, false);
                 if (!sslC.Sstream.IsEncrypted)
                 {
-                    InfoPrinter?.Invoke($"{sslC.IpPortStr}此连接未进行加密处理");
-                    sslC.Dispose();
-                    return false;
+                    throw new Exception("此连接未进行加密处理");
                 }
                 if (!sslC.Sstream.IsAuthenticated)
                 {
-                    InfoPrinter?.Invoke($"{sslC.IpPortStr}身份验证失败");
-                    sslC.Dispose();
-                    return false;
+                    throw new Exception("身份验证失败");
                 }
                 if (iMaumutually && !sslC.Sstream.IsMutuallyAuthenticated)
                 {
-                    InfoPrinter?.Invoke($"{sslC.IpPortStr}双向认证失败");
-                    sslC.Dispose();
-                    return false;
+                    throw new Exception("客户端证书验证失败");
                 }
+                HandleConnectedClient(sslC);
                 return true;
             }
             catch (Exception ex)
             {
-                InfoPrinter?.Invoke($"Error:[{sslC.IpPortStr}]{ex.Message}");
+                Task unwait = null;
+                if (ex.InnerException != null)
+                {
+                    unwait = Task.Run(() => iPromptMsgPrinter($"Error:[{sslC.IpPortStr}]{ex.InnerException.Message}"));
+                }
+                else
+                {
+                    unwait = Task.Run(() => iPromptMsgPrinter($"Error:[{sslC.IpPortStr}]{ex.Message}"));
+                }
+                
                 sslC.Dispose();
                 return false;
             }
@@ -218,6 +217,10 @@ namespace MySocketServer
         {
             switch (iTlsVer)
             {
+                case "SSL v2":
+                    return SslProtocols.Ssl2;
+                case "SSL v3":
+                    return SslProtocols.Ssl2;
                 case "TLS v1.0":
                     return SslProtocols.Tls;
                 case "TLS v1.1":
@@ -244,13 +247,22 @@ namespace MySocketServer
             {
                 // 循环监听&接收数据
                 while (!Token.IsCancellationRequested)
-                {
+                {                           
                     byte[] data = await MessageReadAsync(tcpC);
-                    if (data != null && iDataReceivedFDback != null)
+                    if (data == null)
+                    {
+                        await Task.Delay(10);
+                        continue;
+                    }
+                    if (iDataReceivedFDback != null)
                     {
                         Task<bool> unwaited = Task.Run(() => iDataReceivedFDback(tcpC.IpPortStr, data));
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                // Task<bool> unwaited = Task.Run(() => iPromptMsgPrinter(ex.ToString()));
             }
             finally
             {
@@ -279,7 +291,6 @@ namespace MySocketServer
             #endregion        
 
             #region Read-Data
-            //client.Sstream.ReadTimeout = 
             using (MemoryStream dataMs = new MemoryStream())
             {
                 int read = 0;
@@ -287,16 +298,19 @@ namespace MySocketServer
                 long bufferSize = 2048;
 
                 buffer = new byte[bufferSize];
-                while ((client.Sstream.Length > 0) && (read = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                if ((read = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    InfoPrinter?.Invoke($"client.Sstream.Length={client.Sstream.Length}");
                     dataMs.Write(buffer, 0, read);
                 }
                 contentBytes = dataMs.ToArray();
             }
-
             #endregion
-            return contentBytes;
+            if (contentBytes.Length > 0)
+                return contentBytes;
+            else
+            {
+                return null;
+            } 
         }
         private bool AcceptInvalidCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
@@ -352,6 +366,19 @@ namespace MySocketServer
                 Interlocked.Decrement(ref CurrentClientNum);
             }
         }
+        private async Task<bool> MessageWriteAsync(ElyClient ElyC, byte[] data)
+        {
+            try
+            {
+                await ElyC.Sstream.WriteAsync(data, 0, data.Length);
+                await ElyC.Sstream.FlushAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Public-methods
@@ -366,20 +393,6 @@ namespace MySocketServer
             else
             {
                 throw new ArgumentNullException();
-            }
-        }
-
-        private async Task<bool> MessageWriteAsync(ElyClient ElyC, byte[] data)
-        {
-            try
-            {
-                await ElyC.Sstream.WriteAsync(data, 0, data.Length);
-                await ElyC.Sstream.FlushAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
         public void Disconnect(string IpPort)

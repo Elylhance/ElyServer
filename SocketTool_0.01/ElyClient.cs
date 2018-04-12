@@ -11,6 +11,7 @@ namespace MySocketClient
         private NetworkStream nstream;
         private SslStream sstream;
         private string ipPortStr;
+        private bool AlreadyDisposed = false; // 要检测冗余调用
 
         public ElyClient(TcpClient tcpC)
         {
@@ -20,8 +21,6 @@ namespace MySocketClient
                        + $":{((IPEndPoint)TcpHandle.Client.RemoteEndPoint).Port}";
         }
         #region IDisposable Support
-        private bool AlreadyDisposed = false; // 要检测冗余调用
-
         public TcpClient TcpHandle
         {
             get { return tcpHandle; }
@@ -34,15 +33,14 @@ namespace MySocketClient
         public SslStream Sstream
         {
             get { return sstream; }
-            set
-            {
-                sstream = value;
-                ipPortStr.Replace("TCP","TLS");
-            }
+            set { sstream = value;}
         }
 
         public string IpPortStr
-        { get{ return ipPortStr; }}
+        {
+            get { return ipPortStr; }
+            set { ipPortStr = value;}
+        }
 
         protected virtual void Dispose(bool disposing)
         {

@@ -79,10 +79,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.Client = new System.Windows.Forms.TabPage();
             this.SSLCfg = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.TlsConfig = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SelectCert = new System.Windows.Forms.Button();
             this.CertFilePath = new System.Windows.Forms.TextBox();
             this.TlsPassWd = new System.Windows.Forms.TextBox();
@@ -96,7 +96,10 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.Client = new System.Windows.Forms.TabPage();
+            this.label20 = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label19 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TabCtrl.SuspendLayout();
             this.Server.SuspendLayout();
@@ -109,13 +112,15 @@
             this.panel1.SuspendLayout();
             this.SSLCfg.SuspendLayout();
             this.TlsConfig.SuspendLayout();
+            this.Client.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabCtrl
             // 
             this.TabCtrl.Controls.Add(this.Server);
-            this.TabCtrl.Controls.Add(this.Client);
             this.TabCtrl.Controls.Add(this.SSLCfg);
+            this.TabCtrl.Controls.Add(this.Client);
             this.TabCtrl.Controls.Add(this.tabPage1);
             this.TabCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabCtrl.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -773,17 +778,6 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "TCP地址:";
             // 
-            // Client
-            // 
-            this.Client.Font = new System.Drawing.Font("黑体", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.Client.Location = new System.Drawing.Point(4, 29);
-            this.Client.Name = "Client";
-            this.Client.Padding = new System.Windows.Forms.Padding(3);
-            this.Client.Size = new System.Drawing.Size(936, 535);
-            this.Client.TabIndex = 1;
-            this.Client.Text = "客户端";
-            this.Client.UseVisualStyleBackColor = true;
-            // 
             // SSLCfg
             // 
             this.SSLCfg.Controls.Add(this.groupBox2);
@@ -808,6 +802,7 @@
             // 
             // TlsConfig
             // 
+            this.TlsConfig.Controls.Add(this.checkBox1);
             this.TlsConfig.Controls.Add(this.SelectCert);
             this.TlsConfig.Controls.Add(this.CertFilePath);
             this.TlsConfig.Controls.Add(this.TlsPassWd);
@@ -829,9 +824,22 @@
             this.TlsConfig.TabStop = false;
             this.TlsConfig.Text = "TLS配置";
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.checkBox1.Location = new System.Drawing.Point(372, 221);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 18);
+            this.checkBox1.TabIndex = 11;
+            this.checkBox1.Text = "显示密码";
+            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // SelectCert
             // 
-            this.SelectCert.Location = new System.Drawing.Point(363, 396);
+            this.SelectCert.Location = new System.Drawing.Point(363, 185);
             this.SelectCert.Name = "SelectCert";
             this.SelectCert.Size = new System.Drawing.Size(84, 23);
             this.SelectCert.TabIndex = 3;
@@ -841,26 +849,24 @@
             // 
             // CertFilePath
             // 
-            this.CertFilePath.Location = new System.Drawing.Point(81, 160);
-            this.CertFilePath.Multiline = true;
+            this.CertFilePath.Location = new System.Drawing.Point(81, 156);
             this.CertFilePath.Name = "CertFilePath";
-            this.CertFilePath.Size = new System.Drawing.Size(366, 224);
+            this.CertFilePath.Size = new System.Drawing.Size(366, 23);
             this.CertFilePath.TabIndex = 2;
-            this.CertFilePath.Text = "D:\\TCP_SSL_TOOL\\ssllib\\cert\\baidu1.cer";
             // 
             // TlsPassWd
             // 
-            this.TlsPassWd.Location = new System.Drawing.Point(81, 437);
+            this.TlsPassWd.Location = new System.Drawing.Point(81, 219);
             this.TlsPassWd.Name = "TlsPassWd";
             this.TlsPassWd.PasswordChar = '*';
-            this.TlsPassWd.Size = new System.Drawing.Size(366, 23);
+            this.TlsPassWd.Size = new System.Drawing.Size(283, 23);
             this.TlsPassWd.TabIndex = 10;
             this.toolTip1.SetToolTip(this.TlsPassWd, "若有的话，可选项");
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(7, 442);
+            this.label17.Location = new System.Drawing.Point(7, 223);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(77, 14);
             this.label17.TabIndex = 9;
@@ -925,6 +931,8 @@
             this.TlsVer.FormattingEnabled = true;
             this.TlsVer.Items.AddRange(new object[] {
             "Default",
+            "SSL v2",
+            "SSL v3",
             "TLS v1.0",
             "TLS v1.1",
             "TLS v1.2"});
@@ -973,8 +981,31 @@
             this.label15.Text = "忽略证书：";
             this.toolTip1.SetToolTip(this.label15, "是否接受无效的证书");
             // 
+            // Client
+            // 
+            this.Client.Controls.Add(this.label20);
+            this.Client.Font = new System.Drawing.Font("黑体", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Client.Location = new System.Drawing.Point(4, 29);
+            this.Client.Name = "Client";
+            this.Client.Padding = new System.Windows.Forms.Padding(3);
+            this.Client.Size = new System.Drawing.Size(936, 535);
+            this.Client.TabIndex = 1;
+            this.Client.Text = "客户端";
+            this.Client.UseVisualStyleBackColor = true;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("黑体", 15.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label20.Location = new System.Drawing.Point(386, 257);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(164, 21);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "等待上线......";
+            // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label19);
             this.tabPage1.Font = new System.Drawing.Font("黑体", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabPage1.Location = new System.Drawing.Point(4, 29);
             this.tabPage1.Name = "tabPage1";
@@ -982,6 +1013,16 @@
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "PingTool";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("黑体", 15.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label19.Location = new System.Drawing.Point(386, 257);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(164, 21);
+            this.label19.TabIndex = 1;
+            this.label19.Text = "等待上线......";
             // 
             // myTool
             // 
@@ -1013,6 +1054,10 @@
             this.SSLCfg.ResumeLayout(false);
             this.TlsConfig.ResumeLayout(false);
             this.TlsConfig.PerformLayout();
+            this.Client.ResumeLayout(false);
+            this.Client.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1086,6 +1131,9 @@
         private System.Windows.Forms.GroupBox TlsConfig;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label19;
     }
 }
 
