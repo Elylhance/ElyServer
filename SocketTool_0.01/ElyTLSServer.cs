@@ -67,9 +67,9 @@ namespace MySocketServer
             string listenerPort,
             string pfxCertFile,
             string pfxCertkey,
-            bool   Maumutually,
-            bool   AcceptInvalidCert,
-            string TlsVer, 
+            bool Maumutually,
+            bool AcceptInvalidCert,
+            string TlsVer,
             Func<string, bool> ConnectedFDback,
             Func<string, bool> DisconnectedFDback,
             Func<string, byte[], bool> DataReceivedFDback,
@@ -113,6 +113,7 @@ namespace MySocketServer
             {
                 throw new Exception("IP 地址不可用或端口已被占用");
             }
+
             /// 生成取消监听的Token
             TokenSource = new CancellationTokenSource();
             Token = TokenSource.Token;
@@ -202,11 +203,11 @@ namespace MySocketServer
                 Task unwait = null;
                 if (ex.InnerException != null)
                 {
-                    unwait = Task.Run(() => iPromptMsgPrinter($"Error:[{sslC.IpPortStr}]{ex.InnerException.Message}"));
+                    unwait = Task.Run(() => iPromptMsgPrinter($"Error: [{sslC.IpPortStr}] {ex.InnerException.Message}"));
                 }
                 else
                 {
-                    unwait = Task.Run(() => iPromptMsgPrinter($"Error:[{sslC.IpPortStr}]{ex.Message}"));
+                    unwait = Task.Run(() => iPromptMsgPrinter($"Error: [{sslC.IpPortStr}] {ex.Message}"));
                 }
                 
                 sslC.Dispose();
@@ -220,7 +221,7 @@ namespace MySocketServer
                 case "SSL v2":
                     return SslProtocols.Ssl2;
                 case "SSL v3":
-                    return SslProtocols.Ssl2;
+                    return SslProtocols.Ssl3;
                 case "TLS v1.0":
                     return SslProtocols.Tls;
                 case "TLS v1.1":

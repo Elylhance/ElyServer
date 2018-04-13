@@ -43,20 +43,24 @@ namespace SocketTool
             string LocalIP = GetLocalIPAddress();
             sIpaddr1.Text = LocalIP;
             sIpaddr2.Text = LocalIP;
-            this.TlsVer.SelectedIndex = 0;
+            TlsVer.SelectedIndex = 0;
+            SignatureAlgorithm.SelectedIndex = 2;
             selectedClientList = sConnectionlistBox.SelectedItems;
         }
-        private static string GetLocalIPAddress()
+        private string GetLocalIPAddress()
         {
+            string LocalIP = string.Empty;
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    return ip.ToString();
+                    sIpaddr1.Items.Add(ip.ToString());
+                    sIpaddr2.Items.Add(ip.ToString());
+                    LocalIP = ip.ToString();
                 }
             }
-            return string.Empty;
+            return LocalIP;
         }
         #endregion
 
@@ -279,6 +283,7 @@ namespace SocketTool
                     IsTCPListening = true;
                     sListen1.Text = "已开启";
                     sListen1.BackColor = Color.LightGreen;
+                    sPort1.Items.Add(ListenerPort);
                 }
                 catch (Exception ex)
                 {
@@ -340,8 +345,10 @@ namespace SocketTool
 
                     if (sUdpOnoff.Checked)
                     {
-                        elyUdpServer = new ElyUDP(ListenerIp, ListenerPort, ConnectedFDback, DisconnectedFDback,
-                                                        DataReceivedFDback, false);
+                        elyUdpServer = new ElyUDP(ListenerIp, ListenerPort, 
+                                                ConnectedFDback, 
+                                                DisconnectedFDback,
+                                                DataReceivedFDback, false);
                         MessageOutPutHandler($"Start UDP Server[{ListenerIp}:{ListenerPort}] Successfully!");
                     }
                     else if (sDTLSOnoff.Checked)
@@ -350,6 +357,7 @@ namespace SocketTool
                     IsUDPListening = true;
                     sListen2.Text = "已开启";
                     sListen2.BackColor = Color.LightGreen;
+                    sPort2.Items.Add(ListenerPort);
                 }
                 catch (Exception ex)
                 {
@@ -621,7 +629,7 @@ namespace SocketTool
         {
             if (CancellTS != null)
             {
-                CancellTS.Cancel();
+                CancellTS.Cancel(); // Cancell the opreation that sending data to these Client
             }
             Disconnect();
         }
@@ -689,20 +697,6 @@ namespace SocketTool
                 e.Handled = true;
             }
         }
-
-        private void SelectCert_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
-            openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
-            openFileDialog.RestoreDirectory = true;
-            openFileDialog.FilterIndex = 1;
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string FileName = openFileDialog.FileName;
-                CertFilePath.Text = FileName;
-            }
-        }
         // Ctrl^A
         private void Ctrl_A_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -726,12 +720,12 @@ namespace SocketTool
                 IgnoreCert.Checked = true;
         }
 
-        private void NoMutualAuth_Click(object sender, EventArgs e)
+        private void NoIgnoreCert_Click(object sender, EventArgs e)
         {
-            if (NoMutualAuth.Checked == true)
-                MutualAuth.Checked = false;
+            if (NoIgnoreCert.Checked == true)
+                IgnoreCert.Checked = false;
             else
-                NoMutualAuth.Checked = true;
+                NoIgnoreCert.Checked = true;
         }
 
         private void MutualAuth_Click(object sender, EventArgs e)
@@ -742,9 +736,31 @@ namespace SocketTool
                 MutualAuth.Checked = true;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void NoMutualAuth_Click(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (NoMutualAuth.Checked == true)
+                MutualAuth.Checked = false;
+            else
+                NoMutualAuth.Checked = true;
+        }
+
+        private void SelectCert_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
+            openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string FileName = openFileDialog.FileName;
+                CertFilePath.Text = FileName;
+            }
+        }
+
+        private void DispalyCertPasswd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DispalyCertPasswd.Checked)
             {
                 TlsPassWd.PasswordChar = (char)0;
             }
@@ -753,24 +769,66 @@ namespace SocketTool
                 TlsPassWd.PasswordChar = '*';
             }
         }
-
-        private void NoIgnoreCert_Click(object sender, EventArgs e)
-        {
-            if (NoIgnoreCert.Checked == true)
-                IgnoreCert.Checked = false;
-            else
-                NoIgnoreCert.Checked = true;
-        }
         #endregion
+        private void GSAShowPasswd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (GSAShowPasswd.Checked)
+            {
+                SApasswd.PasswordChar = (char)0;
+            }
+            else
+            {
+                SApasswd.PasswordChar = '*';
+            } 
+        }
 
+        private void GenerateCert_Click(object sender, EventArgs e)
+        {
+            /*
+                del *.cer *.pfx 
+                rem <md5|sha1|sha256|sha384|sha512>  L506仅支持md5及sha256算法
+                makecert -r -pe -n "CN=localhost" -m 24 -a sha256 -sky exchange -ss my CARoot.cer -sv CARoot.pvk
+
+                cert2spc CARoot.cer CARoot.spc
+
+                rem 修改密码请将下行中的"passwd“修改为替换密码
+                pvk2pfx -pvk CARoot.pvk -spc CARoot.spc -pi passwd -pfx ServerCert.pfx
+
+                del *.pvk *.spc
+             */
+            string SA = SignatureAlgorithm.SelectedItem.ToString();
+            string PassWd = string.Empty;
+            if (SApasswd.Text != string.Empty)
+            {
+                PassWd = "-pi " + SApasswd.Text;
+            }
+            Task.Run(() =>
+            {
+                string Cmd = $@"del *.cer *.pfx 
+rem <md5|sha1|sha256|sha384|sha512>  L506仅支持md5及sha256算法
+makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk
+cert2spc CARoot.cer CARoot.spc
+rem 修改密码请将下行中的""passwd""修改为替换密码
+pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx
+del *.pvk *.spc";
+                string Result = string.Empty;
+                string TempPath = Environment.CurrentDirectory;
+                System.Environment.CurrentDirectory += "\\cert";
+                CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
+                CmdHelper.RunCmd(Cmd, out Result);
+                if(Result != string.Empty)
+                    MessageBox.Show(Result);
+                System.Environment.CurrentDirectory = TempPath;
+            });
+        }
     }
 
-    
 
+    #region Generate self-signicate Cert  
     public class CmdHelper
     {
-        private static string CmdPath = @"C:\Windows\System32\cmd.exe";
-
+        public static string CmdPath = @"C:\Windows\System32\cmd.exe";
+        
         /// <summary>
         /// 执行cmd命令
         /// 多命令请使用批处理命令连接符：
@@ -786,25 +844,36 @@ namespace SocketTool
         public static void RunCmd(string cmd, out string output)
         {
             cmd = cmd.Trim().TrimEnd('&') + "&exit";//说明：不管命令是否成功均执行exit命令，否则当调用ReadToEnd()方法时，会处于假死状态
-            using (Process p = new Process())
+            try
             {
-                p.StartInfo.FileName = CmdPath;
-                p.StartInfo.UseShellExecute = false;        //是否使用操作系统shell启动
-                p.StartInfo.RedirectStandardInput = true;   //接受来自调用程序的输入信息
-                p.StartInfo.RedirectStandardOutput = true;  //由调用程序获取输出信息
-                p.StartInfo.RedirectStandardError = true;   //重定向标准错误输出
-                p.StartInfo.CreateNoWindow = true;          //不显示程序窗口
-                p.Start();//启动程序
+                using (Process p = new Process())
+                {
+                    p.StartInfo.FileName = CmdPath;
+                    p.StartInfo.UseShellExecute = false;        //是否使用操作系统shell启动
+                    p.StartInfo.RedirectStandardInput = true;   //接受来自调用程序的输入信息
+                    p.StartInfo.RedirectStandardOutput = true;  //由调用程序获取输出信息
+                    p.StartInfo.RedirectStandardError = true;   //重定向标准错误输出
+                    p.StartInfo.CreateNoWindow = true;          //不显示程序窗口
+                    p.Start();//启动程序
 
-                //向cmd窗口写入命令
-                p.StandardInput.WriteLine(cmd);
-                p.StandardInput.AutoFlush = true;
+                    //向cmd窗口写入命令
+                    p.StandardInput.WriteLine(cmd);
+                    p.StandardInput.AutoFlush = true;
 
-                //获取cmd窗口的输出信息
-                output = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();//等待程序执行完退出进程
-                p.Close();
+                    //获取cmd窗口的输出信息
+                    p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();//等待程序执行完退出进程
+                    p.Close();
+                    output = $"生成证书成功！{Environment.NewLine}证书路径：Environment.CurrentDirectory";
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                output = string.Empty;
             }
         }
     }
+
+    #endregion
 }
