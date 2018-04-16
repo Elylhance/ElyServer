@@ -353,6 +353,7 @@ namespace SocketTool
                     }
                     else if (sDTLSOnoff.Checked)
                     {
+                        throw new Exception("Sorry! DTLS server is not supported now.");
                     }
                     IsUDPListening = true;
                     sListen2.Text = "已开启";
@@ -788,10 +789,8 @@ namespace SocketTool
                 del *.cer *.pfx 
                 rem <md5|sha1|sha256|sha384|sha512>  L506仅支持md5及sha256算法
                 makecert -r -pe -n "CN=localhost" -m 24 -a sha256 -sky exchange -ss my CARoot.cer -sv CARoot.pvk
-
                 cert2spc CARoot.cer CARoot.spc
-
-                rem 修改密码请将下行中的"passwd“修改为替换密码
+                rem 修改密码请将下行中的"passwd"修改为替换密码
                 pvk2pfx -pvk CARoot.pvk -spc CARoot.spc -pi passwd -pfx ServerCert.pfx
 
                 del *.pvk *.spc
@@ -802,24 +801,30 @@ namespace SocketTool
             {
                 PassWd = "-pi " + SApasswd.Text;
             }
+
             Task.Run(() =>
             {
-                string Cmd = $@"del *.cer *.pfx 
+                string Cmd = $@"del *.cer *.pfx
                              rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
                              makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
-                             + $@"&& cert2spc CARoot.cer CARoot.spc"
-                             + $@"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx
-                             del *.pvk *.spc";
+                             + "&& cert2spc CARoot.cer CARoot.spc"
+                             + $"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx"
+                             + "&  del *.pvk *.spc";
                 string Result = string.Empty;
                 string TempPath = Environment.CurrentDirectory;
                 System.Environment.CurrentDirectory += "\\cert";
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
                 CmdHelper.RunCmd(Cmd, out Result);
+                //MessageBox.Show(Result); //For debug
                 if (Result != string.Empty)
                 {
                     if (Result.Contains("Failed"))
                     {
                         Result = $"生成证书失败！";
+                    }
+                    else if (Result.Contains("ERROR"))
+                    {
+                        Result = $"生成证书失败！{Environment.NewLine}请确保设定的证书密钥与创建的私钥密码一致";
                     }
                     else
                     {
@@ -833,7 +838,7 @@ namespace SocketTool
     }
 
 
-    #region Generate self-signicate Cert  
+    #region Generate self-signed Cert
     public class CmdHelper
     {
         public static string CmdPath = @"C:\Windows\System32\cmd.exe";
@@ -871,6 +876,7 @@ namespace SocketTool
 
                     //获取cmd窗口的输出信息
                     output = p.StandardOutput.ReadToEnd();
+                    output += p.StandardError.ReadToEnd();
                     p.WaitForExit();//等待程序执行完退出进程
                     p.Close();
                 }

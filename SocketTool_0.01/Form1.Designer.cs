@@ -656,7 +656,6 @@
             // 
             this.sDTLSOnoff.AutoSize = true;
             this.sDTLSOnoff.Dock = System.Windows.Forms.DockStyle.Right;
-            this.sDTLSOnoff.Enabled = false;
             this.sDTLSOnoff.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sDTLSOnoff.ForeColor = System.Drawing.SystemColors.WindowFrame;
             this.sDTLSOnoff.Location = new System.Drawing.Point(53, 0);
@@ -815,7 +814,7 @@
             this.textBox1.Location = new System.Drawing.Point(8, 22);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(445, 166);
+            this.textBox1.Size = new System.Drawing.Size(445, 180);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = resources.GetString("textBox1.Text");
             // 
@@ -895,7 +894,7 @@
             // 
             this.GSAShowPasswd.AutoSize = true;
             this.GSAShowPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.GSAShowPasswd.Location = new System.Drawing.Point(256, 79);
+            this.GSAShowPasswd.Location = new System.Drawing.Point(256, 77);
             this.GSAShowPasswd.Name = "GSAShowPasswd";
             this.GSAShowPasswd.Size = new System.Drawing.Size(80, 18);
             this.GSAShowPasswd.TabIndex = 12;
@@ -928,9 +927,9 @@
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(7, 79);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(70, 14);
+            this.label20.Size = new System.Drawing.Size(77, 14);
             this.label20.TabIndex = 3;
-            this.label20.Text = "PassWord:";
+            this.label20.Text = "证书密钥：";
             // 
             // label19
             // 

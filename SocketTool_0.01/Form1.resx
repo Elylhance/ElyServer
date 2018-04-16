@@ -124,7 +124,7 @@
 
 1. MTK 平台模块请保持默认设置
 
-2. L506 模块协议版本请选择[ssl v3]，证书签名算法支持md5及sha256
+2. L506 模块协议版本请选择[SSL v3]，证书签名算法支持MD5及SHA256
 
 3. 使用中有任何问题或建议请发送邮件到 hc.liu@mobiletek.cn</value>
   </data>
@@ -132,7 +132,7 @@
   <data name="pictureBox2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAcMAAAEKCAYAAABuYT6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADr8AAA6/ATgFUyQAAP+lSURBVHhe7F0HQBXH2uW997+SvOSl98T0rjExltg1Ro1G
+        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAP+lSURBVHhe7F0HQBXH2uW997+SvOSl98T0rjExltg1Ro1G
         Y4wxGnvvIoIUUbHQEcSGvffeC72JKCp2rCi9gw0Liub8c2YZWG8uRiOWxD162DY7O7O7d85+M9/MWPz6
         668waNCgQYMGH2UaYmjQoEGDBh95GmJo0KBBgwYfeRpiaNCgQYMGH3kaYmjQoEGDBh95GmJo0KBBgwYf
         eRpiaMIbN24U0fzxP0YVp0bzYQwaNGjQ4IPiTWKoL7Bv6PZL6o+ZCXPzMd15vzn22+Nmw5gcL41lK1q/
@@ -1366,9 +1366,6 @@
         4SdDP/zwww8/rnn4ydAPP/zww49rHCfx/2EbwxIYktWJAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
