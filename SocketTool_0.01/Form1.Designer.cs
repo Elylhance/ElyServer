@@ -80,9 +80,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.SSLCfg = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.TlsConfig = new System.Windows.Forms.GroupBox();
             this.IgnoreCert = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -117,9 +118,9 @@
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SSLCfg.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.TlsConfig.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -787,6 +788,7 @@
             // 
             // SSLCfg
             // 
+            this.SSLCfg.Controls.Add(this.groupBox3);
             this.SSLCfg.Controls.Add(this.groupBox2);
             this.SSLCfg.Controls.Add(this.TlsConfig);
             this.SSLCfg.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -797,13 +799,32 @@
             this.SSLCfg.Text = "SSL配置";
             this.SSLCfg.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Location = new System.Drawing.Point(464, 6);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(466, 218);
+            this.groupBox3.TabIndex = 13;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Tips";
+            // 
+            // textBox1
+            // 
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(8, 22);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(445, 166);
+            this.textBox1.TabIndex = 0;
+            this.textBox1.Text = resources.GetString("textBox1.Text");
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.pictureBox2);
-            this.groupBox2.Controls.Add(this.pictureBox1);
-            this.groupBox2.Location = new System.Drawing.Point(471, 6);
+            this.groupBox2.Location = new System.Drawing.Point(464, 230);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(465, 521);
+            this.groupBox2.Size = new System.Drawing.Size(466, 297);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MobileTek Inc";
@@ -812,21 +833,11 @@
             // 
             this.pictureBox2.ErrorImage = null;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(8, 271);
+            this.pictureBox2.Location = new System.Drawing.Point(8, 28);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(451, 219);
+            this.pictureBox2.Size = new System.Drawing.Size(451, 259);
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.ErrorImage = null;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(8, 21);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(451, 219);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // TlsConfig
             // 
@@ -847,7 +858,7 @@
             this.TlsConfig.Controls.Add(this.label15);
             this.TlsConfig.Location = new System.Drawing.Point(4, 6);
             this.TlsConfig.Name = "TlsConfig";
-            this.TlsConfig.Size = new System.Drawing.Size(465, 521);
+            this.TlsConfig.Size = new System.Drawing.Size(442, 521);
             this.TlsConfig.TabIndex = 11;
             this.TlsConfig.TabStop = false;
             this.TlsConfig.Text = "TLS配置";
@@ -855,7 +866,7 @@
             // IgnoreCert
             // 
             this.IgnoreCert.AutoSize = true;
-            this.IgnoreCert.Location = new System.Drawing.Point(189, 68);
+            this.IgnoreCert.Location = new System.Drawing.Point(166, 68);
             this.IgnoreCert.Name = "IgnoreCert";
             this.IgnoreCert.Size = new System.Drawing.Size(68, 18);
             this.IgnoreCert.TabIndex = 5;
@@ -873,7 +884,7 @@
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.SignatureAlgorithm);
             this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Location = new System.Drawing.Point(28, 165);
+            this.groupBox1.Location = new System.Drawing.Point(5, 165);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(348, 142);
             this.groupBox1.TabIndex = 12;
@@ -957,7 +968,7 @@
             // 
             this.DispalyCertPasswd.AutoSize = true;
             this.DispalyCertPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DispalyCertPasswd.Location = new System.Drawing.Point(372, 408);
+            this.DispalyCertPasswd.Location = new System.Drawing.Point(349, 408);
             this.DispalyCertPasswd.Name = "DispalyCertPasswd";
             this.DispalyCertPasswd.Size = new System.Drawing.Size(80, 18);
             this.DispalyCertPasswd.TabIndex = 11;
@@ -968,7 +979,7 @@
             // 
             // SelectCert
             // 
-            this.SelectCert.Location = new System.Drawing.Point(363, 372);
+            this.SelectCert.Location = new System.Drawing.Point(340, 372);
             this.SelectCert.Name = "SelectCert";
             this.SelectCert.Size = new System.Drawing.Size(84, 23);
             this.SelectCert.TabIndex = 3;
@@ -978,14 +989,14 @@
             // 
             // CertFilePath
             // 
-            this.CertFilePath.Location = new System.Drawing.Point(125, 343);
+            this.CertFilePath.Location = new System.Drawing.Point(102, 343);
             this.CertFilePath.Name = "CertFilePath";
             this.CertFilePath.Size = new System.Drawing.Size(322, 23);
             this.CertFilePath.TabIndex = 2;
             // 
             // TlsPassWd
             // 
-            this.TlsPassWd.Location = new System.Drawing.Point(125, 406);
+            this.TlsPassWd.Location = new System.Drawing.Point(102, 406);
             this.TlsPassWd.Name = "TlsPassWd";
             this.TlsPassWd.PasswordChar = '*';
             this.TlsPassWd.Size = new System.Drawing.Size(239, 23);
@@ -995,7 +1006,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(28, 410);
+            this.label17.Location = new System.Drawing.Point(5, 410);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(98, 14);
             this.label17.TabIndex = 9;
@@ -1005,7 +1016,7 @@
             // MutualAuth
             // 
             this.MutualAuth.AutoSize = true;
-            this.MutualAuth.Location = new System.Drawing.Point(189, 113);
+            this.MutualAuth.Location = new System.Drawing.Point(166, 113);
             this.MutualAuth.Name = "MutualAuth";
             this.MutualAuth.Size = new System.Drawing.Size(68, 18);
             this.MutualAuth.TabIndex = 8;
@@ -1019,7 +1030,7 @@
             this.NoMutualAuth.AutoSize = true;
             this.NoMutualAuth.Checked = true;
             this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoMutualAuth.Location = new System.Drawing.Point(111, 113);
+            this.NoMutualAuth.Location = new System.Drawing.Point(88, 113);
             this.NoMutualAuth.Name = "NoMutualAuth";
             this.NoMutualAuth.Size = new System.Drawing.Size(68, 18);
             this.NoMutualAuth.TabIndex = 7;
@@ -1033,7 +1044,7 @@
             this.NoIgnoreCert.AutoSize = true;
             this.NoIgnoreCert.Checked = true;
             this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoIgnoreCert.Location = new System.Drawing.Point(111, 68);
+            this.NoIgnoreCert.Location = new System.Drawing.Point(88, 68);
             this.NoIgnoreCert.Name = "NoIgnoreCert";
             this.NoIgnoreCert.Size = new System.Drawing.Size(68, 18);
             this.NoIgnoreCert.TabIndex = 5;
@@ -1053,7 +1064,7 @@
             "TLS v1.0",
             "TLS v1.1",
             "TLS v1.2"});
-            this.TlsVer.Location = new System.Drawing.Point(111, 21);
+            this.TlsVer.Location = new System.Drawing.Point(88, 21);
             this.TlsVer.Name = "TlsVer";
             this.TlsVer.Size = new System.Drawing.Size(121, 22);
             this.TlsVer.TabIndex = 1;
@@ -1062,7 +1073,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label14.Location = new System.Drawing.Point(28, 347);
+            this.label14.Location = new System.Drawing.Point(5, 347);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(98, 14);
             this.label14.TabIndex = 0;
@@ -1072,7 +1083,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label13.Location = new System.Drawing.Point(28, 25);
+            this.label13.Location = new System.Drawing.Point(5, 25);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(77, 14);
             this.label13.TabIndex = 0;
@@ -1081,7 +1092,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(28, 115);
+            this.label16.Location = new System.Drawing.Point(5, 115);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
@@ -1091,7 +1102,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(28, 70);
+            this.label15.Location = new System.Drawing.Point(5, 70);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(77, 14);
             this.label15.TabIndex = 4;
@@ -1112,7 +1123,7 @@
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
-            this.Text = "YKSocketTool";
+            this.Text = "YKSocketTool V0.01";
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
             this.Server.PerformLayout();
@@ -1127,9 +1138,10 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.SSLCfg.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.TlsConfig.ResumeLayout(false);
             this.TlsConfig.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -1214,8 +1226,9 @@
         private System.Windows.Forms.Button GenerateCert;
         private System.Windows.Forms.TextBox SApasswd;
         private System.Windows.Forms.CheckBox GSAShowPasswd;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

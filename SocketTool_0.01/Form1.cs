@@ -747,7 +747,7 @@ namespace SocketTool
         private void SelectCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\cert";
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -805,19 +805,28 @@ namespace SocketTool
             Task.Run(() =>
             {
                 string Cmd = $@"del *.cer *.pfx 
-rem <md5|sha1|sha256|sha384|sha512>  L506仅支持md5及sha256算法
-makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk
-cert2spc CARoot.cer CARoot.spc
-rem 修改密码请将下行中的""passwd""修改为替换密码
-pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx
-del *.pvk *.spc";
+                             rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
+                             makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
+                             + $@"&& cert2spc CARoot.cer CARoot.spc"
+                             + $@"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx
+                             del *.pvk *.spc";
                 string Result = string.Empty;
                 string TempPath = Environment.CurrentDirectory;
                 System.Environment.CurrentDirectory += "\\cert";
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
                 CmdHelper.RunCmd(Cmd, out Result);
-                if(Result != string.Empty)
+                if (Result != string.Empty)
+                {
+                    if (Result.Contains("Failed"))
+                    {
+                        Result = $"生成证书失败！";
+                    }
+                    else
+                    {
+                        Result = $"生成证书成功！{Environment.NewLine}证书路径：{Environment.CurrentDirectory}";
+                    }
                     MessageBox.Show(Result);
+                }
                 System.Environment.CurrentDirectory = TempPath;
             });
         }
@@ -861,10 +870,9 @@ del *.pvk *.spc";
                     p.StandardInput.AutoFlush = true;
 
                     //获取cmd窗口的输出信息
-                    p.StandardOutput.ReadToEnd();
+                    output = p.StandardOutput.ReadToEnd();
                     p.WaitForExit();//等待程序执行完退出进程
                     p.Close();
-                    output = $"生成证书成功！{Environment.NewLine}证书路径：Environment.CurrentDirectory";
                 }
             }
             catch(Exception ex)

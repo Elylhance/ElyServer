@@ -23,7 +23,6 @@ namespace MySocketServer
     class ElyTLSServer : IDisposable
     {
         #region private-variable
-        private bool _debug = false;
         private TcpListener iTcpListener;
         private bool iAcceptInvalidCert;
         private bool iMaumutually;
