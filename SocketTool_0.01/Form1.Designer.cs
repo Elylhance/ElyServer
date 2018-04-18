@@ -59,7 +59,7 @@
             this.sSDlable3 = new System.Windows.Forms.Label();
             this.sSDlable1 = new System.Windows.Forms.Label();
             this.sCurrentConnection = new System.Windows.Forms.GroupBox();
-            this.sConnectionlistBox = new System.Windows.Forms.ListBox();
+            this.ClientListBox = new System.Windows.Forms.ListBox();
             this.sDisconnectCurrentConnection = new System.Windows.Forms.Button();
             this.sAllSelect = new System.Windows.Forms.Button();
             this.sNetCfg = new System.Windows.Forms.GroupBox();
@@ -81,32 +81,45 @@
             this.label1 = new System.Windows.Forms.Label();
             this.SSLCfg = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.PKCS12 = new System.Windows.Forms.RadioButton();
+            this.GeneralX509 = new System.Windows.Forms.RadioButton();
+            this.CrtAndKey = new System.Windows.Forms.GroupBox();
+            this.OpenSslShowPassowd = new System.Windows.Forms.CheckBox();
+            this.SetPrivateKey = new System.Windows.Forms.Button();
+            this.SetPubKey = new System.Windows.Forms.Button();
+            this.PrvtKeyPasswd = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.PrvtKey = new System.Windows.Forms.TextBox();
+            this.PubCert = new System.Windows.Forms.TextBox();
+            this.privatekeylable = new System.Windows.Forms.Label();
+            this.CertPublable = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.TlsConfig = new System.Windows.Forms.GroupBox();
             this.IgnoreCert = new System.Windows.Forms.CheckBox();
+            this.TlsConfig = new System.Windows.Forms.GroupBox();
+            this.SslTips = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.GSAShowPasswd = new System.Windows.Forms.CheckBox();
             this.GenerateCert = new System.Windows.Forms.Button();
-            this.SApasswd = new System.Windows.Forms.TextBox();
+            this.SelfSignedpasswd = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.SignatureAlgorithm = new System.Windows.Forms.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.DispalyCertPasswd = new System.Windows.Forms.CheckBox();
+            this.PfxShowPasswd = new System.Windows.Forms.CheckBox();
             this.SelectCert = new System.Windows.Forms.Button();
             this.CertFilePath = new System.Windows.Forms.TextBox();
-            this.TlsPassWd = new System.Windows.Forms.TextBox();
+            this.pfxPassWd = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.MutualAuth = new System.Windows.Forms.CheckBox();
-            this.NoMutualAuth = new System.Windows.Forms.CheckBox();
-            this.NoIgnoreCert = new System.Windows.Forms.CheckBox();
-            this.TlsVer = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
+            this.TlsVer = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.NoIgnoreCert = new System.Windows.Forms.CheckBox();
+            this.NoMutualAuth = new System.Windows.Forms.CheckBox();
+            this.MutualAuth = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TabCtrl.SuspendLayout();
             this.Server.SuspendLayout();
@@ -119,7 +132,9 @@
             this.panel1.SuspendLayout();
             this.SSLCfg.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.CrtAndKey.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.TlsConfig.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -516,39 +531,38 @@
             // 
             this.sCurrentConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sCurrentConnection.Controls.Add(this.sConnectionlistBox);
+            this.sCurrentConnection.Controls.Add(this.ClientListBox);
             this.sCurrentConnection.Controls.Add(this.sDisconnectCurrentConnection);
             this.sCurrentConnection.Controls.Add(this.sAllSelect);
             this.sCurrentConnection.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sCurrentConnection.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.sCurrentConnection.Location = new System.Drawing.Point(584, 6);
+            this.sCurrentConnection.Location = new System.Drawing.Point(573, 6);
             this.sCurrentConnection.Name = "sCurrentConnection";
-            this.sCurrentConnection.Size = new System.Drawing.Size(346, 84);
+            this.sCurrentConnection.Size = new System.Drawing.Size(354, 84);
             this.sCurrentConnection.TabIndex = 0;
             this.sCurrentConnection.TabStop = false;
             this.sCurrentConnection.Text = "当前连接";
             // 
-            // sConnectionlistBox
+            // ClientListBox
             // 
-            this.sConnectionlistBox.BackColor = System.Drawing.SystemColors.Window;
-            this.sConnectionlistBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.sConnectionlistBox.Dock = System.Windows.Forms.DockStyle.Left;
-            this.sConnectionlistBox.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sConnectionlistBox.FormattingEnabled = true;
-            this.sConnectionlistBox.ItemHeight = 17;
-            this.sConnectionlistBox.Location = new System.Drawing.Point(3, 19);
-            this.sConnectionlistBox.Name = "sConnectionlistBox";
-            this.sConnectionlistBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.sConnectionlistBox.Size = new System.Drawing.Size(246, 62);
-            this.sConnectionlistBox.TabIndex = 0;
-            this.sConnectionlistBox.SelectedIndexChanged += new System.EventHandler(this.sConnectionlistBox_SelectedIndexChanged);
+            this.ClientListBox.BackColor = System.Drawing.SystemColors.Window;
+            this.ClientListBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ClientListBox.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ClientListBox.FormattingEnabled = true;
+            this.ClientListBox.ItemHeight = 17;
+            this.ClientListBox.Location = new System.Drawing.Point(8, 19);
+            this.ClientListBox.Name = "ClientListBox";
+            this.ClientListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.ClientListBox.Size = new System.Drawing.Size(256, 53);
+            this.ClientListBox.TabIndex = 0;
+            this.ClientListBox.SelectedIndexChanged += new System.EventHandler(this.ClientListBox_SelectedIndexChanged);
             // 
             // sDisconnectCurrentConnection
             // 
             this.sDisconnectCurrentConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.sDisconnectCurrentConnection.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sDisconnectCurrentConnection.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sDisconnectCurrentConnection.Location = new System.Drawing.Point(261, 50);
+            this.sDisconnectCurrentConnection.Location = new System.Drawing.Point(271, 50);
             this.sDisconnectCurrentConnection.Name = "sDisconnectCurrentConnection";
             this.sDisconnectCurrentConnection.Size = new System.Drawing.Size(77, 25);
             this.sDisconnectCurrentConnection.TabIndex = 8;
@@ -561,7 +575,7 @@
             this.sAllSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.sAllSelect.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sAllSelect.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sAllSelect.Location = new System.Drawing.Point(261, 16);
+            this.sAllSelect.Location = new System.Drawing.Point(271, 16);
             this.sAllSelect.Name = "sAllSelect";
             this.sAllSelect.Size = new System.Drawing.Size(77, 25);
             this.sAllSelect.TabIndex = 7;
@@ -587,7 +601,7 @@
             this.sNetCfg.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
             this.sNetCfg.Location = new System.Drawing.Point(4, 6);
             this.sNetCfg.Name = "sNetCfg";
-            this.sNetCfg.Size = new System.Drawing.Size(560, 84);
+            this.sNetCfg.Size = new System.Drawing.Size(536, 84);
             this.sNetCfg.TabIndex = 0;
             this.sNetCfg.TabStop = false;
             this.sNetCfg.Text = "网络配置";
@@ -721,7 +735,7 @@
             // 
             this.sListen2.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sListen2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sListen2.Location = new System.Drawing.Point(465, 50);
+            this.sListen2.Location = new System.Drawing.Point(452, 50);
             this.sListen2.Name = "sListen2";
             this.sListen2.Size = new System.Drawing.Size(77, 25);
             this.sListen2.TabIndex = 6;
@@ -733,7 +747,7 @@
             // 
             this.sListen1.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sListen1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sListen1.Location = new System.Drawing.Point(465, 16);
+            this.sListen1.Location = new System.Drawing.Point(452, 16);
             this.sListen1.Name = "sListen1";
             this.sListen1.Size = new System.Drawing.Size(77, 25);
             this.sListen1.TabIndex = 3;
@@ -788,8 +802,17 @@
             // SSLCfg
             // 
             this.SSLCfg.Controls.Add(this.groupBox3);
+            this.SSLCfg.Controls.Add(this.CrtAndKey);
             this.SSLCfg.Controls.Add(this.groupBox2);
+            this.SSLCfg.Controls.Add(this.IgnoreCert);
             this.SSLCfg.Controls.Add(this.TlsConfig);
+            this.SSLCfg.Controls.Add(this.TlsVer);
+            this.SSLCfg.Controls.Add(this.label15);
+            this.SSLCfg.Controls.Add(this.label16);
+            this.SSLCfg.Controls.Add(this.label13);
+            this.SSLCfg.Controls.Add(this.NoIgnoreCert);
+            this.SSLCfg.Controls.Add(this.NoMutualAuth);
+            this.SSLCfg.Controls.Add(this.MutualAuth);
             this.SSLCfg.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.SSLCfg.Location = new System.Drawing.Point(4, 29);
             this.SSLCfg.Name = "SSLCfg";
@@ -800,92 +823,226 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.textBox1);
-            this.groupBox3.Location = new System.Drawing.Point(464, 6);
+            this.groupBox3.Controls.Add(this.PKCS12);
+            this.groupBox3.Controls.Add(this.GeneralX509);
+            this.groupBox3.Location = new System.Drawing.Point(244, 7);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(466, 218);
-            this.groupBox3.TabIndex = 13;
+            this.groupBox3.Size = new System.Drawing.Size(178, 105);
+            this.groupBox3.TabIndex = 16;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Tips";
+            this.groupBox3.Text = "证书管理";
             // 
-            // textBox1
+            // PKCS12
             // 
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(8, 22);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(445, 180);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            this.PKCS12.AutoSize = true;
+            this.PKCS12.Checked = true;
+            this.PKCS12.Location = new System.Drawing.Point(6, 38);
+            this.PKCS12.Name = "PKCS12";
+            this.PKCS12.Size = new System.Drawing.Size(151, 18);
+            this.PKCS12.TabIndex = 15;
+            this.PKCS12.TabStop = true;
+            this.PKCS12.Text = "使用PKCS12证书配置";
+            this.PKCS12.UseVisualStyleBackColor = true;
+            // 
+            // GeneralX509
+            // 
+            this.GeneralX509.AutoSize = true;
+            this.GeneralX509.Location = new System.Drawing.Point(6, 70);
+            this.GeneralX509.Name = "GeneralX509";
+            this.GeneralX509.Size = new System.Drawing.Size(144, 18);
+            this.GeneralX509.TabIndex = 14;
+            this.GeneralX509.Text = "使用X.509证书配置";
+            this.GeneralX509.UseVisualStyleBackColor = true;
+            // 
+            // CrtAndKey
+            // 
+            this.CrtAndKey.Controls.Add(this.OpenSslShowPassowd);
+            this.CrtAndKey.Controls.Add(this.SetPrivateKey);
+            this.CrtAndKey.Controls.Add(this.SetPubKey);
+            this.CrtAndKey.Controls.Add(this.PrvtKeyPasswd);
+            this.CrtAndKey.Controls.Add(this.label21);
+            this.CrtAndKey.Controls.Add(this.PrvtKey);
+            this.CrtAndKey.Controls.Add(this.PubCert);
+            this.CrtAndKey.Controls.Add(this.privatekeylable);
+            this.CrtAndKey.Controls.Add(this.CertPublable);
+            this.CrtAndKey.Location = new System.Drawing.Point(428, 7);
+            this.CrtAndKey.Name = "CrtAndKey";
+            this.CrtAndKey.Size = new System.Drawing.Size(500, 133);
+            this.CrtAndKey.TabIndex = 13;
+            this.CrtAndKey.TabStop = false;
+            this.CrtAndKey.Text = "通用X.509证书配置";
+            // 
+            // OpenSslShowPassowd
+            // 
+            this.OpenSslShowPassowd.AutoSize = true;
+            this.OpenSslShowPassowd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.OpenSslShowPassowd.Location = new System.Drawing.Point(411, 100);
+            this.OpenSslShowPassowd.Name = "OpenSslShowPassowd";
+            this.OpenSslShowPassowd.Size = new System.Drawing.Size(80, 18);
+            this.OpenSslShowPassowd.TabIndex = 12;
+            this.OpenSslShowPassowd.Text = "显示密码";
+            this.OpenSslShowPassowd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.OpenSslShowPassowd.UseVisualStyleBackColor = true;
+            this.OpenSslShowPassowd.CheckedChanged += new System.EventHandler(this.OpenSslShowPassowd_CheckedChanged);
+            // 
+            // SetPrivateKey
+            // 
+            this.SetPrivateKey.Location = new System.Drawing.Point(409, 57);
+            this.SetPrivateKey.Name = "SetPrivateKey";
+            this.SetPrivateKey.Size = new System.Drawing.Size(84, 26);
+            this.SetPrivateKey.TabIndex = 7;
+            this.SetPrivateKey.Text = "选择证书";
+            this.SetPrivateKey.UseVisualStyleBackColor = true;
+            this.SetPrivateKey.Click += new System.EventHandler(this.SetPrivateKey_Click);
+            // 
+            // SetPubKey
+            // 
+            this.SetPubKey.Location = new System.Drawing.Point(409, 18);
+            this.SetPubKey.Name = "SetPubKey";
+            this.SetPubKey.Size = new System.Drawing.Size(84, 26);
+            this.SetPubKey.TabIndex = 6;
+            this.SetPubKey.Text = "选择证书";
+            this.SetPubKey.UseVisualStyleBackColor = true;
+            this.SetPubKey.Click += new System.EventHandler(this.SetPubKey_Click);
+            // 
+            // PrvtKeyPasswd
+            // 
+            this.PrvtKeyPasswd.Location = new System.Drawing.Point(106, 98);
+            this.PrvtKeyPasswd.MaxLength = 2048;
+            this.PrvtKeyPasswd.Name = "PrvtKeyPasswd";
+            this.PrvtKeyPasswd.PasswordChar = '*';
+            this.PrvtKeyPasswd.Size = new System.Drawing.Size(298, 23);
+            this.PrvtKeyPasswd.TabIndex = 5;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(7, 102);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(105, 14);
+            this.label21.TabIndex = 4;
+            this.label21.Text = "私钥证书密码：";
+            // 
+            // PrvtKey
+            // 
+            this.PrvtKey.Location = new System.Drawing.Point(106, 59);
+            this.PrvtKey.MaxLength = 2048;
+            this.PrvtKey.Name = "PrvtKey";
+            this.PrvtKey.Size = new System.Drawing.Size(298, 23);
+            this.PrvtKey.TabIndex = 3;
+            // 
+            // PubCert
+            // 
+            this.PubCert.Location = new System.Drawing.Point(106, 20);
+            this.PubCert.MaxLength = 2048;
+            this.PubCert.Name = "PubCert";
+            this.PubCert.Size = new System.Drawing.Size(298, 23);
+            this.PubCert.TabIndex = 2;
+            // 
+            // privatekeylable
+            // 
+            this.privatekeylable.AutoSize = true;
+            this.privatekeylable.Location = new System.Drawing.Point(7, 63);
+            this.privatekeylable.Name = "privatekeylable";
+            this.privatekeylable.Size = new System.Drawing.Size(105, 14);
+            this.privatekeylable.TabIndex = 1;
+            this.privatekeylable.Text = "私钥证书文件：";
+            // 
+            // CertPublable
+            // 
+            this.CertPublable.AutoSize = true;
+            this.CertPublable.Location = new System.Drawing.Point(7, 24);
+            this.CertPublable.Name = "CertPublable";
+            this.CertPublable.Size = new System.Drawing.Size(105, 14);
+            this.CertPublable.TabIndex = 0;
+            this.CertPublable.Text = "公钥证书文件：";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.pictureBox1);
             this.groupBox2.Controls.Add(this.pictureBox2);
-            this.groupBox2.Location = new System.Drawing.Point(464, 230);
+            this.groupBox2.Location = new System.Drawing.Point(428, 160);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(466, 297);
+            this.groupBox2.Size = new System.Drawing.Size(500, 364);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MobileTek Inc";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.ErrorImage = null;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(97, 46);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(307, 47);
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
             this.pictureBox2.ErrorImage = null;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(8, 28);
+            this.pictureBox2.Location = new System.Drawing.Point(6, 124);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(451, 259);
+            this.pictureBox2.Size = new System.Drawing.Size(488, 220);
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
-            // 
-            // TlsConfig
-            // 
-            this.TlsConfig.Controls.Add(this.IgnoreCert);
-            this.TlsConfig.Controls.Add(this.groupBox1);
-            this.TlsConfig.Controls.Add(this.DispalyCertPasswd);
-            this.TlsConfig.Controls.Add(this.SelectCert);
-            this.TlsConfig.Controls.Add(this.CertFilePath);
-            this.TlsConfig.Controls.Add(this.TlsPassWd);
-            this.TlsConfig.Controls.Add(this.label17);
-            this.TlsConfig.Controls.Add(this.MutualAuth);
-            this.TlsConfig.Controls.Add(this.NoMutualAuth);
-            this.TlsConfig.Controls.Add(this.NoIgnoreCert);
-            this.TlsConfig.Controls.Add(this.TlsVer);
-            this.TlsConfig.Controls.Add(this.label14);
-            this.TlsConfig.Controls.Add(this.label13);
-            this.TlsConfig.Controls.Add(this.label16);
-            this.TlsConfig.Controls.Add(this.label15);
-            this.TlsConfig.Location = new System.Drawing.Point(4, 6);
-            this.TlsConfig.Name = "TlsConfig";
-            this.TlsConfig.Size = new System.Drawing.Size(442, 521);
-            this.TlsConfig.TabIndex = 11;
-            this.TlsConfig.TabStop = false;
-            this.TlsConfig.Text = "TLS配置";
             // 
             // IgnoreCert
             // 
             this.IgnoreCert.AutoSize = true;
-            this.IgnoreCert.Location = new System.Drawing.Point(166, 68);
+            this.IgnoreCert.Location = new System.Drawing.Point(176, 43);
             this.IgnoreCert.Name = "IgnoreCert";
-            this.IgnoreCert.Size = new System.Drawing.Size(68, 18);
+            this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
-            this.IgnoreCert.Text = "YES   ";
+            this.IgnoreCert.Text = "YES";
             this.toolTip1.SetToolTip(this.IgnoreCert, "是否接受无效的证书");
             this.IgnoreCert.UseVisualStyleBackColor = true;
             this.IgnoreCert.Click += new System.EventHandler(this.IgnoreCert_Click);
+            // 
+            // TlsConfig
+            // 
+            this.TlsConfig.Controls.Add(this.SslTips);
+            this.TlsConfig.Controls.Add(this.groupBox1);
+            this.TlsConfig.Controls.Add(this.PfxShowPasswd);
+            this.TlsConfig.Controls.Add(this.SelectCert);
+            this.TlsConfig.Controls.Add(this.CertFilePath);
+            this.TlsConfig.Controls.Add(this.pfxPassWd);
+            this.TlsConfig.Controls.Add(this.label17);
+            this.TlsConfig.Controls.Add(this.label14);
+            this.TlsConfig.Location = new System.Drawing.Point(7, 113);
+            this.TlsConfig.Name = "TlsConfig";
+            this.TlsConfig.Size = new System.Drawing.Size(415, 411);
+            this.TlsConfig.TabIndex = 11;
+            this.TlsConfig.TabStop = false;
+            this.TlsConfig.Text = "PKCS12证书配置";
+            // 
+            // SslTips
+            // 
+            this.SslTips.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.SslTips.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.SslTips.Location = new System.Drawing.Point(12, 203);
+            this.SslTips.Multiline = true;
+            this.SslTips.Name = "SslTips";
+            this.SslTips.ReadOnly = true;
+            this.SslTips.Size = new System.Drawing.Size(391, 199);
+            this.SslTips.TabIndex = 0;
+            this.SslTips.Text = resources.GetString("SslTips.Text");
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.GSAShowPasswd);
             this.groupBox1.Controls.Add(this.GenerateCert);
-            this.groupBox1.Controls.Add(this.SApasswd);
+            this.groupBox1.Controls.Add(this.SelfSignedpasswd);
             this.groupBox1.Controls.Add(this.label20);
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.SignatureAlgorithm);
             this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Location = new System.Drawing.Point(5, 165);
+            this.groupBox1.ForeColor = System.Drawing.SystemColors.WindowFrame;
+            this.groupBox1.Location = new System.Drawing.Point(12, 21);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(348, 142);
+            this.groupBox1.Size = new System.Drawing.Size(391, 87);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "生成自签名证书（仅限测试使用）";
@@ -894,7 +1051,8 @@
             // 
             this.GSAShowPasswd.AutoSize = true;
             this.GSAShowPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.GSAShowPasswd.Location = new System.Drawing.Point(256, 77);
+            this.GSAShowPasswd.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.GSAShowPasswd.Location = new System.Drawing.Point(307, 24);
             this.GSAShowPasswd.Name = "GSAShowPasswd";
             this.GSAShowPasswd.Size = new System.Drawing.Size(80, 18);
             this.GSAShowPasswd.TabIndex = 12;
@@ -905,27 +1063,30 @@
             // 
             // GenerateCert
             // 
-            this.GenerateCert.Location = new System.Drawing.Point(252, 109);
+            this.GenerateCert.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.GenerateCert.Location = new System.Drawing.Point(320, 53);
             this.GenerateCert.Name = "GenerateCert";
-            this.GenerateCert.Size = new System.Drawing.Size(84, 23);
+            this.GenerateCert.Size = new System.Drawing.Size(64, 26);
             this.GenerateCert.TabIndex = 5;
-            this.GenerateCert.Text = "一键生成";
+            this.GenerateCert.Text = "生成";
             this.GenerateCert.UseVisualStyleBackColor = true;
             this.GenerateCert.Click += new System.EventHandler(this.GenerateCert_Click);
             // 
-            // SApasswd
+            // SelfSignedpasswd
             // 
-            this.SApasswd.Location = new System.Drawing.Point(78, 75);
-            this.SApasswd.Name = "SApasswd";
-            this.SApasswd.PasswordChar = '*';
-            this.SApasswd.Size = new System.Drawing.Size(172, 23);
-            this.SApasswd.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.SApasswd, "可选项");
+            this.SelfSignedpasswd.Location = new System.Drawing.Point(81, 22);
+            this.SelfSignedpasswd.MaxLength = 2048;
+            this.SelfSignedpasswd.Name = "SelfSignedpasswd";
+            this.SelfSignedpasswd.PasswordChar = '*';
+            this.SelfSignedpasswd.Size = new System.Drawing.Size(220, 23);
+            this.SelfSignedpasswd.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.SelfSignedpasswd, "可选项");
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(7, 79);
+            this.label20.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label20.Location = new System.Drawing.Point(7, 26);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(77, 14);
             this.label20.TabIndex = 3;
@@ -949,38 +1110,39 @@
             "SHA256",
             "SHA384",
             "SHA512"});
-            this.SignatureAlgorithm.Location = new System.Drawing.Point(78, 35);
+            this.SignatureAlgorithm.Location = new System.Drawing.Point(81, 55);
             this.SignatureAlgorithm.Name = "SignatureAlgorithm";
-            this.SignatureAlgorithm.Size = new System.Drawing.Size(172, 22);
+            this.SignatureAlgorithm.Size = new System.Drawing.Size(220, 22);
             this.SignatureAlgorithm.TabIndex = 1;
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(7, 39);
+            this.label18.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label18.Location = new System.Drawing.Point(6, 59);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(77, 14);
             this.label18.TabIndex = 0;
             this.label18.Text = "签名算法：";
             // 
-            // DispalyCertPasswd
+            // PfxShowPasswd
             // 
-            this.DispalyCertPasswd.AutoSize = true;
-            this.DispalyCertPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DispalyCertPasswd.Location = new System.Drawing.Point(349, 408);
-            this.DispalyCertPasswd.Name = "DispalyCertPasswd";
-            this.DispalyCertPasswd.Size = new System.Drawing.Size(80, 18);
-            this.DispalyCertPasswd.TabIndex = 11;
-            this.DispalyCertPasswd.Text = "显示密码";
-            this.DispalyCertPasswd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.DispalyCertPasswd.UseVisualStyleBackColor = true;
-            this.DispalyCertPasswd.CheckedChanged += new System.EventHandler(this.DispalyCertPasswd_CheckedChanged);
+            this.PfxShowPasswd.AutoSize = true;
+            this.PfxShowPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.PfxShowPasswd.Location = new System.Drawing.Point(323, 158);
+            this.PfxShowPasswd.Name = "PfxShowPasswd";
+            this.PfxShowPasswd.Size = new System.Drawing.Size(80, 18);
+            this.PfxShowPasswd.TabIndex = 11;
+            this.PfxShowPasswd.Text = "显示密码";
+            this.PfxShowPasswd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.PfxShowPasswd.UseVisualStyleBackColor = true;
+            this.PfxShowPasswd.CheckedChanged += new System.EventHandler(this.DispalyCertPasswd_CheckedChanged);
             // 
             // SelectCert
             // 
-            this.SelectCert.Location = new System.Drawing.Point(340, 372);
+            this.SelectCert.Location = new System.Drawing.Point(319, 120);
             this.SelectCert.Name = "SelectCert";
-            this.SelectCert.Size = new System.Drawing.Size(84, 23);
+            this.SelectCert.Size = new System.Drawing.Size(84, 26);
             this.SelectCert.TabIndex = 3;
             this.SelectCert.Text = "选择证书";
             this.SelectCert.UseVisualStyleBackColor = true;
@@ -988,69 +1150,40 @@
             // 
             // CertFilePath
             // 
-            this.CertFilePath.Location = new System.Drawing.Point(102, 343);
+            this.CertFilePath.Location = new System.Drawing.Point(102, 122);
             this.CertFilePath.Name = "CertFilePath";
-            this.CertFilePath.Size = new System.Drawing.Size(322, 23);
+            this.CertFilePath.Size = new System.Drawing.Size(209, 23);
             this.CertFilePath.TabIndex = 2;
             // 
-            // TlsPassWd
+            // pfxPassWd
             // 
-            this.TlsPassWd.Location = new System.Drawing.Point(102, 406);
-            this.TlsPassWd.Name = "TlsPassWd";
-            this.TlsPassWd.PasswordChar = '*';
-            this.TlsPassWd.Size = new System.Drawing.Size(239, 23);
-            this.TlsPassWd.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.TlsPassWd, "若有的话，可选项");
+            this.pfxPassWd.Location = new System.Drawing.Point(102, 156);
+            this.pfxPassWd.MaxLength = 2048;
+            this.pfxPassWd.Name = "pfxPassWd";
+            this.pfxPassWd.PasswordChar = '*';
+            this.pfxPassWd.Size = new System.Drawing.Size(209, 23);
+            this.pfxPassWd.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.pfxPassWd, "若有的话，可选项");
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(5, 410);
+            this.label17.Location = new System.Drawing.Point(12, 160);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(98, 14);
             this.label17.TabIndex = 9;
             this.label17.Text = "PFX证书密钥：";
             this.toolTip1.SetToolTip(this.label17, "若有的话，可选项");
             // 
-            // MutualAuth
+            // label14
             // 
-            this.MutualAuth.AutoSize = true;
-            this.MutualAuth.Location = new System.Drawing.Point(166, 113);
-            this.MutualAuth.Name = "MutualAuth";
-            this.MutualAuth.Size = new System.Drawing.Size(68, 18);
-            this.MutualAuth.TabIndex = 8;
-            this.MutualAuth.Text = "YES   ";
-            this.toolTip1.SetToolTip(this.MutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
-            this.MutualAuth.UseVisualStyleBackColor = true;
-            this.MutualAuth.Click += new System.EventHandler(this.MutualAuth_Click);
-            // 
-            // NoMutualAuth
-            // 
-            this.NoMutualAuth.AutoSize = true;
-            this.NoMutualAuth.Checked = true;
-            this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoMutualAuth.Location = new System.Drawing.Point(88, 113);
-            this.NoMutualAuth.Name = "NoMutualAuth";
-            this.NoMutualAuth.Size = new System.Drawing.Size(68, 18);
-            this.NoMutualAuth.TabIndex = 7;
-            this.NoMutualAuth.Text = "NO    ";
-            this.toolTip1.SetToolTip(this.NoMutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
-            this.NoMutualAuth.UseVisualStyleBackColor = true;
-            this.NoMutualAuth.Click += new System.EventHandler(this.NoMutualAuth_Click);
-            // 
-            // NoIgnoreCert
-            // 
-            this.NoIgnoreCert.AutoSize = true;
-            this.NoIgnoreCert.Checked = true;
-            this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoIgnoreCert.Location = new System.Drawing.Point(88, 68);
-            this.NoIgnoreCert.Name = "NoIgnoreCert";
-            this.NoIgnoreCert.Size = new System.Drawing.Size(68, 18);
-            this.NoIgnoreCert.TabIndex = 5;
-            this.NoIgnoreCert.Text = "NO    ";
-            this.toolTip1.SetToolTip(this.NoIgnoreCert, "是否接受无效的证书");
-            this.NoIgnoreCert.UseVisualStyleBackColor = true;
-            this.NoIgnoreCert.Click += new System.EventHandler(this.NoIgnoreCert_Click);
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label14.Location = new System.Drawing.Point(12, 126);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(98, 14);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "PFX证书文件：";
             // 
             // TlsVer
             // 
@@ -1063,50 +1196,80 @@
             "TLS v1.0",
             "TLS v1.1",
             "TLS v1.2"});
-            this.TlsVer.Location = new System.Drawing.Point(88, 21);
+            this.TlsVer.Location = new System.Drawing.Point(88, 7);
             this.TlsVer.Name = "TlsVer";
-            this.TlsVer.Size = new System.Drawing.Size(121, 22);
+            this.TlsVer.Size = new System.Drawing.Size(100, 22);
             this.TlsVer.TabIndex = 1;
             // 
-            // label14
+            // label15
             // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label14.Location = new System.Drawing.Point(5, 347);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(98, 14);
-            this.label14.TabIndex = 0;
-            this.label14.Text = "PFX证书文件：";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label13.Location = new System.Drawing.Point(5, 25);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(77, 14);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "协议版本：";
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(10, 45);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(77, 14);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "忽略证书：";
+            this.toolTip1.SetToolTip(this.label15, "是否接受无效的证书");
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 115);
+            this.label16.Location = new System.Drawing.Point(10, 79);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
             this.label16.Text = "双向认证：";
             this.toolTip1.SetToolTip(this.label16, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
             // 
-            // label15
+            // label13
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(5, 70);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(77, 14);
-            this.label15.TabIndex = 4;
-            this.label15.Text = "忽略证书：";
-            this.toolTip1.SetToolTip(this.label15, "是否接受无效的证书");
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label13.Location = new System.Drawing.Point(10, 11);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 14);
+            this.label13.TabIndex = 0;
+            this.label13.Text = "协议版本：";
+            // 
+            // NoIgnoreCert
+            // 
+            this.NoIgnoreCert.AutoSize = true;
+            this.NoIgnoreCert.Checked = true;
+            this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.NoIgnoreCert.Location = new System.Drawing.Point(88, 43);
+            this.NoIgnoreCert.Name = "NoIgnoreCert";
+            this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
+            this.NoIgnoreCert.TabIndex = 5;
+            this.NoIgnoreCert.Text = "NO ";
+            this.toolTip1.SetToolTip(this.NoIgnoreCert, "是否接受无效的证书");
+            this.NoIgnoreCert.UseVisualStyleBackColor = true;
+            this.NoIgnoreCert.Click += new System.EventHandler(this.NoIgnoreCert_Click);
+            // 
+            // NoMutualAuth
+            // 
+            this.NoMutualAuth.AutoSize = true;
+            this.NoMutualAuth.Checked = true;
+            this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.NoMutualAuth.Location = new System.Drawing.Point(88, 77);
+            this.NoMutualAuth.Name = "NoMutualAuth";
+            this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
+            this.NoMutualAuth.TabIndex = 7;
+            this.NoMutualAuth.Text = "NO ";
+            this.toolTip1.SetToolTip(this.NoMutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.NoMutualAuth.UseVisualStyleBackColor = true;
+            this.NoMutualAuth.Click += new System.EventHandler(this.NoMutualAuth_Click);
+            // 
+            // MutualAuth
+            // 
+            this.MutualAuth.AutoSize = true;
+            this.MutualAuth.Location = new System.Drawing.Point(176, 77);
+            this.MutualAuth.Name = "MutualAuth";
+            this.MutualAuth.Size = new System.Drawing.Size(47, 18);
+            this.MutualAuth.TabIndex = 8;
+            this.MutualAuth.Text = "YES";
+            this.toolTip1.SetToolTip(this.MutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MutualAuth.UseVisualStyleBackColor = true;
+            this.MutualAuth.Click += new System.EventHandler(this.MutualAuth_Click);
             // 
             // myTool
             // 
@@ -1117,7 +1280,7 @@
             this.Controls.Add(this.TabCtrl);
             this.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(960, 960);
+            this.MaximumSize = new System.Drawing.Size(960, 1080);
             this.MinimumSize = new System.Drawing.Size(960, 38);
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1137,9 +1300,13 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.SSLCfg.ResumeLayout(false);
+            this.SSLCfg.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.CrtAndKey.ResumeLayout(false);
+            this.CrtAndKey.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.TlsConfig.ResumeLayout(false);
             this.TlsConfig.PerformLayout();
@@ -1171,7 +1338,7 @@
         private System.Windows.Forms.ComboBox sIpaddr1;
         private System.Windows.Forms.Button sDisconnectCurrentConnection;
         private System.Windows.Forms.Button sAllSelect;
-        private System.Windows.Forms.ListBox sConnectionlistBox;
+        private System.Windows.Forms.ListBox ClientListBox;
         private System.Windows.Forms.Label sSDlable2;
         private System.Windows.Forms.Label sSDlable3;
         private System.Windows.Forms.TextBox Datablock_3;
@@ -1211,23 +1378,36 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.CheckBox NoMutualAuth;
         private System.Windows.Forms.CheckBox MutualAuth;
-        private System.Windows.Forms.TextBox TlsPassWd;
+        private System.Windows.Forms.TextBox pfxPassWd;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.GroupBox TlsConfig;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.CheckBox DispalyCertPasswd;
+        private System.Windows.Forms.CheckBox PfxShowPasswd;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.ComboBox SignatureAlgorithm;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Button GenerateCert;
-        private System.Windows.Forms.TextBox SApasswd;
+        private System.Windows.Forms.TextBox SelfSignedpasswd;
         private System.Windows.Forms.CheckBox GSAShowPasswd;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.TextBox SslTips;
+        private System.Windows.Forms.GroupBox CrtAndKey;
+        private System.Windows.Forms.Label CertPublable;
+        private System.Windows.Forms.Label privatekeylable;
+        private System.Windows.Forms.TextBox PrvtKey;
+        private System.Windows.Forms.TextBox PubCert;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Button SetPrivateKey;
+        private System.Windows.Forms.Button SetPubKey;
+        private System.Windows.Forms.TextBox PrvtKeyPasswd;
+        private System.Windows.Forms.CheckBox OpenSslShowPassowd;
+        private System.Windows.Forms.RadioButton PKCS12;
+        private System.Windows.Forms.RadioButton GeneralX509;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

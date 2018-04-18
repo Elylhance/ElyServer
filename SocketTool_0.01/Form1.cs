@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace SocketTool
 {
     public partial class myTool : Form
@@ -20,7 +21,7 @@ namespace SocketTool
         private bool IsUDPListening;
         private bool IsSending;
         private CancellationTokenSource CancellTS;
-        private ListBox.SelectedObjectCollection selectedClientList;
+        private ListBox.SelectedObjectCollection SelectedClientList;
         private ElyTCPServer elyTcpServer;
         private ElyTLSServer elyTlsServer;
         private ElyUDP elyUdpServer;
@@ -45,7 +46,7 @@ namespace SocketTool
             sIpaddr2.Text = LocalIP;
             TlsVer.SelectedIndex = 0;
             SignatureAlgorithm.SelectedIndex = 2;
-            selectedClientList = sConnectionlistBox.SelectedItems;
+            SelectedClientList = ClientListBox.SelectedItems;
         }
         private string GetLocalIPAddress()
         {
@@ -71,19 +72,19 @@ namespace SocketTool
         private async Task<int> SendDataToClient(string data, decimal SendCount, CancellationToken Token)
         {
             int SentSize = 0;
-            while (selectedClientList.Count > 0 && SendCount-- > 0)
+            while (SelectedClientList.Count > 0 && SendCount-- > 0)
             {
                 if (Token.IsCancellationRequested)
                 {
                     break;
                 }
-                for (int i = 0; i < selectedClientList.Count; i++)
+                for (int i = 0; i < SelectedClientList.Count; i++)
                 {
                     if (Token.IsCancellationRequested)
                     {
                         break;
                     }
-                    object Client = selectedClientList[i];
+                    object Client = SelectedClientList[i];
                     byte[] bytes = Encoding.Default.GetBytes(data);
                     try
                     {
@@ -141,34 +142,34 @@ namespace SocketTool
         }
         private bool ConnectedFDback(string newClient)
         {
-            if (sConnectionlistBox.InvokeRequired)
+            if (ClientListBox.InvokeRequired)
             {
                 delegateCallBack d = new delegateCallBack(ConnectedFDback);
                 this.Invoke(d, new object[] { newClient });
             }
             else
             {
-                this.sConnectionlistBox.Items.Add(newClient);
-                if (this.selectedClientList.Count == 0)
-                    sConnectionlistBox.SetSelected(0, true);
+                this.ClientListBox.Items.Add(newClient);
+                if (this.SelectedClientList.Count == 0)
+                    ClientListBox.SetSelected(0, true);
             } 
             return true;
         }
         private bool DisconnectedFDback(string ConnectedClient)
         {
-            if (sConnectionlistBox.InvokeRequired)
+            if (ClientListBox.InvokeRequired)
             {
                 delegateCallBack d = new delegateCallBack(DisconnectedFDback);
                 this.Invoke(d, new object[] { ConnectedClient });
             }
             else
             {
-                this.sConnectionlistBox.Items.Remove(ConnectedClient);
-                if (this.selectedClientList.Count == 0 && this.sConnectionlistBox.Items.Count > 0)
+                this.ClientListBox.Items.Remove(ConnectedClient);
+                if (this.SelectedClientList.Count == 0 && this.ClientListBox.Items.Count > 0)
                 {
-                    sConnectionlistBox.SetSelected(0, true);
+                    ClientListBox.SetSelected(0, true);
                 }
-                this.sConnectionlistBox.Update();
+                this.ClientListBox.Update();
             }
             return true;
         }
@@ -192,20 +193,10 @@ namespace SocketTool
         }
         private bool MessageOutPutHandler(string msginfo)
         {
-            string Str = string.Empty;
-            if (SequenceNum != 0)
-            {
-                Str = Environment.NewLine
+            string Str = (SequenceNum != 0 ? Environment.NewLine : string.Empty)
                         + GetSequenceNumStr()
                         + $"  [{DateTime.Now.ToString("HH:mm:ss.fff")}] "
                         + msginfo;
-            }
-            else
-            {
-                Str = GetSequenceNumStr()
-                        + $"  [{DateTime.Now.ToString("HH:mm:ss.fff")}] "
-                        + msginfo;
-            }
             sLogTextbox.AppendText(Str);
             return true;
         }
@@ -266,18 +257,35 @@ namespace SocketTool
                     }
                     else if (sTLSOnoff.Checked)
                     {
-                        string pfxCertFile = CertFilePath.Text;
-                        string pfxCertkey = TlsPassWd.Text;
                         bool Maumutually = MutualAuth.Checked;
                         bool AcceptInvalidCert = IgnoreCert.Checked;
                         string TlsVer = this.TlsVer.Text;
-                        elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
-                                                         pfxCertFile, pfxCertkey,
-                                                         Maumutually, AcceptInvalidCert, TlsVer,
-                                                         ConnectedFDback,
-                                                         DisconnectedFDback,
-                                                         DataReceivedFDback,
-                                                         PrintPromptMessage);
+                        if (PKCS12.Checked)
+                        {
+                            string pfxCertFile = CertFilePath.Text;
+                            string pfxCertkey = pfxPassWd.Text;
+                            elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
+                                                             pfxCertFile, pfxCertkey,
+                                                             Maumutually, AcceptInvalidCert, TlsVer,
+                                                             ConnectedFDback,
+                                                             DisconnectedFDback,
+                                                             DataReceivedFDback,
+                                                             PrintPromptMessage);
+                        }
+                        else if (GeneralX509.Checked)
+                        {
+                            string certificate_pub = PubCert.Text;
+                            string privatekey = PrvtKey.Text;
+                            string securepasswd = PrvtKeyPasswd.Text;
+                            elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
+                                                             certificate_pub, privatekey, securepasswd,
+                                                             Maumutually, AcceptInvalidCert, TlsVer,
+                                                             ConnectedFDback,
+                                                             DisconnectedFDback,
+                                                             DataReceivedFDback,
+                                                             PrintPromptMessage);
+                        }
+                        else { throw new Exception("An unknown error occurred"); }
                         MessageOutPutHandler($"Start TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
                     }
                     IsTCPListening = true;
@@ -290,10 +298,12 @@ namespace SocketTool
                     if (elyTcpServer != null)
                     {
                         elyTcpServer.Dispose();
+                        elyTcpServer = null;
                     }
                     if (elyTlsServer != null)
                     {
                         elyTlsServer.Dispose();
+                        elyTlsServer = null;
                     }
                     MessageOutPutHandler($"{ex.Message}");
                     sListen1.Text = "打开";
@@ -309,11 +319,13 @@ namespace SocketTool
                 if (elyTcpServer != null)
                 {
                     elyTcpServer.Dispose();
+                    elyTcpServer = null;
                     MessageOutPutHandler($"Stop TCP Server[{ListenerIp}:{ListenerPort}] Successfully!");
                 }
                 if (elyTlsServer != null)
                 {
                     elyTlsServer.Dispose();
+                    elyTlsServer = null;
                     MessageOutPutHandler($"Stop TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
                 }
                 // TODO:取消控件未执行的委托           
@@ -365,6 +377,7 @@ namespace SocketTool
                     if (elyUdpServer != null)
                     {
                         elyUdpServer.Dispose();
+                        elyUdpServer = null;
                     }
 
                     MessageOutPutHandler($"{ex.Message}");
@@ -384,6 +397,7 @@ namespace SocketTool
                 if (elyUdpServer != null)
                 {
                     elyUdpServer.Dispose();
+                    elyUdpServer = null;
                 }
                 MessageOutPutHandler($"Stop UDP Server[{ListenerIp}:{ListenerPort}] Successfully!");
 
@@ -407,16 +421,16 @@ namespace SocketTool
             TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
         }
 
-        private void sConnectionlistBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void ClientListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selectedClientList = sConnectionlistBox.SelectedItems;
+            SelectedClientList = ClientListBox.SelectedItems;
         }
 
         private async void sSendButton1_Click(object sender, EventArgs e)
         {
             if (!IsSending)
             {
-                if (selectedClientList.Count == 0)
+                if (SelectedClientList.Count == 0)
                     return;
                 if (Datablock_1.Text == string.Empty)
                     return;
@@ -476,7 +490,7 @@ namespace SocketTool
         {
             if (!IsSending)
             {
-                if (selectedClientList.Count == 0)
+                if (SelectedClientList.Count == 0)
                     return;
                 if (Datablock_2.Text == string.Empty)
                     return;
@@ -537,7 +551,7 @@ namespace SocketTool
         {
             if (!IsSending)
             {
-                if (selectedClientList.Count == 0)
+                if (SelectedClientList.Count == 0)
                     return;
                 if (Datablock_3.Text == string.Empty)
                     return;
@@ -620,9 +634,9 @@ namespace SocketTool
 
         private void sAllSelect_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < sConnectionlistBox.Items.Count; i++)
+            for (int i = 0; i < ClientListBox.Items.Count; i++)
             {
-                sConnectionlistBox.SetSelected(i, true);
+                ClientListBox.SetSelected(i, true);
             }
         }
 
@@ -637,21 +651,21 @@ namespace SocketTool
 
         private void Disconnect()
         {
-            while (selectedClientList.Count > 0)
+            while (SelectedClientList.Count > 0)
             {
-                if (selectedClientList[0].ToString() != string.Empty)
+                if (SelectedClientList[0].ToString() != string.Empty)
                 {
-                    if (elyTcpServer != null && selectedClientList[0].ToString().StartsWith("TCP"))
-                        elyTcpServer.Disconnect(selectedClientList[0].ToString());
-                    else if (elyTlsServer != null && selectedClientList[0].ToString().StartsWith("TLS"))
-                        elyTlsServer.Disconnect(selectedClientList[0].ToString());
-                    else if (elyUdpServer != null && selectedClientList[0].ToString().StartsWith("UDP"))
-                        elyUdpServer.Disconnect(selectedClientList[0].ToString());
-                    else if (elyDtlsServer != null && selectedClientList[0].ToString().StartsWith("DTLS"))
-                        elyDtlsServer.Disconnect(selectedClientList[0].ToString());
+                    if (elyTcpServer != null && SelectedClientList[0].ToString().StartsWith("TCP"))
+                        elyTcpServer.Disconnect(SelectedClientList[0].ToString());
+                    else if (elyTlsServer != null && SelectedClientList[0].ToString().StartsWith("TLS"))
+                        elyTlsServer.Disconnect(SelectedClientList[0].ToString());
+                    else if (elyUdpServer != null && SelectedClientList[0].ToString().StartsWith("UDP"))
+                        elyUdpServer.Disconnect(SelectedClientList[0].ToString());
+                    else if (elyDtlsServer != null && SelectedClientList[0].ToString().StartsWith("DTLS"))
+                        elyDtlsServer.Disconnect(SelectedClientList[0].ToString());
                     
                     //删除的是选中的，所以 selectedClientList.Count 会自减 1
-                    sConnectionlistBox.Items.Remove(selectedClientList[0]); 
+                    ClientListBox.Items.Remove(SelectedClientList[0]); 
                 }
             }
         }
@@ -745,6 +759,42 @@ namespace SocketTool
                 NoMutualAuth.Checked = true;
         }
 
+        #region 密码框显示控制
+        private void DispalyCertPasswd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (PfxShowPasswd.Checked)
+            {
+                pfxPassWd.PasswordChar = (char)0;
+            }
+            else
+            {
+                pfxPassWd.PasswordChar = '*';
+            }
+        }
+        private void GSAShowPasswd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (GSAShowPasswd.Checked)
+            {
+                SelfSignedpasswd.PasswordChar = (char)0;
+            }
+            else
+            {
+                SelfSignedpasswd.PasswordChar = '*';
+            } 
+        }
+
+        private void OpenSslShowPassowd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (OpenSslShowPassowd.Checked)
+            {
+                PrvtKeyPasswd.PasswordChar = (char)0;
+            }
+            else
+            {
+                PrvtKeyPasswd.PasswordChar = '*';
+            }
+        }
+        #endregion
         private void SelectCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -759,28 +809,32 @@ namespace SocketTool
             }
         }
 
-        private void DispalyCertPasswd_CheckedChanged(object sender, EventArgs e)
+        private void SetPubKey_Click(object sender, EventArgs e)
         {
-            if (DispalyCertPasswd.Checked)
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\x509";
+            openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                TlsPassWd.PasswordChar = (char)0;
-            }
-            else
-            {
-                TlsPassWd.PasswordChar = '*';
+                string FileName = openFileDialog.FileName;
+                PubCert.Text = FileName;
             }
         }
-        #endregion
-        private void GSAShowPasswd_CheckedChanged(object sender, EventArgs e)
+
+        private void SetPrivateKey_Click(object sender, EventArgs e)
         {
-            if (GSAShowPasswd.Checked)
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\x509";
+            openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                SApasswd.PasswordChar = (char)0;
+                string FileName = openFileDialog.FileName;
+                PrvtKey.Text = FileName;
             }
-            else
-            {
-                SApasswd.PasswordChar = '*';
-            } 
         }
 
         private void GenerateCert_Click(object sender, EventArgs e)
@@ -797,9 +851,9 @@ namespace SocketTool
              */
             string SA = SignatureAlgorithm.SelectedItem.ToString();
             string PassWd = string.Empty;
-            if (SApasswd.Text != string.Empty)
+            if (SelfSignedpasswd.Text != string.Empty)
             {
-                PassWd = "-pi " + SApasswd.Text;
+                PassWd = "-pi " + SelfSignedpasswd.Text;
             }
 
             Task.Run(() =>
@@ -836,9 +890,9 @@ namespace SocketTool
             });
         }
     }
+    #endregion
 
-
-    #region Generate self-signed Cert
+    #region Generate self-signed pfx Cert
     public class CmdHelper
     {
         public static string CmdPath = @"C:\Windows\System32\cmd.exe";

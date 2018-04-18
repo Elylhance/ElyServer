@@ -66,6 +66,18 @@
     <ApplicationIcon>comp_net_48px_16885_easyicon.net.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenSSL.PrivateKeyDecoder, Version=1.2.0.0, Culture=neutral, PublicKeyToken=78f5ba1b024431f9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenSSL.PrivateKeyDecoder.1.2.0\lib\net45\OpenSSL.PrivateKeyDecoder.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenSSL.PublicKeyDecoder, Version=1.1.0.0, Culture=neutral, PublicKeyToken=78f5ba1b024431f9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenSSL.PublicKeyDecoder.1.1.0\lib\net45\OpenSSL.PublicKeyDecoder.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenSSL.X509Certificate2.Provider, Version=1.2.0.0, Culture=neutral, PublicKeyToken=78f5ba1b024431f9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenSSL.X509Certificate2.Provider.1.2.0\lib\net45\OpenSSL.X509Certificate2.Provider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -104,6 +116,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
