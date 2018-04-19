@@ -152,7 +152,7 @@ namespace SocketTool
                 this.ClientListBox.Items.Add(newClient);
                 if (this.SelectedClientList.Count == 0)
                     ClientListBox.SetSelected(0, true);
-            } 
+            }
             return true;
         }
         private bool DisconnectedFDback(string ConnectedClient)
@@ -178,7 +178,7 @@ namespace SocketTool
             if (sLogTextbox.InvokeRequired)
             {
                 delegateCallBackWithData d = new delegateCallBackWithData(DataReceivedFDback);
-                this.Invoke(d, new object[] { Sender,Data });
+                this.Invoke(d, new object[] { Sender, Data });
             }
             else
             {
@@ -230,11 +230,46 @@ namespace SocketTool
         #endregion
 
         #region Click&Content-Changed-Event
-        /// <summary>
-        /// Start TCP/DTLS Server
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        //借助openssl工具将.crt&.key文件转换为.pfx格式证书
+        private bool CrtAndKey2pfx(string certificate_pub, string privatekey, out string pfxPath, out string pfxPasswd)
+        {
+            if (string.IsNullOrEmpty(certificate_pub) || string.IsNullOrEmpty(privatekey))
+            {
+                throw new ArgumentException("证书路径错误");
+            }
+            pfxPasswd = DateTime.Now.Millisecond.ToString();
+            string Result = string.Empty;
+            string pfxName = "TempCertificate.pfx";
+            string TempPath = Environment.CurrentDirectory;
+            Environment.CurrentDirectory += "\\cert";
+            try
+            {
+                File.Copy(certificate_pub, Environment.CurrentDirectory + "\\_PubCert.crt", true);
+                File.Copy(privatekey, Environment.CurrentDirectory + "\\_PriKey.key", true);
+                string Cmd = $"openssl pkcs12 -export -out {pfxName} -passout pass:{pfxPasswd} -inkey _PriKey.key -in _PubCert.crt";
+                CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
+                CmdHelper.RunCmd(Cmd, out Result);
+                if (Result.EndsWith($"Loading 'screen' into random state - done{Environment.NewLine}"))
+                {
+                    pfxPath = Environment.CurrentDirectory + "\\" + pfxName;
+                    return true;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                pfxPath = string.Empty;
+                return false;
+            }
+            finally
+            {
+                Environment.CurrentDirectory = TempPath;
+            }
+        }
+
         private void sListen1_Click(object sender, EventArgs e)
         {
             string ListenerIp = sIpaddr1.Text;
@@ -274,16 +309,25 @@ namespace SocketTool
                         }
                         else if (GeneralX509.Checked)
                         {
+                            string pfxPath = string.Empty;
+                            string pfxPasswd = string.Empty;
                             string certificate_pub = PubCert.Text;
                             string privatekey = PrvtKey.Text;
                             string securepasswd = PrvtKeyPasswd.Text;
-                            elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
-                                                             certificate_pub, privatekey, securepasswd,
-                                                             Maumutually, AcceptInvalidCert, TlsVer,
-                                                             ConnectedFDback,
-                                                             DisconnectedFDback,
-                                                             DataReceivedFDback,
-                                                             PrintPromptMessage);
+                            if (CrtAndKey2pfx(certificate_pub, privatekey, out pfxPath, out pfxPasswd))
+                            {
+                                elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
+                                                                 pfxPath, pfxPasswd,
+                                                                 Maumutually, AcceptInvalidCert, TlsVer,
+                                                                 ConnectedFDback,
+                                                                 DisconnectedFDback,
+                                                                 DataReceivedFDback,
+                                                                 PrintPromptMessage);
+                            }
+                            else
+                            {
+                                throw new ArgumentException("处理证书发生未知错误。");
+                            }
                         }
                         else { throw new Exception("An unknown error occurred"); }
                         MessageOutPutHandler($"Start TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
@@ -357,8 +401,8 @@ namespace SocketTool
 
                     if (sUdpOnoff.Checked)
                     {
-                        elyUdpServer = new ElyUDP(ListenerIp, ListenerPort, 
-                                                ConnectedFDback, 
+                        elyUdpServer = new ElyUDP(ListenerIp, ListenerPort,
+                                                ConnectedFDback,
                                                 DisconnectedFDback,
                                                 DataReceivedFDback, false);
                         MessageOutPutHandler($"Start UDP Server[{ListenerIp}:{ListenerPort}] Successfully!");
@@ -387,7 +431,7 @@ namespace SocketTool
                     sIpaddr2.Enabled = true;
                     sPort2.Enabled = true;
                     sUdpOnoff.Enabled = true;
-                    sDTLSOnoff.Enabled = true;   
+                    sDTLSOnoff.Enabled = true;
 
                     IsUDPListening = false;
                 }
@@ -473,7 +517,7 @@ namespace SocketTool
                 if (CancellTS != null)
                 {
                     CancellTS.Cancel();
-                }     
+                }
                 sSendButton2.Enabled = true;
                 sSendButton3.Enabled = true;
 
@@ -598,7 +642,7 @@ namespace SocketTool
                 }
                 sSendButton1.Enabled = true;
                 sSendButton2.Enabled = true;
-       
+
                 TimerSpan3.Enabled = true;
                 Datablock_3.Enabled = true;
                 numericUpDown3.Enabled = true;
@@ -632,7 +676,7 @@ namespace SocketTool
             }
         }
 
-        private void sAllSelect_Click(object sender, EventArgs e)
+        private void SelectAll_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < ClientListBox.Items.Count; i++)
             {
@@ -640,7 +684,7 @@ namespace SocketTool
             }
         }
 
-        private void sDisconnectCurrentConnection_Click(object sender, EventArgs e)
+        private void DisconnectSelectedClient_Click(object sender, EventArgs e)
         {
             if (CancellTS != null)
             {
@@ -663,9 +707,9 @@ namespace SocketTool
                         elyUdpServer.Disconnect(SelectedClientList[0].ToString());
                     else if (elyDtlsServer != null && SelectedClientList[0].ToString().StartsWith("DTLS"))
                         elyDtlsServer.Disconnect(SelectedClientList[0].ToString());
-                    
+
                     //删除的是选中的，所以 selectedClientList.Count 会自减 1
-                    ClientListBox.Items.Remove(SelectedClientList[0]); 
+                    ClientListBox.Items.Remove(SelectedClientList[0]);
                 }
             }
         }
@@ -775,12 +819,12 @@ namespace SocketTool
         {
             if (GSAShowPasswd.Checked)
             {
-                SelfSignedpasswd.PasswordChar = (char)0;
+                SelfSignedPasswd.PasswordChar = (char)0;
             }
             else
             {
-                SelfSignedpasswd.PasswordChar = '*';
-            } 
+                SelfSignedPasswd.PasswordChar = '*';
+            }
         }
 
         private void OpenSslShowPassowd_CheckedChanged(object sender, EventArgs e)
@@ -839,21 +883,11 @@ namespace SocketTool
 
         private void GenerateCert_Click(object sender, EventArgs e)
         {
-            /*
-                del *.cer *.pfx 
-                rem <md5|sha1|sha256|sha384|sha512>  L506仅支持md5及sha256算法
-                makecert -r -pe -n "CN=localhost" -m 24 -a sha256 -sky exchange -ss my CARoot.cer -sv CARoot.pvk
-                cert2spc CARoot.cer CARoot.spc
-                rem 修改密码请将下行中的"passwd"修改为替换密码
-                pvk2pfx -pvk CARoot.pvk -spc CARoot.spc -pi passwd -pfx ServerCert.pfx
-
-                del *.pvk *.spc
-             */
             string SA = SignatureAlgorithm.SelectedItem.ToString();
             string PassWd = string.Empty;
-            if (SelfSignedpasswd.Text != string.Empty)
+            if (SelfSignedPasswd.Text != string.Empty)
             {
-                PassWd = "-pi " + SelfSignedpasswd.Text;
+                PassWd = "-po " + SelfSignedPasswd.Text;
             }
 
             Task.Run(() =>
@@ -866,37 +900,39 @@ namespace SocketTool
                              + "&  del *.pvk *.spc";
                 string Result = string.Empty;
                 string TempPath = Environment.CurrentDirectory;
-                System.Environment.CurrentDirectory += "\\cert";
-                CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
-                CmdHelper.RunCmd(Cmd, out Result);
-                //MessageBox.Show(Result); //For debug
-                if (Result != string.Empty)
+                try
                 {
-                    if (Result.Contains("Failed"))
+                    Environment.CurrentDirectory += "\\cert";
+                    CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
+                    CmdHelper.RunCmd(Cmd, out Result);
+                    //MessageBox.Show(Result); //For debug
+                    if (Result != string.Empty)
                     {
-                        Result = $"生成证书失败！";
+                        if (Result.Contains("Failed") || Result.Contains("Error") || Result.Contains("ERROR"))
+                        {
+                            Result = $"生成证书失败！";
+                        }
+                        else
+                        {
+                            Result = $"生成证书成功！{Environment.NewLine}证书路径：{Environment.CurrentDirectory}";
+                        }
+                        MessageBox.Show(Result);
                     }
-                    else if (Result.Contains("ERROR"))
-                    {
-                        Result = $"生成证书失败！{Environment.NewLine}请确保设定的证书密钥与创建的私钥密码一致";
-                    }
-                    else
-                    {
-                        Result = $"生成证书成功！{Environment.NewLine}证书路径：{Environment.CurrentDirectory}";
-                    }
-                    MessageBox.Show(Result);
                 }
-                System.Environment.CurrentDirectory = TempPath;
+                finally
+                {
+                    Environment.CurrentDirectory = TempPath;
+                }
             });
         }
     }
     #endregion
 
-    #region Generate self-signed pfx Cert
+    #region CmdHelper--Used to call cmd.exe and execute bat command
     public class CmdHelper
     {
         public static string CmdPath = @"C:\Windows\System32\cmd.exe";
-        
+
         /// <summary>
         /// 执行cmd命令
         /// 多命令请使用批处理命令连接符：
@@ -935,13 +971,12 @@ namespace SocketTool
                     p.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 output = string.Empty;
             }
         }
     }
-
     #endregion
 }

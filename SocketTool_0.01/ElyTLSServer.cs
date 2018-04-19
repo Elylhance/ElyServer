@@ -1,7 +1,4 @@
 ﻿using MySocketClient;
-using OpenSSL.Common;
-using OpenSSL.PrivateKeyDecoder;
-using OpenSSL.X509Certificate2Provider;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,7 +8,6 @@ using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,88 +45,7 @@ namespace MySocketServer
 
         #region Construct&Factory
         /// <summary>
-        /// Ely TLS server 构造函数(1)
-        /// </summary>
-        /// <param name="listenerIp">服务器本地IP地址</param>
-        /// <param name="listenerPort">服务器本地端口</param>
-        /// <param name="certificate_pub"> 公钥证书文件</param>
-        /// <param name="privatekey"> 私钥证书文件</param>
-        /// <param name="securepasswd"> 私钥安全密码</param>
-        /// <param name="Maumutually"> 服务器与客户端均需证书认证</param>
-        /// <param name="AcceptInvalidCert"> 是否接受无效证书</param>
-        /// <param name="TlsVer"> Tls版本设置</param>
-        /// <param name="ConnectedFDback"> 有新客户端接入输出信息</param>
-        /// <param name="DisconnectedFDback"> 客户端断开连接输出信息</param>
-        /// <param name="DataReceivedFDback"> 收到客户端的数据输出</param>
-        /// <param name="PromptMsgPrinter"> 异常信息处理</param>
-        public ElyTLSServer(
-            string listenerIp,
-            string listenerPort,
-            string certificate_pub,
-            string privatekey,
-            string securepasswd,
-            bool Maumutually,
-            bool AcceptInvalidCert,
-            string TlsVer,
-            Func<string, bool> ConnectedFDback,
-            Func<string, bool> DisconnectedFDback,
-            Func<string, byte[], bool> DataReceivedFDback,
-            Func<string, bool> PromptMsgPrinter)
-        {
-            iTlsVer = TlsVer;
-            iMaumutually = Maumutually;
-            iAcceptInvalidCert = AcceptInvalidCert;
-            iPromptMsgPrinter = PromptMsgPrinter;
-            iConnectedFDback = ConnectedFDback;
-            iDisconnectedFDback = DisconnectedFDback;
-            iDataReceivedFDback = DataReceivedFDback;
-
-            IPAddress tcpIpaddr = IPAddress.Parse(listenerIp);
-            if (listenerPort == String.Empty)
-            {
-                throw new ArgumentException("请输入端口号");
-            }
-            int port = Convert.ToInt32(listenerPort);
-            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort || PortInUse(port))
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            
-            string certificateText = File.ReadAllText(certificate_pub);
-            string privateKeyText = File.ReadAllText(privatekey);
-
-            SslCertificate = null;
-            ICertificateProvider provider = null;
-            if (securepasswd != null && securepasswd != string.Empty)
-            {
-                provider = new CertificateFromFileProvider(certificateText, privateKeyText, SecureStringUtils.Encrypt(securepasswd));
-            }
-            else
-            {
-                provider = new CertificateFromFileProvider(certificateText, privateKeyText);
-            }
-            SslCertificate = provider.Certificate;
-
-            try
-            {
-                iTcpListener = new TcpListener(tcpIpaddr, port);
-                iTcpListener.Start();
-            }
-            catch (SocketException)
-            {
-                throw new Exception("IP 地址不可用或端口已被占用");
-            }
-
-            /// 生成取消监听的Token
-            TokenSource = new CancellationTokenSource();
-            Token = TokenSource.Token;
-            /// 存储IpPort字符串与client的线程安全字典，有点耗内存
-            ClientList = new ConcurrentDictionary<string, ElyClient>();
-            /// 此构造函数由UI调用，另起一个Task循环监听接入请求，以免UI卡住
-            Task.Run(() => AccecptConnection(), Token);
-        }
-        /// <summary>
-        /// Ely TLS server 构造函数(2)
+        /// Ely TLS server 构造函数
         /// </summary>
         /// <param name="listenerIp">服务器本地IP地址</param>
         /// <param name="listenerPort">服务器本地端口</param>

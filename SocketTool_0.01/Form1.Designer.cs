@@ -102,7 +102,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.GSAShowPasswd = new System.Windows.Forms.CheckBox();
             this.GenerateCert = new System.Windows.Forms.Button();
-            this.SelfSignedpasswd = new System.Windows.Forms.TextBox();
+            this.SelfSignedPasswd = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.SignatureAlgorithm = new System.Windows.Forms.ComboBox();
@@ -568,7 +568,7 @@
             this.sDisconnectCurrentConnection.TabIndex = 8;
             this.sDisconnectCurrentConnection.Text = "断开";
             this.sDisconnectCurrentConnection.UseVisualStyleBackColor = true;
-            this.sDisconnectCurrentConnection.Click += new System.EventHandler(this.sDisconnectCurrentConnection_Click);
+            this.sDisconnectCurrentConnection.Click += new System.EventHandler(this.DisconnectSelectedClient_Click);
             // 
             // sAllSelect
             // 
@@ -581,7 +581,7 @@
             this.sAllSelect.TabIndex = 7;
             this.sAllSelect.Text = "全选";
             this.sAllSelect.UseVisualStyleBackColor = true;
-            this.sAllSelect.Click += new System.EventHandler(this.sAllSelect_Click);
+            this.sAllSelect.Click += new System.EventHandler(this.SelectAll_Click);
             // 
             // sNetCfg
             // 
@@ -961,9 +961,9 @@
             // 
             this.groupBox2.Controls.Add(this.pictureBox1);
             this.groupBox2.Controls.Add(this.pictureBox2);
-            this.groupBox2.Location = new System.Drawing.Point(428, 160);
+            this.groupBox2.Location = new System.Drawing.Point(428, 146);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(500, 364);
+            this.groupBox2.Size = new System.Drawing.Size(500, 378);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MobileTek Inc";
@@ -985,7 +985,7 @@
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.Location = new System.Drawing.Point(6, 124);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(488, 220);
+            this.pictureBox2.Size = new System.Drawing.Size(488, 245);
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
             // 
@@ -1034,7 +1034,7 @@
             // 
             this.groupBox1.Controls.Add(this.GSAShowPasswd);
             this.groupBox1.Controls.Add(this.GenerateCert);
-            this.groupBox1.Controls.Add(this.SelfSignedpasswd);
+            this.groupBox1.Controls.Add(this.SelfSignedPasswd);
             this.groupBox1.Controls.Add(this.label20);
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.SignatureAlgorithm);
@@ -1072,15 +1072,15 @@
             this.GenerateCert.UseVisualStyleBackColor = true;
             this.GenerateCert.Click += new System.EventHandler(this.GenerateCert_Click);
             // 
-            // SelfSignedpasswd
+            // SelfSignedPasswd
             // 
-            this.SelfSignedpasswd.Location = new System.Drawing.Point(81, 22);
-            this.SelfSignedpasswd.MaxLength = 2048;
-            this.SelfSignedpasswd.Name = "SelfSignedpasswd";
-            this.SelfSignedpasswd.PasswordChar = '*';
-            this.SelfSignedpasswd.Size = new System.Drawing.Size(220, 23);
-            this.SelfSignedpasswd.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.SelfSignedpasswd, "可选项");
+            this.SelfSignedPasswd.Location = new System.Drawing.Point(81, 22);
+            this.SelfSignedPasswd.MaxLength = 2048;
+            this.SelfSignedPasswd.Name = "SelfSignedPasswd";
+            this.SelfSignedPasswd.PasswordChar = '*';
+            this.SelfSignedPasswd.Size = new System.Drawing.Size(220, 23);
+            this.SelfSignedPasswd.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.SelfSignedPasswd, "可选项");
             // 
             // label20
             // 
@@ -1285,7 +1285,7 @@
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
-            this.Text = "YKSocketTool V0.01";
+            this.Text = "YKSocketTool V0.02";
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
             this.Server.PerformLayout();
@@ -1390,7 +1390,7 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Button GenerateCert;
-        private System.Windows.Forms.TextBox SelfSignedpasswd;
+        private System.Windows.Forms.TextBox SelfSignedPasswd;
         private System.Windows.Forms.CheckBox GSAShowPasswd;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.TextBox SslTips;
