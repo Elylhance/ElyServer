@@ -42,9 +42,9 @@ namespace SocketTool
         private void My_InitFunc()
         {
             string LocalIP = GetLocalIPAddress();
-            sIpaddr1.Text = LocalIP;
-            sIpaddr2.Text = LocalIP;
-            TlsVer.SelectedIndex = 0;
+            TcpIpAddr.Text = LocalIP;
+            UdpIpAddr.Text = LocalIP;
+            TlsVersion.SelectedIndex = 0;
             SignatureAlgorithm.SelectedIndex = 2;
             SelectedClientList = ClientListBox.SelectedItems;
         }
@@ -56,8 +56,8 @@ namespace SocketTool
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    sIpaddr1.Items.Add(ip.ToString());
-                    sIpaddr2.Items.Add(ip.ToString());
+                    TcpIpAddr.Items.Add(ip.ToString());
+                    UdpIpAddr.Items.Add(ip.ToString());
                     LocalIP = ip.ToString();
                 }
             }
@@ -140,6 +140,7 @@ namespace SocketTool
             }
             return SentSize;
         }
+
         private bool ConnectedFDback(string newClient)
         {
             if (ClientListBox.InvokeRequired)
@@ -155,6 +156,7 @@ namespace SocketTool
             }
             return true;
         }
+
         private bool DisconnectedFDback(string ConnectedClient)
         {
             if (ClientListBox.InvokeRequired)
@@ -173,9 +175,10 @@ namespace SocketTool
             }
             return true;
         }
+
         private bool DataReceivedFDback(string Sender, byte[] Data)
         {
-            if (sLogTextbox.InvokeRequired)
+            if (LogTextbox.InvokeRequired)
             {
                 delegateCallBackWithData d = new delegateCallBackWithData(DataReceivedFDback);
                 this.Invoke(d, new object[] { Sender, Data });
@@ -191,18 +194,20 @@ namespace SocketTool
             }
             return true;
         }
+
         private bool MessageOutPutHandler(string msginfo)
         {
             string Str = (SequenceNum != 0 ? Environment.NewLine : string.Empty)
                         + GetSequenceNumStr()
                         + $"  [{DateTime.Now.ToString("HH:mm:ss.fff")}] "
                         + msginfo;
-            sLogTextbox.AppendText(Str);
+            LogTextbox.AppendText(Str);
             return true;
         }
+
         private bool PrintPromptMessage(string promptMsg)
         {
-            if (sLogTextbox.InvokeRequired)
+            if (LogTextbox.InvokeRequired)
             {
                 delegateCallBack d = new delegateCallBack(PrintPromptMessage);
                 this.Invoke(d, new object[] { promptMsg });
@@ -213,6 +218,7 @@ namespace SocketTool
             }
             return true;
         }
+
         private string GetSequenceNumStr()
         {
             if (SequenceNum < 9999)
@@ -270,35 +276,35 @@ namespace SocketTool
             }
         }
 
-        private void sListen1_Click(object sender, EventArgs e)
+        private void StartTCPServer_Click(object sender, EventArgs e)
         {
-            string ListenerIp = sIpaddr1.Text;
-            string ListenerPort = sPort1.Text;
+            string ListenerIp = TcpIpAddr.Text;
+            string ListenerPort = TcpPort.Text;
             if (!IsTCPListening)
             {
                 try
                 {
                     // 开启后不允许修改服务器参数
-                    sIpaddr1.Enabled = false;
-                    sPort1.Enabled = false;
-                    sTcpOnoff.Enabled = false;
-                    sTLSOnoff.Enabled = false;
+                    TcpIpAddr.Enabled = false;
+                    TcpPort.Enabled = false;
+                    TcpOnoff.Enabled = false;
+                    TLSOnoff.Enabled = false;
 
-                    if (sTcpOnoff.Checked)
+                    if (TcpOnoff.Checked)
                     {
                         elyTcpServer = new ElyTCPServer(ListenerIp, ListenerPort, ConnectedFDback, DisconnectedFDback,
                                                         DataReceivedFDback, false);
-                        MessageOutPutHandler($"Start TCP Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                        MessageOutPutHandler($"Start TCP server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
-                    else if (sTLSOnoff.Checked)
+                    else if (TLSOnoff.Checked)
                     {
                         bool Maumutually = MutualAuth.Checked;
                         bool AcceptInvalidCert = IgnoreCert.Checked;
-                        string TlsVer = this.TlsVer.Text;
+                        string TlsVer = this.TlsVersion.Text;
                         if (PKCS12.Checked)
                         {
-                            string pfxCertFile = CertFilePath.Text;
-                            string pfxCertkey = pfxPassWd.Text;
+                            string pfxCertFile = pfxFilePath.Text;
+                            string pfxCertkey = pfxPasswd.Text;
                             elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
                                                              pfxCertFile, pfxCertkey,
                                                              Maumutually, AcceptInvalidCert, TlsVer,
@@ -307,13 +313,12 @@ namespace SocketTool
                                                              DataReceivedFDback,
                                                              PrintPromptMessage);
                         }
-                        else if (GeneralX509.Checked)
+                        else if (PEM_DER.Checked)
                         {
                             string pfxPath = string.Empty;
                             string pfxPasswd = string.Empty;
                             string certificate_pub = PubCert.Text;
                             string privatekey = PrvtKey.Text;
-                            string securepasswd = PrvtKeyPasswd.Text;
                             if (CrtAndKey2pfx(certificate_pub, privatekey, out pfxPath, out pfxPasswd))
                             {
                                 elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
@@ -330,12 +335,12 @@ namespace SocketTool
                             }
                         }
                         else { throw new Exception("An unknown error occurred"); }
-                        MessageOutPutHandler($"Start TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                        MessageOutPutHandler($"Start TLS server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
                     IsTCPListening = true;
-                    sListen1.Text = "已开启";
-                    sListen1.BackColor = Color.LightGreen;
-                    sPort1.Items.Add(ListenerPort);
+                    StartTcpTlsServer.Text = "已开启";
+                    StartTcpTlsServer.BackColor = Color.LightGreen;
+                    TcpPort.Items.Add(ListenerPort);
                 }
                 catch (Exception ex)
                 {
@@ -350,12 +355,12 @@ namespace SocketTool
                         elyTlsServer = null;
                     }
                     MessageOutPutHandler($"{ex.Message}");
-                    sListen1.Text = "打开";
-                    sListen1.BackColor = TransparencyKey;
-                    sIpaddr1.Enabled = true;
-                    sPort1.Enabled = true;
-                    sTcpOnoff.Enabled = true;
-                    sTLSOnoff.Enabled = true;
+                    StartTcpTlsServer.Text = "打开";
+                    StartTcpTlsServer.BackColor = TransparencyKey;
+                    TcpIpAddr.Enabled = true;
+                    TcpPort.Enabled = true;
+                    TcpOnoff.Enabled = true;
+                    TLSOnoff.Enabled = true;
                 }
             }
             else
@@ -364,57 +369,57 @@ namespace SocketTool
                 {
                     elyTcpServer.Dispose();
                     elyTcpServer = null;
-                    MessageOutPutHandler($"Stop TCP Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                    MessageOutPutHandler($"Stop TCP server[{ListenerIp}:{ListenerPort}] successfully!");
                 }
                 if (elyTlsServer != null)
                 {
                     elyTlsServer.Dispose();
                     elyTlsServer = null;
-                    MessageOutPutHandler($"Stop TLS Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                    MessageOutPutHandler($"Stop TLS server[{ListenerIp}:{ListenerPort}] successfully!");
                 }
                 // TODO:取消控件未执行的委托           
-                sIpaddr1.Enabled = true;
-                sPort1.Enabled = true;
-                sTcpOnoff.Enabled = true;
-                sTLSOnoff.Enabled = true;
-                sListen1.Text = "打开";
-                sListen1.BackColor = TransparencyKey;
+                TcpIpAddr.Enabled = true;
+                TcpPort.Enabled = true;
+                TcpOnoff.Enabled = true;
+                TLSOnoff.Enabled = true;
+                StartTcpTlsServer.Text = "打开";
+                StartTcpTlsServer.BackColor = TransparencyKey;
 
                 IsTCPListening = false;
                 return;
             }
         }
 
-        private void sListen2_Click(object sender, EventArgs e)
+        private void StartUDPServer_Click(object sender, EventArgs e)
         {
-            string ListenerIp = sIpaddr2.Text;
-            string ListenerPort = sPort2.Text;
+            string ListenerIp = UdpIpAddr.Text;
+            string ListenerPort = UdpPort.Text;
             if (!IsUDPListening)
             {
                 try
                 {
                     // 开启后不允许修改服务器参数
-                    sIpaddr2.Enabled = false;
-                    sPort2.Enabled = false;
-                    sUdpOnoff.Enabled = false;
-                    sDTLSOnoff.Enabled = false;
+                    UdpIpAddr.Enabled = false;
+                    UdpPort.Enabled = false;
+                    UdpOnoff.Enabled = false;
+                    DTLSOnoff.Enabled = false;
 
-                    if (sUdpOnoff.Checked)
+                    if (UdpOnoff.Checked)
                     {
                         elyUdpServer = new ElyUDP(ListenerIp, ListenerPort,
                                                 ConnectedFDback,
                                                 DisconnectedFDback,
                                                 DataReceivedFDback, false);
-                        MessageOutPutHandler($"Start UDP Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                        MessageOutPutHandler($"Start UDP server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
-                    else if (sDTLSOnoff.Checked)
+                    else if (DTLSOnoff.Checked)
                     {
-                        throw new Exception("Sorry! DTLS server is not supported now.");
+                        throw new Exception("Sorry,DTLS server is not supported now.");
                     }
                     IsUDPListening = true;
-                    sListen2.Text = "已开启";
-                    sListen2.BackColor = Color.LightGreen;
-                    sPort2.Items.Add(ListenerPort);
+                    StartUdpDtlsServer.Text = "已开启";
+                    StartUdpDtlsServer.BackColor = Color.LightGreen;
+                    UdpPort.Items.Add(ListenerPort);
                 }
                 catch (Exception ex)
                 {
@@ -425,13 +430,13 @@ namespace SocketTool
                     }
 
                     MessageOutPutHandler($"{ex.Message}");
-                    sListen2.Text = "打开";
-                    sListen2.BackColor = TransparencyKey;
+                    StartUdpDtlsServer.Text = "打开";
+                    StartUdpDtlsServer.BackColor = TransparencyKey;
 
-                    sIpaddr2.Enabled = true;
-                    sPort2.Enabled = true;
-                    sUdpOnoff.Enabled = true;
-                    sDTLSOnoff.Enabled = true;
+                    UdpIpAddr.Enabled = true;
+                    UdpPort.Enabled = true;
+                    UdpOnoff.Enabled = true;
+                    DTLSOnoff.Enabled = true;
 
                     IsUDPListening = false;
                 }
@@ -443,14 +448,14 @@ namespace SocketTool
                     elyUdpServer.Dispose();
                     elyUdpServer = null;
                 }
-                MessageOutPutHandler($"Stop UDP Server[{ListenerIp}:{ListenerPort}] Successfully!");
+                MessageOutPutHandler($"Stop UDP server[{ListenerIp}:{ListenerPort}] successfully!");
 
-                sIpaddr2.Enabled = true;
-                sPort2.Enabled = true;
-                sUdpOnoff.Enabled = true;
-                sDTLSOnoff.Enabled = true;
-                sListen2.Text = "打开";
-                sListen2.BackColor = TransparencyKey;
+                UdpIpAddr.Enabled = true;
+                UdpPort.Enabled = true;
+                UdpOnoff.Enabled = true;
+                DTLSOnoff.Enabled = true;
+                StartUdpDtlsServer.Text = "打开";
+                StartUdpDtlsServer.BackColor = TransparencyKey;
 
                 IsUDPListening = false;
                 return;
@@ -459,7 +464,7 @@ namespace SocketTool
 
         private void ClearLog_Click(object sender, EventArgs e)
         {
-            sLogTextbox.Text = string.Empty;
+            LogTextbox.Text = string.Empty;
             RxBytes = TxBytes = 0;
             SequenceNum = 0;
             TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
@@ -470,45 +475,45 @@ namespace SocketTool
             SelectedClientList = ClientListBox.SelectedItems;
         }
 
-        private async void sSendButton1_Click(object sender, EventArgs e)
+        private async void ASendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
             {
                 if (SelectedClientList.Count == 0)
                     return;
-                if (Datablock_1.Text == string.Empty)
+                if (ADatablock.Text == string.Empty)
                     return;
-                string InputData = Datablock_1.Text;
-                SendTimerSpanMs = Convert.ToInt32(TimerSpan1.Text);
-                if (SendTimerSpanMs == 0 && numericUpDown1.Value > 1)
+                string InputData = ADatablock.Text;
+                SendTimerSpanMs = Convert.ToInt32(ATimerSpan.Text);
+                if (SendTimerSpanMs == 0 && AnumericUpDown.Value > 1)
                 {
-                    TimerSpan1.Focus();
+                    ATimerSpan.Focus();
                     return;
                 }
                 try
                 {
                     IsSending = true;
                     /// 禁止修改一些参数及触发按钮
-                    sSendButton2.Enabled = false;
-                    sSendButton3.Enabled = false;
+                    BSendButton.Enabled = false;
+                    CSendButton.Enabled = false;
 
-                    sSendButton1.BackColor = Color.SkyBlue;
-                    TimerSpan1.Enabled = false;
-                    Datablock_1.Enabled = false;
-                    numericUpDown1.Enabled = false;
+                    ASendButton.BackColor = Color.SkyBlue;
+                    ATimerSpan.Enabled = false;
+                    ADatablock.Enabled = false;
+                    AnumericUpDown.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, numericUpDown1.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, AnumericUpDown.Value, CancellTS.Token);
                 }
                 finally
                 {
-                    sSendButton2.Enabled = true;
-                    sSendButton3.Enabled = true;
+                    BSendButton.Enabled = true;
+                    CSendButton.Enabled = true;
 
-                    TimerSpan1.Enabled = true;
-                    Datablock_1.Enabled = true;
-                    numericUpDown1.Enabled = true;
-                    sSendButton1.BackColor = TransparencyKey;
+                    ATimerSpan.Enabled = true;
+                    ADatablock.Enabled = true;
+                    AnumericUpDown.Enabled = true;
+                    ASendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
             }
@@ -518,59 +523,59 @@ namespace SocketTool
                 {
                     CancellTS.Cancel();
                 }
-                sSendButton2.Enabled = true;
-                sSendButton3.Enabled = true;
+                BSendButton.Enabled = true;
+                CSendButton.Enabled = true;
 
-                TimerSpan1.Enabled = true;
-                Datablock_1.Enabled = true;
-                numericUpDown1.Enabled = true;
-                sSendButton1.BackColor = TransparencyKey;
+                ATimerSpan.Enabled = true;
+                ADatablock.Enabled = true;
+                AnumericUpDown.Enabled = true;
+                ASendButton.BackColor = TransparencyKey;
                 IsSending = false;
             }
 
         }
 
-        private async void sSendButton2_Click(object sender, EventArgs e)
+        private async void BSendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
             {
                 if (SelectedClientList.Count == 0)
                     return;
-                if (Datablock_2.Text == string.Empty)
+                if (BDatablock.Text == string.Empty)
                     return;
 
-                string InputData = Datablock_2.Text;
-                SendTimerSpanMs = Convert.ToInt32(TimerSpan2.Text);
-                if (SendTimerSpanMs == 0 && numericUpDown2.Value > 1)
+                string InputData = BDatablock.Text;
+                SendTimerSpanMs = Convert.ToInt32(BTimerSpan.Text);
+                if (SendTimerSpanMs == 0 && BnumericUpDown.Value > 1)
                 {
-                    TimerSpan2.Focus();
+                    BTimerSpan.Focus();
                     return;
                 }
                 try
                 {
                     IsSending = true;
                     // 开启互斥
-                    sSendButton1.Enabled = false;
-                    sSendButton3.Enabled = false;
+                    ASendButton.Enabled = false;
+                    CSendButton.Enabled = false;
 
-                    sSendButton2.BackColor = Color.SkyBlue;
-                    TimerSpan2.Enabled = false;
-                    Datablock_2.Enabled = false;
-                    numericUpDown2.Enabled = false;
+                    BSendButton.BackColor = Color.SkyBlue;
+                    BTimerSpan.Enabled = false;
+                    BDatablock.Enabled = false;
+                    BnumericUpDown.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, numericUpDown2.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, BnumericUpDown.Value, CancellTS.Token);
                 }
                 finally
                 {
                     // 取消互斥
-                    sSendButton1.Enabled = true;
-                    sSendButton3.Enabled = true;
+                    ASendButton.Enabled = true;
+                    CSendButton.Enabled = true;
                     // 反转状态
-                    TimerSpan2.Enabled = true;
-                    Datablock_2.Enabled = true;
-                    numericUpDown2.Enabled = true;
-                    sSendButton2.BackColor = TransparencyKey;
+                    BTimerSpan.Enabled = true;
+                    BDatablock.Enabled = true;
+                    BnumericUpDown.Enabled = true;
+                    BSendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
             }
@@ -580,57 +585,57 @@ namespace SocketTool
                 {
                     CancellTS.Cancel();
                 }
-                sSendButton1.Enabled = true;
-                sSendButton3.Enabled = true;
+                ASendButton.Enabled = true;
+                CSendButton.Enabled = true;
 
-                TimerSpan2.Enabled = true;
-                Datablock_2.Enabled = true;
-                numericUpDown2.Enabled = true;
-                sSendButton2.BackColor = TransparencyKey;
+                BTimerSpan.Enabled = true;
+                BDatablock.Enabled = true;
+                BnumericUpDown.Enabled = true;
+                BSendButton.BackColor = TransparencyKey;
                 IsSending = false;
             }
         }
 
-        private async void sSendButton3_Click(object sender, EventArgs e)
+        private async void CSendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
             {
                 if (SelectedClientList.Count == 0)
                     return;
-                if (Datablock_3.Text == string.Empty)
+                if (CDatablock.Text == string.Empty)
                     return;
 
-                string InputData = Datablock_3.Text;
-                SendTimerSpanMs = Convert.ToInt32(TimerSpan3.Text);
-                if (SendTimerSpanMs == 0 && numericUpDown3.Value > 1)
+                string InputData = CDatablock.Text;
+                SendTimerSpanMs = Convert.ToInt32(CTimerSpan.Text);
+                if (SendTimerSpanMs == 0 && CnumericUpDown.Value > 1)
                 {
-                    TimerSpan3.Focus();
+                    CTimerSpan.Focus();
                     return;
                 }
                 try
                 {
                     IsSending = true;
 
-                    sSendButton1.Enabled = false;
-                    sSendButton2.Enabled = false;
+                    ASendButton.Enabled = false;
+                    BSendButton.Enabled = false;
 
-                    sSendButton3.BackColor = Color.SkyBlue;
-                    Datablock_3.Enabled = false;
-                    TimerSpan3.Enabled = false;
-                    numericUpDown3.Enabled = false;
+                    CSendButton.BackColor = Color.SkyBlue;
+                    CDatablock.Enabled = false;
+                    CTimerSpan.Enabled = false;
+                    CnumericUpDown.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, numericUpDown3.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, CnumericUpDown.Value, CancellTS.Token);
                 }
                 finally
                 {
-                    sSendButton1.Enabled = true;
-                    sSendButton2.Enabled = true;
+                    ASendButton.Enabled = true;
+                    BSendButton.Enabled = true;
 
-                    TimerSpan3.Enabled = true;
-                    Datablock_3.Enabled = true;
-                    numericUpDown3.Enabled = true;
-                    sSendButton3.BackColor = TransparencyKey;
+                    CTimerSpan.Enabled = true;
+                    CDatablock.Enabled = true;
+                    CnumericUpDown.Enabled = true;
+                    CSendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
             }
@@ -640,13 +645,13 @@ namespace SocketTool
                 {
                     CancellTS.Cancel();
                 }
-                sSendButton1.Enabled = true;
-                sSendButton2.Enabled = true;
+                ASendButton.Enabled = true;
+                BSendButton.Enabled = true;
 
-                TimerSpan3.Enabled = true;
-                Datablock_3.Enabled = true;
-                numericUpDown3.Enabled = true;
-                sSendButton3.BackColor = TransparencyKey;
+                CTimerSpan.Enabled = true;
+                CDatablock.Enabled = true;
+                CnumericUpDown.Enabled = true;
+                CSendButton.BackColor = TransparencyKey;
                 IsSending = false;
             }
         }
@@ -665,10 +670,11 @@ namespace SocketTool
 
         private void numericUpDown_Leave(object sender, EventArgs e)
         {
+            /* 解决当删除框内字符后，没有输入新值，显示为null，但是value实际为原来的值的问题 */
             NumericUpDown Num = sender as NumericUpDown;
             if (Num != null)
             {
-                /// NumericUpDown 类型的Text属性不可见，转为其基类的Text来判断是否为空
+                /* NumericUpDown 类型的Text属性不可见，转为其基类的Text来判断是否为空 */
                 if (string.IsNullOrEmpty(((UpDownBase)Num).Text))
                 {
                     ((UpDownBase)Num).Text = Num.Value.ToString();
@@ -770,7 +776,7 @@ namespace SocketTool
         }
         #endregion
 
-        #region SSL_setup
+        #region SSL_Setup
         private void IgnoreCert_Click(object sender, EventArgs e)
         {
             if (IgnoreCert.Checked == true)
@@ -803,21 +809,22 @@ namespace SocketTool
                 NoMutualAuth.Checked = true;
         }
 
-        #region 密码框显示控制
-        private void DispalyCertPasswd_CheckedChanged(object sender, EventArgs e)
+        #region ControlShowOrHidePassword
+        private void ImportShowPasswd_CheckedChanged(object sender, EventArgs e)
         {
-            if (PfxShowPasswd.Checked)
+            if (ImportShowPasswd.Checked)
             {
-                pfxPassWd.PasswordChar = (char)0;
+                pfxPasswd.PasswordChar = (char)0;
             }
             else
             {
-                pfxPassWd.PasswordChar = '*';
+                pfxPasswd.PasswordChar = '*';
             }
         }
-        private void GSAShowPasswd_CheckedChanged(object sender, EventArgs e)
+
+        private void GssShowPasswd_CheckedChanged(object sender, EventArgs e)
         {
-            if (GSAShowPasswd.Checked)
+            if (GssShowPasswd.Checked)
             {
                 SelfSignedPasswd.PasswordChar = (char)0;
             }
@@ -826,20 +833,8 @@ namespace SocketTool
                 SelfSignedPasswd.PasswordChar = '*';
             }
         }
-
-        private void OpenSslShowPassowd_CheckedChanged(object sender, EventArgs e)
-        {
-            if (OpenSslShowPassowd.Checked)
-            {
-                PrvtKeyPasswd.PasswordChar = (char)0;
-            }
-            else
-            {
-                PrvtKeyPasswd.PasswordChar = '*';
-            }
-        }
         #endregion
-        private void SelectCert_Click(object sender, EventArgs e)
+        private void SelectPfxCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\cert";
@@ -849,14 +844,14 @@ namespace SocketTool
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string FileName = openFileDialog.FileName;
-                CertFilePath.Text = FileName;
+                pfxFilePath.Text = FileName;
             }
         }
 
         private void SetPubKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\x509";
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -870,7 +865,7 @@ namespace SocketTool
         private void SetPrivateKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\x509";
+            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -925,8 +920,9 @@ namespace SocketTool
                 }
             });
         }
+        #endregion
     }
-    #endregion
+
 
     #region CmdHelper--Used to call cmd.exe and execute bat command
     public class CmdHelper

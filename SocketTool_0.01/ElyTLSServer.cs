@@ -257,8 +257,9 @@ namespace MySocketServer
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                //服务器被关闭或发生异常
                 // Task<bool> unwaited = Task.Run(() => iPromptMsgPrinter(ex.ToString()));
             }
             finally
