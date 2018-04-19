@@ -91,8 +91,8 @@
             this.PrivateKeyLable = new System.Windows.Forms.Label();
             this.CertPubLable = new System.Windows.Forms.Label();
             this.MobiletekInc = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.Logo = new System.Windows.Forms.PictureBox();
+            this.M2M = new System.Windows.Forms.PictureBox();
             this.IgnoreCert = new System.Windows.Forms.CheckBox();
             this.TlsConfig = new System.Windows.Forms.GroupBox();
             this.SslTips = new System.Windows.Forms.TextBox();
@@ -131,8 +131,8 @@
             this.CertControler.SuspendLayout();
             this.CrtAndKey.SuspendLayout();
             this.MobiletekInc.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Logo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.M2M)).BeginInit();
             this.TlsConfig.SuspendLayout();
             this.GenerateSelfSignedCert.SuspendLayout();
             this.SuspendLayout();
@@ -922,8 +922,8 @@
             // 
             // MobiletekInc
             // 
-            this.MobiletekInc.Controls.Add(this.pictureBox1);
-            this.MobiletekInc.Controls.Add(this.pictureBox2);
+            this.MobiletekInc.Controls.Add(this.Logo);
+            this.MobiletekInc.Controls.Add(this.M2M);
             this.MobiletekInc.Location = new System.Drawing.Point(428, 111);
             this.MobiletekInc.Name = "MobiletekInc";
             this.MobiletekInc.Size = new System.Drawing.Size(500, 413);
@@ -931,31 +931,35 @@
             this.MobiletekInc.TabStop = false;
             this.MobiletekInc.Text = "MobileTek Inc";
             // 
-            // pictureBox1
+            // Logo
             // 
-            this.pictureBox1.ErrorImage = null;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(97, 53);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(307, 47);
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
+            this.Logo.ErrorImage = null;
+            this.Logo.Image = ((System.Drawing.Image)(resources.GetObject("Logo.Image")));
+            this.Logo.InitialImage = null;
+            this.Logo.Location = new System.Drawing.Point(97, 53);
+            this.Logo.Name = "Logo";
+            this.Logo.Size = new System.Drawing.Size(307, 47);
+            this.Logo.TabIndex = 1;
+            this.Logo.TabStop = false;
+            this.toolTip1.SetToolTip(this.Logo, "点击进入公司主页（www.mobiletek.cn）");
+            this.Logo.Click += new System.EventHandler(this.RedirectToHome_Click);
             // 
-            // pictureBox2
+            // M2M
             // 
-            this.pictureBox2.ErrorImage = null;
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(10, 143);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(488, 259);
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
+            this.M2M.ErrorImage = null;
+            this.M2M.Image = ((System.Drawing.Image)(resources.GetObject("M2M.Image")));
+            this.M2M.Location = new System.Drawing.Point(10, 143);
+            this.M2M.Name = "M2M";
+            this.M2M.Size = new System.Drawing.Size(488, 259);
+            this.M2M.TabIndex = 0;
+            this.M2M.TabStop = false;
+            this.toolTip1.SetToolTip(this.M2M, "点击进入公司主页（www.mobiletek.cn）");
+            this.M2M.Click += new System.EventHandler(this.RedirectToHome_Click);
             // 
             // IgnoreCert
             // 
             this.IgnoreCert.AutoSize = true;
-            this.IgnoreCert.Location = new System.Drawing.Point(345, 43);
+            this.IgnoreCert.Location = new System.Drawing.Point(283, 43);
             this.IgnoreCert.Name = "IgnoreCert";
             this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
@@ -985,7 +989,7 @@
             // 
             this.SslTips.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SslTips.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.SslTips.Location = new System.Drawing.Point(12, 203);
+            this.SslTips.Location = new System.Drawing.Point(12, 194);
             this.SslTips.Multiline = true;
             this.SslTips.Name = "SslTips";
             this.SslTips.ReadOnly = true;
@@ -1092,7 +1096,7 @@
             // 
             this.ImportShowPasswd.AutoSize = true;
             this.ImportShowPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.ImportShowPasswd.Location = new System.Drawing.Point(323, 158);
+            this.ImportShowPasswd.Location = new System.Drawing.Point(319, 158);
             this.ImportShowPasswd.Name = "ImportShowPasswd";
             this.ImportShowPasswd.Size = new System.Drawing.Size(80, 18);
             this.ImportShowPasswd.TabIndex = 11;
@@ -1199,7 +1203,7 @@
             this.NoIgnoreCert.AutoSize = true;
             this.NoIgnoreCert.Checked = true;
             this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoIgnoreCert.Location = new System.Drawing.Point(283, 43);
+            this.NoIgnoreCert.Location = new System.Drawing.Point(345, 43);
             this.NoIgnoreCert.Name = "NoIgnoreCert";
             this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.NoIgnoreCert.TabIndex = 5;
@@ -1213,7 +1217,7 @@
             this.NoMutualAuth.AutoSize = true;
             this.NoMutualAuth.Checked = true;
             this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoMutualAuth.Location = new System.Drawing.Point(283, 77);
+            this.NoMutualAuth.Location = new System.Drawing.Point(345, 77);
             this.NoMutualAuth.Name = "NoMutualAuth";
             this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
             this.NoMutualAuth.TabIndex = 7;
@@ -1225,7 +1229,7 @@
             // MutualAuth
             // 
             this.MutualAuth.AutoSize = true;
-            this.MutualAuth.Location = new System.Drawing.Point(345, 77);
+            this.MutualAuth.Location = new System.Drawing.Point(283, 77);
             this.MutualAuth.Name = "MutualAuth";
             this.MutualAuth.Size = new System.Drawing.Size(47, 18);
             this.MutualAuth.TabIndex = 8;
@@ -1269,8 +1273,8 @@
             this.CrtAndKey.ResumeLayout(false);
             this.CrtAndKey.PerformLayout();
             this.MobiletekInc.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Logo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.M2M)).EndInit();
             this.TlsConfig.ResumeLayout(false);
             this.TlsConfig.PerformLayout();
             this.GenerateSelfSignedCert.ResumeLayout(false);
@@ -1335,11 +1339,8 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button SelectPfxCert;
         private System.Windows.Forms.TextBox pfxFilePath;
-        private System.Windows.Forms.CheckBox IgnoreCert;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.CheckBox NoIgnoreCert;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.CheckBox NoMutualAuth;
         private System.Windows.Forms.CheckBox MutualAuth;
         private System.Windows.Forms.TextBox pfxPasswd;
         private System.Windows.Forms.Label label17;
@@ -1355,7 +1356,7 @@
         private System.Windows.Forms.Button GenerateCert;
         private System.Windows.Forms.TextBox SelfSignedPasswd;
         private System.Windows.Forms.CheckBox GssShowPasswd;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox M2M;
         private System.Windows.Forms.TextBox SslTips;
         private System.Windows.Forms.GroupBox CrtAndKey;
         private System.Windows.Forms.Label CertPubLable;
@@ -1367,7 +1368,10 @@
         private System.Windows.Forms.RadioButton PKCS12;
         private System.Windows.Forms.RadioButton PEM_DER;
         private System.Windows.Forms.GroupBox CertControler;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox Logo;
+        private System.Windows.Forms.CheckBox IgnoreCert;
+        private System.Windows.Forms.CheckBox NoIgnoreCert;
+        private System.Windows.Forms.CheckBox NoMutualAuth;
     }
 }
 

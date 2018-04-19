@@ -876,6 +876,11 @@ namespace SocketTool
             }
         }
 
+        private void RedirectToHome_Click(object sender, EventArgs e)
+        {
+            Process.Start("www.mobiletek.cn");
+        }
+
         private void GenerateCert_Click(object sender, EventArgs e)
         {
             string SA = SignatureAlgorithm.SelectedItem.ToString();
