@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(myTool));
             this.TabCtrl = new System.Windows.Forms.TabControl();
             this.Server = new System.Windows.Forms.TabPage();
+            this.ShowHexData = new System.Windows.Forms.CheckBox();
+            this.SaveLogToFile = new System.Windows.Forms.CheckBox();
             this.CTimerSpan = new System.Windows.Forms.TextBox();
             this.BTimerSpan = new System.Windows.Forms.TextBox();
             this.ATimerSpan = new System.Windows.Forms.TextBox();
@@ -151,6 +153,8 @@
             // 
             // Server
             // 
+            this.Server.Controls.Add(this.ShowHexData);
+            this.Server.Controls.Add(this.SaveLogToFile);
             this.Server.Controls.Add(this.CTimerSpan);
             this.Server.Controls.Add(this.BTimerSpan);
             this.Server.Controls.Add(this.ATimerSpan);
@@ -187,6 +191,31 @@
             this.Server.TabIndex = 0;
             this.Server.Text = "服务器";
             this.Server.UseVisualStyleBackColor = true;
+            // 
+            // ShowHexData
+            // 
+            this.ShowHexData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.ShowHexData.AutoSize = true;
+            this.ShowHexData.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ShowHexData.Location = new System.Drawing.Point(757, 508);
+            this.ShowHexData.Name = "ShowHexData";
+            this.ShowHexData.Size = new System.Drawing.Size(99, 21);
+            this.ShowHexData.TabIndex = 30;
+            this.ShowHexData.Text = "显示十六进制";
+            this.ShowHexData.UseVisualStyleBackColor = true;
+            // 
+            // SaveLogToFile
+            // 
+            this.SaveLogToFile.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.SaveLogToFile.AutoSize = true;
+            this.SaveLogToFile.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.SaveLogToFile.Location = new System.Drawing.Point(673, 508);
+            this.SaveLogToFile.Name = "SaveLogToFile";
+            this.SaveLogToFile.Size = new System.Drawing.Size(75, 21);
+            this.SaveLogToFile.TabIndex = 29;
+            this.SaveLogToFile.Text = "写入日志";
+            this.SaveLogToFile.UseVisualStyleBackColor = true;
+            this.SaveLogToFile.CheckedChanged += new System.EventHandler(this.SaveLogToFile_CheckedChanged);
             // 
             // CTimerSpan
             // 
@@ -942,19 +971,20 @@
             this.Logo.TabIndex = 1;
             this.Logo.TabStop = false;
             this.toolTip1.SetToolTip(this.Logo, "点击进入公司主页（www.mobiletek.cn）");
-            this.Logo.Click += new System.EventHandler(this.RedirectToHome_Click);
+            this.Logo.Click += new System.EventHandler(this.DirectToHomePage_Click);
             // 
             // M2M
             // 
             this.M2M.ErrorImage = null;
             this.M2M.Image = ((System.Drawing.Image)(resources.GetObject("M2M.Image")));
+            this.M2M.InitialImage = null;
             this.M2M.Location = new System.Drawing.Point(10, 143);
             this.M2M.Name = "M2M";
             this.M2M.Size = new System.Drawing.Size(488, 259);
             this.M2M.TabIndex = 0;
             this.M2M.TabStop = false;
             this.toolTip1.SetToolTip(this.M2M, "点击进入公司主页（www.mobiletek.cn）");
-            this.M2M.Click += new System.EventHandler(this.RedirectToHome_Click);
+            this.M2M.Click += new System.EventHandler(this.DirectToHomePage_Click);
             // 
             // IgnoreCert
             // 
@@ -1372,6 +1402,8 @@
         private System.Windows.Forms.CheckBox IgnoreCert;
         private System.Windows.Forms.CheckBox NoIgnoreCert;
         private System.Windows.Forms.CheckBox NoMutualAuth;
+        private System.Windows.Forms.CheckBox ShowHexData;
+        private System.Windows.Forms.CheckBox SaveLogToFile;
     }
 }
 

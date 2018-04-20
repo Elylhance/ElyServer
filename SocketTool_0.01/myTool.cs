@@ -28,6 +28,7 @@ namespace SocketTool
         private ElyUDP elyDtlsServer;
         private int SendTimerSpanMs = 0;
         private int SequenceNum = 0;
+        private FileStream LogFile;
         #endregion
 
         #region InitMyTool
@@ -113,6 +114,11 @@ namespace SocketTool
                             {
                                 /// Report sent data successfully. 
                                 string SendInfo = $"[Send-->{Client.ToString()}] < {bytes.Length} >--[OK]{Environment.NewLine}{data}";
+                                if (ShowHexData.Checked)
+                                {
+                                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytes).Replace("-", " ")}]";
+                                    SendInfo += Hexstr;
+                                }
                                 MessageOutPutHandler(SendInfo);
                                 SentSize += bytes.Length;
                                 TxBytes += bytes.Length;
@@ -129,6 +135,11 @@ namespace SocketTool
                     {
                         /// Report sent data failed.
                         string SendInfo = $"[Send-->{Client.ToString()}]< {bytes.Length} >--[ERROR]{Environment.NewLine}{data}";
+                        if (ShowHexData.Checked)
+                        {
+                            string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytes).Replace("-", " ")}]";
+                            SendInfo += Hexstr;
+                        }
                         MessageOutPutHandler(SendInfo);
                         continue;
                     }
@@ -186,7 +197,24 @@ namespace SocketTool
             else
             {
                 string Strdata = Encoding.Default.GetString(Data);
+                while (Strdata.IndexOf((char)0) != (-1))    //检测数据中是否含有字符串结束符“\0”
+                {
+                    string[] Substr = Strdata.Split((char)0);
+                    StringBuilder NewStrdata = new StringBuilder();
+                    foreach (string substr in Substr)
+                    {
+                        NewStrdata.Append(substr);
+                        NewStrdata.Append(@"[\0]");
+                    }
+                    NewStrdata.Remove(NewStrdata.Length - 4,4);
+                    Strdata = NewStrdata.ToString();
+                }
                 string RecvDataInfo = $"[Recv<--{Sender}] < {Data.Length} >{Environment.NewLine}{Strdata}";
+                if (ShowHexData.Checked)
+                {
+                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(Data).Replace("-"," ")}]";
+                    RecvDataInfo += Hexstr;
+                }
                 MessageOutPutHandler(RecvDataInfo);
                 RxBytes += Data.Length;
                 TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
@@ -201,7 +229,31 @@ namespace SocketTool
                         + GetSequenceNumStr()
                         + $"  [{DateTime.Now.ToString("HH:mm:ss.fff")}] "
                         + msginfo;
-            LogTextbox.AppendText(Str);
+            if (LogTextbox.TextLength > 30*1024*1024)   // 此时会占用200M左右内存
+            {
+                if (!SaveLogToFile.Checked)
+                {
+                    string LogHeader = $"{Environment.NewLine}===========内存占用过多，请到Log文件中查看，窗口将停止输出===========";
+                    SaveLogToFile.Checked = true;
+                    LogTextbox.AppendText(LogHeader);
+                    Str = LogHeader + Str;
+                }
+            }
+            else
+            {
+                LogTextbox.AppendText(Str);
+            }
+            if (SaveLogToFile.Checked && LogFile.CanWrite)
+            {
+                Task.Run(() =>{
+                    byte[] Byte = Encoding.Default.GetBytes(Str);
+                    lock (this)
+                    {
+                        LogFile.Write(Byte, 0, Byte.Length);
+                        LogFile.Flush();
+                    }
+                });
+            }
             return true;
         }
 
@@ -237,7 +289,7 @@ namespace SocketTool
 
         #region Click&Content-Changed-Event
         //借助openssl工具将.crt&.key文件转换为.pfx格式证书
-        private bool CrtAndKey2pfx(string certificate_pub, string privatekey, out string pfxPath, out string pfxPasswd)
+        private bool ConvertCrtKeyToPfx(string certificate_pub, string privatekey, out string pfxPath, out string pfxPasswd)
         {
             if (string.IsNullOrEmpty(certificate_pub) || string.IsNullOrEmpty(privatekey))
             {
@@ -319,7 +371,7 @@ namespace SocketTool
                             string pfxPasswd = string.Empty;
                             string certificate_pub = PubCert.Text;
                             string privatekey = PrvtKey.Text;
-                            if (CrtAndKey2pfx(certificate_pub, privatekey, out pfxPath, out pfxPasswd))
+                            if (ConvertCrtKeyToPfx(certificate_pub, privatekey, out pfxPath, out pfxPasswd))
                             {
                                 elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
                                                                  pfxPath, pfxPasswd,
@@ -459,6 +511,32 @@ namespace SocketTool
 
                 IsUDPListening = false;
                 return;
+            }
+        }
+
+        private void SaveLogToFile_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SaveLogToFile.Checked)
+            {
+                //Create and Open flie
+                string LogDirectory = Environment.CurrentDirectory + "\\log";
+                if (!Directory.Exists(LogDirectory))
+                {
+                    Directory.CreateDirectory(LogDirectory);
+                }
+                lock (this) //解决程序正在向文件流写入数据导致的竞态
+                {
+                    string NewLogFilePath = LogDirectory + $"\\{DateTime.Now.ToString("yyMMddHHmmss")}.txt";
+                    LogFile = File.Create(NewLogFilePath, 512, FileOptions.Asynchronous);
+                }
+            }
+            else
+            {
+                //Close file
+                lock (this)
+                {
+                    LogFile.Dispose();
+                }
             }
         }
 
@@ -809,7 +887,6 @@ namespace SocketTool
                 NoMutualAuth.Checked = true;
         }
 
-        #region ControlShowOrHidePassword
         private void ImportShowPasswd_CheckedChanged(object sender, EventArgs e)
         {
             if (ImportShowPasswd.Checked)
@@ -833,7 +910,7 @@ namespace SocketTool
                 SelfSignedPasswd.PasswordChar = '*';
             }
         }
-        #endregion
+
         private void SelectPfxCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -876,7 +953,7 @@ namespace SocketTool
             }
         }
 
-        private void RedirectToHome_Click(object sender, EventArgs e)
+        private void DirectToHomePage_Click(object sender, EventArgs e)
         {
             Process.Start("www.mobiletek.cn");
         }

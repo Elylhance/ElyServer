@@ -172,7 +172,6 @@ namespace MySocketServer
 
         private async Task<byte[]> MessageReadAsync(ElyClient client)
         {
-            #region Variables
             byte[] contentBytes;
 
             if (!isConnected(client))
@@ -183,7 +182,6 @@ namespace MySocketServer
             {
                 return null;
             }
-            #endregion        
 
             #region Read-Data
             using (MemoryStream dataMs = new MemoryStream())

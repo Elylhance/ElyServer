@@ -117,21 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SslTips.Text" xml:space="preserve">
-    <value>
- 0、生成证书与选择证书时，证书密钥均是非必需项
-
- 1、生成证书包含 ServerCert.pfx 与 CARoot.cer 文件。
-    ServerCert.pfx 用于服务器，CARoot.cer 用于当模块未
-    设置忽略本地证书时导入模块
-
- 2、MTK 平台模组请保持默认设置
-
- 3、L506 模组协议版本请选择[SSL v3]，证书签名算法支持
-    MD5 及 SHA256
-
- 4、使用中有任何问题请发送邮件到hc.liu@mobiletek.cn</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="Logo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1631,6 +1616,21 @@
         F9uYX2weBb1Xn0sLboKklxMm4PWlhJ23l0Ayd1xnesNTPZwvTF4CT3E++OBDQXAW/x/+uZZn7KkyEgAA
         AABJRU5ErkJggg==
 </value>
+  </data>
+  <data name="SslTips.Text" xml:space="preserve">
+    <value>
+ 0、生成证书与选择证书时，证书密钥均是非必需项
+
+ 1、生成证书包含 ServerCert.pfx 与 CARoot.cer 文件。
+    ServerCert.pfx 用于服务器，CARoot.cer 用于当模块未
+    设置忽略本地证书时导入模块
+
+ 2、MTK 平台模组请保持默认设置
+
+ 3、L506 模组协议版本请选择[SSL v3]，证书签名算法支持
+    MD5 及 SHA256
+
+ 4、使用中有任何问题请发送邮件到hc.liu@mobiletek.cn</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
