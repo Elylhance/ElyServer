@@ -24,8 +24,8 @@ namespace SocketTool
         private ListBox.SelectedObjectCollection SelectedClientList;
         private ElyTCPServer elyTcpServer;
         private ElyTLSServer elyTlsServer;
-        private ElyUDP elyUdpServer;
-        private ElyUDP elyDtlsServer;
+        private ElyUDPClient elyUdpServer;
+        private ElyUDPClient elyDtlsServer;
         private int SendTimerSpanMs = 0;
         private int SequenceNum = 0;
         private FileStream LogFile;
@@ -297,14 +297,14 @@ namespace SocketTool
             }
             pfxPasswd = DateTime.Now.Millisecond.ToString();
             string Result = string.Empty;
-            string pfxName = "TempCertificate.pfx";
+            string pfxName = $"_TemporaryCert_.pfx";
             string TempPath = Environment.CurrentDirectory;
             Environment.CurrentDirectory += "\\cert";
             try
             {
                 File.Copy(certificate_pub, Environment.CurrentDirectory + "\\_PubCert.crt", true);
                 File.Copy(privatekey, Environment.CurrentDirectory + "\\_PriKey.key", true);
-                string Cmd = $"openssl pkcs12 -export -out {pfxName} -passout pass:{pfxPasswd} -inkey _PriKey.key -in _PubCert.crt";
+                string Cmd = $"openssl pkcs12 -export -out {pfxName} -passout pass:{pfxPasswd} -inkey _PriKey.key -in _PubCert.crt & del _PubCert.crt,_PriKey.key";
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
                 CmdHelper.RunCmd(Cmd, out Result);
                 if (Result.EndsWith($"Loading 'screen' into random state - done{Environment.NewLine}"))
@@ -334,6 +334,11 @@ namespace SocketTool
             string ListenerPort = TcpPort.Text;
             if (!IsTCPListening)
             {
+                if (ListenerPort == String.Empty)
+                {
+                    MessageOutPutHandler("请输入端口号");
+                    return;
+                }
                 try
                 {
                     // 开启后不允许修改服务器参数
@@ -380,9 +385,13 @@ namespace SocketTool
                                                                  DisconnectedFDback,
                                                                  DataReceivedFDback,
                                                                  PrintPromptMessage);
+                                if(pfxPath != string.Empty)
+                                    File.Delete(pfxPath);
                             }
                             else
                             {
+                                if (pfxPath != string.Empty)
+                                    File.Delete(pfxPath);
                                 throw new ArgumentException("处理证书发生未知错误。");
                             }
                         }
@@ -448,6 +457,11 @@ namespace SocketTool
             string ListenerPort = UdpPort.Text;
             if (!IsUDPListening)
             {
+                if (ListenerPort == String.Empty)
+                {
+                    MessageOutPutHandler("请输入端口号");
+                    return;
+                }
                 try
                 {
                     // 开启后不允许修改服务器参数
@@ -458,7 +472,7 @@ namespace SocketTool
 
                     if (UdpOnoff.Checked)
                     {
-                        elyUdpServer = new ElyUDP(ListenerIp, ListenerPort,
+                        elyUdpServer = new ElyUDPClient(ListenerIp, ListenerPort,
                                                 ConnectedFDback,
                                                 DisconnectedFDback,
                                                 DataReceivedFDback, false);
@@ -914,7 +928,7 @@ namespace SocketTool
         private void SelectPfxCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\cert";
+            openFileDialog.InitialDirectory = Environment.CurrentDirectory + "\\cert";
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -928,7 +942,7 @@ namespace SocketTool
         private void SetPubKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
+            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -942,7 +956,7 @@ namespace SocketTool
         private void SetPrivateKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
+            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -966,41 +980,38 @@ namespace SocketTool
             {
                 PassWd = "-po " + SelfSignedPasswd.Text;
             }
-
-            Task.Run(() =>
+            //生成证书时，可以使UI无响应
+            string Cmd = $@"del *.cer *.pfx
+                            rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
+                            makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
+                            + "&& cert2spc CARoot.cer CARoot.spc"
+                            + $"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx"
+                            + "&  del *.pvk *.spc";
+            string Result = string.Empty;
+            string TempPath = Environment.CurrentDirectory;
+            try
             {
-                string Cmd = $@"del *.cer *.pfx
-                             rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
-                             makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
-                             + "&& cert2spc CARoot.cer CARoot.spc"
-                             + $"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx"
-                             + "&  del *.pvk *.spc";
-                string Result = string.Empty;
-                string TempPath = Environment.CurrentDirectory;
-                try
+                Environment.CurrentDirectory += "\\cert";
+                CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
+                CmdHelper.RunCmd(Cmd, out Result);
+                //MessageBox.Show(Result); //For debug
+                if (Result != string.Empty)
                 {
-                    Environment.CurrentDirectory += "\\cert";
-                    CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
-                    CmdHelper.RunCmd(Cmd, out Result);
-                    //MessageBox.Show(Result); //For debug
-                    if (Result != string.Empty)
+                    if (Result.Contains("Failed") || Result.Contains("Error") || Result.Contains("ERROR"))
                     {
-                        if (Result.Contains("Failed") || Result.Contains("Error") || Result.Contains("ERROR"))
-                        {
-                            Result = $"生成证书失败！";
-                        }
-                        else
-                        {
-                            Result = $"生成证书成功！{Environment.NewLine}证书路径：{Environment.CurrentDirectory}";
-                        }
-                        MessageBox.Show(Result);
+                        Result = $"生成证书失败！";
                     }
+                    else
+                    {
+                        Result = $"生成证书成功！{Environment.NewLine}证书路径：{Environment.CurrentDirectory}";
+                    }
+                    MessageBox.Show(Result);
                 }
-                finally
-                {
-                    Environment.CurrentDirectory = TempPath;
-                }
-            });
+            }
+            finally
+            {
+                Environment.CurrentDirectory = TempPath;
+            }
         }
         #endregion
     }

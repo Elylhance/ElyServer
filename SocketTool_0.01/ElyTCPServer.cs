@@ -78,14 +78,7 @@ namespace MySocketServer
 
             iTcpListener = new TcpListener(tcpIpaddr, port);
             iTcpListener.Start();
-/*
-            catch (SocketException)
-            {
-                if (iTcpListener != null)
-                    iTcpListener.Server.Dispose();
-                throw new Exception("IP 地址不可用或端口已被占用");
-            }
-*/
+
             /// 此构造函数由UI调用，另起一个Task循环监听接入请求，以免UI卡住
             Task.Run(() => AccecptConnection(), Token);
         }

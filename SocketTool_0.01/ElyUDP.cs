@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace MySocketServer
 {
-    class ElyUDP:IDisposable
+    class ElyUDPClient:IDisposable
     {
         #region private-variable
         private UdpClient UdpC;
@@ -33,7 +33,7 @@ namespace MySocketServer
         /// <param name="DataReceivedFDback"> 收到客户端的数据输出</param>
         /// <param name="ExceptionCatcher"> 异常信息处理</param>
         /// <param name="debug"> 输出Debug信息</param>
-        public ElyUDP(
+        public ElyUDPClient(
             string listenerIp,
             string listenerPort,
             Func<string, bool> ConnectedFDback,
@@ -186,7 +186,7 @@ namespace MySocketServer
             }
         }
 
-         ~ElyUDP() {
+         ~ElyUDPClient() {
             Dispose(false);
         }
 
