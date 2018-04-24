@@ -32,11 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(myTool));
             this.TabCtrl = new System.Windows.Forms.TabControl();
             this.Server = new System.Windows.Forms.TabPage();
+            this.CTimerSpan = new System.Windows.Forms.NumericUpDown();
+            this.BTimerSpan = new System.Windows.Forms.NumericUpDown();
+            this.ATimerSpan = new System.Windows.Forms.NumericUpDown();
             this.ShowHexData = new System.Windows.Forms.CheckBox();
             this.SaveLogToFile = new System.Windows.Forms.CheckBox();
-            this.CTimerSpan = new System.Windows.Forms.TextBox();
-            this.BTimerSpan = new System.Windows.Forms.TextBox();
-            this.ATimerSpan = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -51,16 +51,16 @@
             this.LogTextbox = new System.Windows.Forms.RichTextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.CnumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.BnumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.AnumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.CSendCount = new System.Windows.Forms.NumericUpDown();
+            this.BSendCount = new System.Windows.Forms.NumericUpDown();
+            this.ASendCount = new System.Windows.Forms.NumericUpDown();
             this.CSendButton = new System.Windows.Forms.Button();
             this.BSendButton = new System.Windows.Forms.Button();
             this.ASendButton = new System.Windows.Forms.Button();
             this.BsendDataLable = new System.Windows.Forms.Label();
             this.CsendDataLable = new System.Windows.Forms.Label();
             this.AsendDataLable = new System.Windows.Forms.Label();
-            this.sCurrentConnection = new System.Windows.Forms.GroupBox();
+            this.CurrentConnection = new System.Windows.Forms.GroupBox();
             this.ClientListBox = new System.Windows.Forms.ListBox();
             this.DisconnectSelectedClient = new System.Windows.Forms.Button();
             this.SelectAllClient = new System.Windows.Forms.Button();
@@ -122,13 +122,16 @@
             this.NoIgnoreCert = new System.Windows.Forms.CheckBox();
             this.NoMutualAuth = new System.Windows.Forms.CheckBox();
             this.MutualAuth = new System.Windows.Forms.CheckBox();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.MyToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.TabCtrl.SuspendLayout();
             this.Server.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CnumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BnumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AnumericUpDown)).BeginInit();
-            this.sCurrentConnection.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CTimerSpan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BTimerSpan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ATimerSpan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CSendCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BSendCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ASendCount)).BeginInit();
+            this.CurrentConnection.SuspendLayout();
             this.sNetCfg.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -156,11 +159,11 @@
             // 
             // Server
             // 
-            this.Server.Controls.Add(this.ShowHexData);
-            this.Server.Controls.Add(this.SaveLogToFile);
             this.Server.Controls.Add(this.CTimerSpan);
             this.Server.Controls.Add(this.BTimerSpan);
             this.Server.Controls.Add(this.ATimerSpan);
+            this.Server.Controls.Add(this.ShowHexData);
+            this.Server.Controls.Add(this.SaveLogToFile);
             this.Server.Controls.Add(this.label12);
             this.Server.Controls.Add(this.label11);
             this.Server.Controls.Add(this.label9);
@@ -175,16 +178,16 @@
             this.Server.Controls.Add(this.LogTextbox);
             this.Server.Controls.Add(this.label6);
             this.Server.Controls.Add(this.label5);
-            this.Server.Controls.Add(this.CnumericUpDown);
-            this.Server.Controls.Add(this.BnumericUpDown);
-            this.Server.Controls.Add(this.AnumericUpDown);
+            this.Server.Controls.Add(this.CSendCount);
+            this.Server.Controls.Add(this.BSendCount);
+            this.Server.Controls.Add(this.ASendCount);
             this.Server.Controls.Add(this.CSendButton);
             this.Server.Controls.Add(this.BSendButton);
             this.Server.Controls.Add(this.ASendButton);
             this.Server.Controls.Add(this.BsendDataLable);
             this.Server.Controls.Add(this.CsendDataLable);
             this.Server.Controls.Add(this.AsendDataLable);
-            this.Server.Controls.Add(this.sCurrentConnection);
+            this.Server.Controls.Add(this.CurrentConnection);
             this.Server.Controls.Add(this.sNetCfg);
             this.Server.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Server.Location = new System.Drawing.Point(4, 29);
@@ -194,6 +197,63 @@
             this.Server.TabIndex = 0;
             this.Server.Text = "服务器";
             this.Server.UseVisualStyleBackColor = true;
+            // 
+            // CTimerSpan
+            // 
+            this.CTimerSpan.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CTimerSpan.Location = new System.Drawing.Point(713, 216);
+            this.CTimerSpan.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.CTimerSpan.Name = "CTimerSpan";
+            this.CTimerSpan.Size = new System.Drawing.Size(48, 21);
+            this.CTimerSpan.TabIndex = 33;
+            this.CTimerSpan.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.CTimerSpan.Leave += new System.EventHandler(this.numericUpDown_Leave);
+            // 
+            // BTimerSpan
+            // 
+            this.BTimerSpan.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BTimerSpan.Location = new System.Drawing.Point(404, 216);
+            this.BTimerSpan.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.BTimerSpan.Name = "BTimerSpan";
+            this.BTimerSpan.Size = new System.Drawing.Size(48, 21);
+            this.BTimerSpan.TabIndex = 32;
+            this.BTimerSpan.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.BTimerSpan.Leave += new System.EventHandler(this.numericUpDown_Leave);
+            // 
+            // ATimerSpan
+            // 
+            this.ATimerSpan.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ATimerSpan.Location = new System.Drawing.Point(95, 216);
+            this.ATimerSpan.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.ATimerSpan.Name = "ATimerSpan";
+            this.ATimerSpan.Size = new System.Drawing.Size(48, 21);
+            this.ATimerSpan.TabIndex = 31;
+            this.ATimerSpan.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.ATimerSpan.Leave += new System.EventHandler(this.numericUpDown_Leave);
             // 
             // ShowHexData
             // 
@@ -219,42 +279,6 @@
             this.SaveLogToFile.Text = "写入日志";
             this.SaveLogToFile.UseVisualStyleBackColor = true;
             this.SaveLogToFile.CheckedChanged += new System.EventHandler(this.SaveLogToFile_CheckedChanged);
-            // 
-            // CTimerSpan
-            // 
-            this.CTimerSpan.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CTimerSpan.Location = new System.Drawing.Point(732, 216);
-            this.CTimerSpan.MaxLength = 7;
-            this.CTimerSpan.Name = "CTimerSpan";
-            this.CTimerSpan.Size = new System.Drawing.Size(30, 21);
-            this.CTimerSpan.TabIndex = 28;
-            this.CTimerSpan.Text = "500";
-            this.CTimerSpan.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TimerSpan_KeyPress);
-            this.CTimerSpan.Leave += new System.EventHandler(this.TimerSpan_Leave);
-            // 
-            // BTimerSpan
-            // 
-            this.BTimerSpan.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BTimerSpan.Location = new System.Drawing.Point(423, 216);
-            this.BTimerSpan.MaxLength = 7;
-            this.BTimerSpan.Name = "BTimerSpan";
-            this.BTimerSpan.Size = new System.Drawing.Size(30, 21);
-            this.BTimerSpan.TabIndex = 27;
-            this.BTimerSpan.Text = "500";
-            this.BTimerSpan.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TimerSpan_KeyPress);
-            this.BTimerSpan.Leave += new System.EventHandler(this.TimerSpan_Leave);
-            // 
-            // ATimerSpan
-            // 
-            this.ATimerSpan.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ATimerSpan.Location = new System.Drawing.Point(114, 216);
-            this.ATimerSpan.MaxLength = 7;
-            this.ATimerSpan.Name = "ATimerSpan";
-            this.ATimerSpan.Size = new System.Drawing.Size(30, 21);
-            this.ATimerSpan.TabIndex = 26;
-            this.ATimerSpan.Text = "500";
-            this.ATimerSpan.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TimerSpan_KeyPress);
-            this.ATimerSpan.Leave += new System.EventHandler(this.TimerSpan_Leave);
             // 
             // label12
             // 
@@ -413,85 +437,85 @@
             this.label5.Size = new System.Drawing.Size(0, 13);
             this.label5.TabIndex = 16;
             // 
-            // CnumericUpDown
+            // CSendCount
             // 
-            this.CnumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CnumericUpDown.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CnumericUpDown.Location = new System.Drawing.Point(804, 216);
-            this.CnumericUpDown.Maximum = new decimal(new int[] {
+            this.CSendCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.CSendCount.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CSendCount.Location = new System.Drawing.Point(804, 216);
+            this.CSendCount.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             0});
-            this.CnumericUpDown.Minimum = new decimal(new int[] {
+            this.CSendCount.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.CnumericUpDown.Name = "CnumericUpDown";
-            this.CnumericUpDown.Size = new System.Drawing.Size(48, 21);
-            this.CnumericUpDown.TabIndex = 16;
-            this.CnumericUpDown.Value = new decimal(new int[] {
+            this.CSendCount.Name = "CSendCount";
+            this.CSendCount.Size = new System.Drawing.Size(48, 21);
+            this.CSendCount.TabIndex = 16;
+            this.CSendCount.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.CnumericUpDown.Leave += new System.EventHandler(this.numericUpDown_Leave);
+            this.CSendCount.Leave += new System.EventHandler(this.numericUpDown_Leave);
             // 
-            // BnumericUpDown
+            // BSendCount
             // 
-            this.BnumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.BnumericUpDown.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BnumericUpDown.Location = new System.Drawing.Point(492, 216);
-            this.BnumericUpDown.Maximum = new decimal(new int[] {
+            this.BSendCount.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.BSendCount.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.BSendCount.Location = new System.Drawing.Point(492, 216);
+            this.BSendCount.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             0});
-            this.BnumericUpDown.Minimum = new decimal(new int[] {
+            this.BSendCount.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.BnumericUpDown.Name = "BnumericUpDown";
-            this.BnumericUpDown.Size = new System.Drawing.Size(48, 21);
-            this.BnumericUpDown.TabIndex = 13;
-            this.BnumericUpDown.Value = new decimal(new int[] {
+            this.BSendCount.Name = "BSendCount";
+            this.BSendCount.Size = new System.Drawing.Size(48, 21);
+            this.BSendCount.TabIndex = 13;
+            this.BSendCount.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.BnumericUpDown.Leave += new System.EventHandler(this.numericUpDown_Leave);
+            this.BSendCount.Leave += new System.EventHandler(this.numericUpDown_Leave);
             // 
-            // AnumericUpDown
+            // ASendCount
             // 
-            this.AnumericUpDown.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.AnumericUpDown.Location = new System.Drawing.Point(185, 216);
-            this.AnumericUpDown.Maximum = new decimal(new int[] {
+            this.ASendCount.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ASendCount.Location = new System.Drawing.Point(185, 216);
+            this.ASendCount.Maximum = new decimal(new int[] {
             99999999,
             0,
             0,
             0});
-            this.AnumericUpDown.Minimum = new decimal(new int[] {
+            this.ASendCount.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.AnumericUpDown.Name = "AnumericUpDown";
-            this.AnumericUpDown.Size = new System.Drawing.Size(48, 21);
-            this.AnumericUpDown.TabIndex = 10;
-            this.AnumericUpDown.Value = new decimal(new int[] {
+            this.ASendCount.Name = "ASendCount";
+            this.ASendCount.Size = new System.Drawing.Size(48, 21);
+            this.ASendCount.TabIndex = 10;
+            this.ASendCount.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.AnumericUpDown.Leave += new System.EventHandler(this.numericUpDown_Leave);
+            this.ASendCount.Leave += new System.EventHandler(this.numericUpDown_Leave);
             // 
             // CSendButton
             // 
             this.CSendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CSendButton.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CSendButton.Location = new System.Drawing.Point(879, 214);
+            this.CSendButton.Location = new System.Drawing.Point(873, 214);
             this.CSendButton.Name = "CSendButton";
             this.CSendButton.Size = new System.Drawing.Size(48, 25);
             this.CSendButton.TabIndex = 17;
@@ -503,7 +527,7 @@
             // 
             this.BSendButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.BSendButton.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BSendButton.Location = new System.Drawing.Point(570, 214);
+            this.BSendButton.Location = new System.Drawing.Point(564, 214);
             this.BSendButton.Name = "BSendButton";
             this.BSendButton.Size = new System.Drawing.Size(48, 25);
             this.BSendButton.TabIndex = 14;
@@ -514,7 +538,7 @@
             // ASendButton
             // 
             this.ASendButton.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ASendButton.Location = new System.Drawing.Point(261, 214);
+            this.ASendButton.Location = new System.Drawing.Point(255, 214);
             this.ASendButton.Name = "ASendButton";
             this.ASendButton.Size = new System.Drawing.Size(48, 25);
             this.ASendButton.TabIndex = 11;
@@ -557,21 +581,21 @@
             this.AsendDataLable.TabIndex = 3;
             this.AsendDataLable.Text = "发送数据Ⅰ:";
             // 
-            // sCurrentConnection
+            // CurrentConnection
             // 
-            this.sCurrentConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CurrentConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sCurrentConnection.Controls.Add(this.ClientListBox);
-            this.sCurrentConnection.Controls.Add(this.DisconnectSelectedClient);
-            this.sCurrentConnection.Controls.Add(this.SelectAllClient);
-            this.sCurrentConnection.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.sCurrentConnection.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sCurrentConnection.Location = new System.Drawing.Point(570, 6);
-            this.sCurrentConnection.Name = "sCurrentConnection";
-            this.sCurrentConnection.Size = new System.Drawing.Size(357, 84);
-            this.sCurrentConnection.TabIndex = 0;
-            this.sCurrentConnection.TabStop = false;
-            this.sCurrentConnection.Text = "当前连接";
+            this.CurrentConnection.Controls.Add(this.ClientListBox);
+            this.CurrentConnection.Controls.Add(this.DisconnectSelectedClient);
+            this.CurrentConnection.Controls.Add(this.SelectAllClient);
+            this.CurrentConnection.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CurrentConnection.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.CurrentConnection.Location = new System.Drawing.Point(570, 6);
+            this.CurrentConnection.Name = "CurrentConnection";
+            this.CurrentConnection.Size = new System.Drawing.Size(357, 84);
+            this.CurrentConnection.TabIndex = 0;
+            this.CurrentConnection.TabStop = false;
+            this.CurrentConnection.Text = "当前连接";
             // 
             // ClientListBox
             // 
@@ -631,7 +655,7 @@
             this.sNetCfg.ForeColor = System.Drawing.SystemColors.ControlText;
             this.sNetCfg.Location = new System.Drawing.Point(4, 6);
             this.sNetCfg.Name = "sNetCfg";
-            this.sNetCfg.Size = new System.Drawing.Size(536, 84);
+            this.sNetCfg.Size = new System.Drawing.Size(557, 84);
             this.sNetCfg.TabIndex = 0;
             this.sNetCfg.TabStop = false;
             this.sNetCfg.Text = "网络配置";
@@ -691,7 +715,7 @@
             // 
             this.panel2.Controls.Add(this.DTLSOnoff);
             this.panel2.Controls.Add(this.UdpOnoff);
-            this.panel2.Location = new System.Drawing.Point(338, 43);
+            this.panel2.Location = new System.Drawing.Point(352, 43);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(111, 35);
             this.panel2.TabIndex = 0;
@@ -728,7 +752,7 @@
             // 
             this.panel1.Controls.Add(this.TLSOnoff);
             this.panel1.Controls.Add(this.TcpOnoff);
-            this.panel1.Location = new System.Drawing.Point(338, 10);
+            this.panel1.Location = new System.Drawing.Point(352, 10);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(103, 35);
             this.panel1.TabIndex = 0;
@@ -765,7 +789,7 @@
             // 
             this.StartUdpDtlsServer.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.StartUdpDtlsServer.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.StartUdpDtlsServer.Location = new System.Drawing.Point(452, 50);
+            this.StartUdpDtlsServer.Location = new System.Drawing.Point(469, 50);
             this.StartUdpDtlsServer.Name = "StartUdpDtlsServer";
             this.StartUdpDtlsServer.Size = new System.Drawing.Size(77, 25);
             this.StartUdpDtlsServer.TabIndex = 6;
@@ -777,7 +801,7 @@
             // 
             this.StartTcpTlsServer.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.StartTcpTlsServer.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.StartTcpTlsServer.Location = new System.Drawing.Point(452, 16);
+            this.StartTcpTlsServer.Location = new System.Drawing.Point(469, 16);
             this.StartTcpTlsServer.Name = "StartTcpTlsServer";
             this.StartTcpTlsServer.Size = new System.Drawing.Size(77, 25);
             this.StartTcpTlsServer.TabIndex = 3;
@@ -1007,7 +1031,7 @@
             this.Logo.Size = new System.Drawing.Size(307, 47);
             this.Logo.TabIndex = 1;
             this.Logo.TabStop = false;
-            this.toolTip1.SetToolTip(this.Logo, "点击进入公司主页（www.mobiletek.cn）");
+            this.MyToolTip.SetToolTip(this.Logo, "点击进入公司主页（www.mobiletek.cn）");
             this.Logo.Click += new System.EventHandler(this.DirectToHomePage_Click);
             // 
             // M2M
@@ -1020,7 +1044,7 @@
             this.M2M.Size = new System.Drawing.Size(488, 238);
             this.M2M.TabIndex = 0;
             this.M2M.TabStop = false;
-            this.toolTip1.SetToolTip(this.M2M, "点击进入公司主页（www.mobiletek.cn）");
+            this.MyToolTip.SetToolTip(this.M2M, "点击进入公司主页（www.mobiletek.cn）");
             this.M2M.Click += new System.EventHandler(this.DirectToHomePage_Click);
             // 
             // IgnoreCert
@@ -1031,7 +1055,7 @@
             this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
             this.IgnoreCert.Text = "YES";
-            this.toolTip1.SetToolTip(this.IgnoreCert, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.IgnoreCert, "是否接受无效的证书");
             this.IgnoreCert.UseVisualStyleBackColor = true;
             this.IgnoreCert.Click += new System.EventHandler(this.IgnoreCert_Click);
             // 
@@ -1114,7 +1138,7 @@
             this.SelfSignedPasswd.PasswordChar = '*';
             this.SelfSignedPasswd.Size = new System.Drawing.Size(220, 23);
             this.SelfSignedPasswd.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.SelfSignedPasswd, "可选项");
+            this.MyToolTip.SetToolTip(this.SelfSignedPasswd, "可选项");
             // 
             // label20
             // 
@@ -1197,7 +1221,7 @@
             this.pfxPasswd.PasswordChar = '*';
             this.pfxPasswd.Size = new System.Drawing.Size(218, 23);
             this.pfxPasswd.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.pfxPasswd, "若有的话，可选项");
+            this.MyToolTip.SetToolTip(this.pfxPasswd, "若有的话，可选项");
             // 
             // label17
             // 
@@ -1207,7 +1231,7 @@
             this.label17.Size = new System.Drawing.Size(77, 14);
             this.label17.TabIndex = 9;
             this.label17.Text = "证书密钥：";
-            this.toolTip1.SetToolTip(this.label17, "若有的话，可选项");
+            this.MyToolTip.SetToolTip(this.label17, "若有的话，可选项");
             // 
             // label14
             // 
@@ -1243,7 +1267,7 @@
             this.label15.Size = new System.Drawing.Size(77, 14);
             this.label15.TabIndex = 4;
             this.label15.Text = "忽略证书：";
-            this.toolTip1.SetToolTip(this.label15, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.label15, "是否接受无效的证书");
             // 
             // label16
             // 
@@ -1253,7 +1277,7 @@
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
             this.label16.Text = "双向认证：";
-            this.toolTip1.SetToolTip(this.label16, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.label16, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
             // 
             // label13
             // 
@@ -1275,7 +1299,7 @@
             this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.NoIgnoreCert.TabIndex = 5;
             this.NoIgnoreCert.Text = "NO ";
-            this.toolTip1.SetToolTip(this.NoIgnoreCert, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.NoIgnoreCert, "是否接受无效的证书");
             this.NoIgnoreCert.UseVisualStyleBackColor = true;
             this.NoIgnoreCert.Click += new System.EventHandler(this.NoIgnoreCert_Click);
             // 
@@ -1289,7 +1313,7 @@
             this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
             this.NoMutualAuth.TabIndex = 7;
             this.NoMutualAuth.Text = "NO ";
-            this.toolTip1.SetToolTip(this.NoMutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.NoMutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
             this.NoMutualAuth.UseVisualStyleBackColor = true;
             this.NoMutualAuth.Click += new System.EventHandler(this.NoMutualAuth_Click);
             // 
@@ -1301,7 +1325,7 @@
             this.MutualAuth.Size = new System.Drawing.Size(47, 18);
             this.MutualAuth.TabIndex = 8;
             this.MutualAuth.Text = "YES";
-            this.toolTip1.SetToolTip(this.MutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.MutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
             this.MutualAuth.UseVisualStyleBackColor = true;
             this.MutualAuth.Click += new System.EventHandler(this.MutualAuth_Click);
             // 
@@ -1323,10 +1347,13 @@
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
             this.Server.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CnumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.BnumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AnumericUpDown)).EndInit();
-            this.sCurrentConnection.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CTimerSpan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BTimerSpan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ATimerSpan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CSendCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BSendCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ASendCount)).EndInit();
+            this.CurrentConnection.ResumeLayout(false);
             this.sNetCfg.ResumeLayout(false);
             this.sNetCfg.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -1365,7 +1392,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RadioButton TLSOnoff;
         private System.Windows.Forms.RadioButton TcpOnoff;
-        private System.Windows.Forms.GroupBox sCurrentConnection;
+        private System.Windows.Forms.GroupBox CurrentConnection;
         private System.Windows.Forms.ComboBox UdpIpAddr;
         private System.Windows.Forms.ComboBox UdpPort;
         private System.Windows.Forms.ComboBox TcpPort;
@@ -1379,27 +1406,24 @@
         private System.Windows.Forms.TextBox BDatablock;
         private System.Windows.Forms.TextBox ADatablock;
         private System.Windows.Forms.Label AsendDataLable;
-        private System.Windows.Forms.NumericUpDown AnumericUpDown;
+        private System.Windows.Forms.NumericUpDown ASendCount;
         private System.Windows.Forms.Button CSendButton;
         private System.Windows.Forms.Button BSendButton;
         private System.Windows.Forms.Button ASendButton;
         private System.Windows.Forms.TabPage SslConfig;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown CnumericUpDown;
-        private System.Windows.Forms.NumericUpDown BnumericUpDown;
+        private System.Windows.Forms.NumericUpDown CSendCount;
+        private System.Windows.Forms.NumericUpDown BSendCount;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox LogTextbox;
         private System.Windows.Forms.Button ClearLog;
         private System.Windows.Forms.Label TxRxCounter;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox ATimerSpan;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox CTimerSpan;
-        private System.Windows.Forms.TextBox BTimerSpan;
         public System.Windows.Forms.TabControl TabCtrl;
         private System.Windows.Forms.ComboBox TlsVersion;
         private System.Windows.Forms.Label label13;
@@ -1413,7 +1437,7 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.GroupBox TlsConfig;
         private System.Windows.Forms.GroupBox MobiletekInc;
-        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip MyToolTip;
         private System.Windows.Forms.CheckBox ImportShowPasswd;
         private System.Windows.Forms.GroupBox GenerateSelfSignedCert;
         private System.Windows.Forms.Label label19;
@@ -1444,6 +1468,9 @@
         private System.Windows.Forms.CheckBox PemShowPasswd;
         private System.Windows.Forms.TextBox PriKeyPasswd;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown ATimerSpan;
+        private System.Windows.Forms.NumericUpDown CTimerSpan;
+        private System.Windows.Forms.NumericUpDown BTimerSpan;
     }
 }
 

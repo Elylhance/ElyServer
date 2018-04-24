@@ -57,7 +57,7 @@ namespace SocketTool
                     MessageBox.Show(ReleaseNote, "新版特性");
                     using (FileStream unUse = File.Create("init.ini")) { ;}
                 }
-                // Tool Chain Check
+                // Tool Chain Check, note the diffirence between x86&x64
                 string[] ToolList = { "cmd.exe", "makecert.exe", "Cert2Spc.exe", "pvk2pfx.exe", "openssl.exe" };
                 if (!Directory.Exists("cert"))
                 {
@@ -97,6 +97,28 @@ namespace SocketTool
         #region ConstrutorCallBack
         delegate bool delegateCallBack(string newClient);
         delegate bool delegateCallBackWithData(string Sender, byte[] Data);
+        private async Task<bool> WriteData(string Client, byte[] bytedata)
+        {
+            bool SendResult = false;
+            if (elyTcpServer != null && Client.StartsWith("TCP"))
+            {
+                SendResult = await elyTcpServer.Send(Client, bytedata);
+            }
+            else if (elyTlsServer != null && Client.StartsWith("TLS"))
+            {
+                SendResult = await elyTlsServer.Send(Client, bytedata);
+            }
+            else if (elyUdpServer != null && Client.StartsWith("UDP"))
+            {
+                SendResult = await elyUdpServer.Send(Client, bytedata);
+            }
+            else if (elyDtlsServer != null && Client.StartsWith("DTLS"))
+            {
+                SendResult = await elyDtlsServer.Send(Client, bytedata);
+            }
+            else { }
+            return SendResult;
+        }
 
         private async Task<int> SendDataToClient(string data, decimal SendCount, CancellationToken Token)
         {
@@ -124,25 +146,7 @@ namespace SocketTool
                     {
                         if (Client.ToString() != string.Empty)
                         {
-                            bool SendResult = false;
-                            if (elyTcpServer != null && Client.ToString().StartsWith("TCP"))
-                            {
-                                SendResult = await elyTcpServer.Send(Client.ToString(), bytedata);
-                            }
-                            else if (elyTlsServer != null && Client.ToString().StartsWith("TLS"))
-                            {
-                                SendResult = await elyTlsServer.Send(Client.ToString(), bytedata);
-                            }
-                            else if (elyUdpServer != null && Client.ToString().StartsWith("UDP"))
-                            {
-                                SendResult = await elyUdpServer.Send(Client.ToString(), bytedata);
-                            }
-                            else if (elyDtlsServer != null && Client.ToString().StartsWith("DTLS"))
-                            {
-                                SendResult = await elyDtlsServer.Send(Client.ToString(), bytedata);
-                            }
-                            else { }
-
+                            bool SendResult = await WriteData(Client.ToString(), bytedata);
                             if (SendResult)
                             {
                                 /// Report sent data successfully. 
@@ -620,7 +624,7 @@ namespace SocketTool
                     return;
                 string InputData = ADatablock.Text;
                 SendTimerSpanMs = Convert.ToInt32(ATimerSpan.Text);
-                if (SendTimerSpanMs == 0 && AnumericUpDown.Value > 1)
+                if (SendTimerSpanMs == 0 && ASendCount.Value > 1)
                 {
                     ATimerSpan.Focus();
                     return;
@@ -635,10 +639,10 @@ namespace SocketTool
                     ASendButton.BackColor = Color.SkyBlue;
                     ATimerSpan.Enabled = false;
                     ADatablock.Enabled = false;
-                    AnumericUpDown.Enabled = false;
+                    ASendCount.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, AnumericUpDown.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, ASendCount.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -647,7 +651,7 @@ namespace SocketTool
 
                     ATimerSpan.Enabled = true;
                     ADatablock.Enabled = true;
-                    AnumericUpDown.Enabled = true;
+                    ASendCount.Enabled = true;
                     ASendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
@@ -663,7 +667,7 @@ namespace SocketTool
 
                 ATimerSpan.Enabled = true;
                 ADatablock.Enabled = true;
-                AnumericUpDown.Enabled = true;
+                ASendCount.Enabled = true;
                 ASendButton.BackColor = TransparencyKey;
                 IsSending = false;
             }
@@ -681,7 +685,7 @@ namespace SocketTool
 
                 string InputData = BDatablock.Text;
                 SendTimerSpanMs = Convert.ToInt32(BTimerSpan.Text);
-                if (SendTimerSpanMs == 0 && BnumericUpDown.Value > 1)
+                if (SendTimerSpanMs == 0 && BSendCount.Value > 1)
                 {
                     BTimerSpan.Focus();
                     return;
@@ -696,10 +700,10 @@ namespace SocketTool
                     BSendButton.BackColor = Color.SkyBlue;
                     BTimerSpan.Enabled = false;
                     BDatablock.Enabled = false;
-                    BnumericUpDown.Enabled = false;
+                    BSendCount.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, BnumericUpDown.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, BSendCount.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -709,7 +713,7 @@ namespace SocketTool
                     // 反转状态
                     BTimerSpan.Enabled = true;
                     BDatablock.Enabled = true;
-                    BnumericUpDown.Enabled = true;
+                    BSendCount.Enabled = true;
                     BSendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
@@ -725,7 +729,7 @@ namespace SocketTool
 
                 BTimerSpan.Enabled = true;
                 BDatablock.Enabled = true;
-                BnumericUpDown.Enabled = true;
+                BSendCount.Enabled = true;
                 BSendButton.BackColor = TransparencyKey;
                 IsSending = false;
             }
@@ -742,7 +746,7 @@ namespace SocketTool
 
                 string InputData = CDatablock.Text;
                 SendTimerSpanMs = Convert.ToInt32(CTimerSpan.Text);
-                if (SendTimerSpanMs == 0 && CnumericUpDown.Value > 1)
+                if (SendTimerSpanMs == 0 && CSendCount.Value > 1)
                 {
                     CTimerSpan.Focus();
                     return;
@@ -757,10 +761,10 @@ namespace SocketTool
                     CSendButton.BackColor = Color.SkyBlue;
                     CDatablock.Enabled = false;
                     CTimerSpan.Enabled = false;
-                    CnumericUpDown.Enabled = false;
+                    CSendCount.Enabled = false;
 
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, CnumericUpDown.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(InputData, CSendCount.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -769,7 +773,7 @@ namespace SocketTool
 
                     CTimerSpan.Enabled = true;
                     CDatablock.Enabled = true;
-                    CnumericUpDown.Enabled = true;
+                    CSendCount.Enabled = true;
                     CSendButton.BackColor = TransparencyKey;
                     IsSending = false;
                 }
@@ -785,21 +789,9 @@ namespace SocketTool
 
                 CTimerSpan.Enabled = true;
                 CDatablock.Enabled = true;
-                CnumericUpDown.Enabled = true;
+                CSendCount.Enabled = true;
                 CSendButton.BackColor = TransparencyKey;
                 IsSending = false;
-            }
-        }
-
-        private void TimerSpan_Leave(object sender, EventArgs e)
-        {
-            TextBox TimerSpan = sender as TextBox;
-            if (TimerSpan != null)
-            {
-                if (string.IsNullOrEmpty(TimerSpan.Text))
-                {
-                    TimerSpan.Text = "500";
-                }
             }
         }
 
