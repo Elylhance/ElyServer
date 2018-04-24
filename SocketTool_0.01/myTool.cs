@@ -48,7 +48,35 @@ namespace SocketTool
             TlsVersion.SelectedIndex = 0;
             SignatureAlgorithm.SelectedIndex = 2;
             SelectedClientList = ClientListBox.SelectedItems;
+            Task.Run(async() =>
+            {
+                await Task.Delay(500);
+                if (!File.Exists("init.ini"))
+                {
+                    string ReleaseNote = File.ReadAllText("ReleaseNote.txt");
+                    MessageBox.Show(ReleaseNote, "新版特性");
+                    using (FileStream unUse = File.Create("init.ini")) { ;}
+                }
+                // Tool Chain Check
+                string[] ToolList = { "cmd.exe", "makecert.exe", "Cert2Spc.exe", "pvk2pfx.exe", "openssl.exe" };
+                if (!Directory.Exists("cert"))
+                {
+                    MessageBox.Show("Warrning!!! Directory [cert] is not exist!");
+                    return;
+                }
+                else
+                {
+                    foreach (string ToolName in ToolList)
+                    {
+                        if (File.Exists($"cert\\{ToolName}"))
+                            continue;
+                        else
+                            MessageBox.Show($"Warrning!!! Can not find file [{ToolName}]!");
+                    }
+                }
+            });
         }
+        
         private string GetLocalIPAddress()
         {
             string LocalIP = string.Empty;
@@ -75,18 +103,23 @@ namespace SocketTool
             int SentSize = 0;
             while (SelectedClientList.Count > 0 && SendCount-- > 0)
             {
-                if (Token.IsCancellationRequested)
-                {
-                    break;
-                }
                 for (int i = 0; i < SelectedClientList.Count; i++)
                 {
                     if (Token.IsCancellationRequested)
                     {
                         break;
                     }
+                    byte[] bytedata;
+                    if (!data.Contains(@"[\0]"))
+                    {
+                        bytedata = Encoding.Default.GetBytes(data);
+                    }
+                    else
+                    {
+                        bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
+                    }
+
                     object Client = SelectedClientList[i];
-                    byte[] bytes = Encoding.Default.GetBytes(data);
                     try
                     {
                         if (Client.ToString() != string.Empty)
@@ -94,34 +127,34 @@ namespace SocketTool
                             bool SendResult = false;
                             if (elyTcpServer != null && Client.ToString().StartsWith("TCP"))
                             {
-                                SendResult = await elyTcpServer.Send(Client.ToString(), bytes);
+                                SendResult = await elyTcpServer.Send(Client.ToString(), bytedata);
                             }
                             else if (elyTlsServer != null && Client.ToString().StartsWith("TLS"))
                             {
-                                SendResult = await elyTlsServer.Send(Client.ToString(), bytes);
+                                SendResult = await elyTlsServer.Send(Client.ToString(), bytedata);
                             }
                             else if (elyUdpServer != null && Client.ToString().StartsWith("UDP"))
                             {
-                                SendResult = await elyUdpServer.Send(Client.ToString(), bytes);
+                                SendResult = await elyUdpServer.Send(Client.ToString(), bytedata);
                             }
                             else if (elyDtlsServer != null && Client.ToString().StartsWith("DTLS"))
                             {
-                                SendResult = await elyDtlsServer.Send(Client.ToString(), bytes);
+                                SendResult = await elyDtlsServer.Send(Client.ToString(), bytedata);
                             }
                             else { }
 
                             if (SendResult)
                             {
                                 /// Report sent data successfully. 
-                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytes.Length} >--[OK]{Environment.NewLine}{data}";
+                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytedata.Length} >--[OK]{Environment.NewLine}{data}";
                                 if (ShowHexData.Checked)
                                 {
-                                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytes).Replace("-", " ")}]";
+                                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
                                     SendInfo += Hexstr;
                                 }
                                 MessageOutPutHandler(SendInfo);
-                                SentSize += bytes.Length;
-                                TxBytes += bytes.Length;
+                                SentSize += bytedata.Length;
+                                TxBytes += bytedata.Length;
                                 TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
                                 TxRxCounter.Update();
                             }
@@ -134,10 +167,10 @@ namespace SocketTool
                     catch (Exception)
                     {
                         /// Report sent data failed.
-                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytes.Length} >--[ERROR]{Environment.NewLine}{data}";
+                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytedata.Length} >--[ERROR]{Environment.NewLine}{data}";
                         if (ShowHexData.Checked)
                         {
-                            string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytes).Replace("-", " ")}]";
+                            string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
                             SendInfo += Hexstr;
                         }
                         MessageOutPutHandler(SendInfo);
@@ -199,15 +232,7 @@ namespace SocketTool
                 string Strdata = Encoding.Default.GetString(Data);
                 while (Strdata.IndexOf((char)0) != (-1))    //检测数据中是否含有字符串结束符“\0”
                 {
-                    string[] Substr = Strdata.Split((char)0);
-                    StringBuilder NewStrdata = new StringBuilder();
-                    foreach (string substr in Substr)
-                    {
-                        NewStrdata.Append(substr);
-                        NewStrdata.Append(@"[\0]");
-                    }
-                    NewStrdata.Remove(NewStrdata.Length - 4,4);
-                    Strdata = NewStrdata.ToString();
+                    Strdata = Strdata.Replace("\0", @"[\0]");
                 }
                 string RecvDataInfo = $"[Recv<--{Sender}] < {Data.Length} >{Environment.NewLine}{Strdata}";
                 if (ShowHexData.Checked)
@@ -229,7 +254,11 @@ namespace SocketTool
                         + GetSequenceNumStr()
                         + $"  [{DateTime.Now.ToString("HH:mm:ss.fff")}] "
                         + msginfo;
-            if (LogTextbox.TextLength > 30*1024*1024)   // 此时会占用200M左右内存
+            if (LogTextbox.TextLength < 100*1024*1024)
+            {
+                LogTextbox.AppendText(Str);
+            }
+            else
             {
                 if (!SaveLogToFile.Checked)
                 {
@@ -239,16 +268,13 @@ namespace SocketTool
                     Str = LogHeader + Str;
                 }
             }
-            else
-            {
-                LogTextbox.AppendText(Str);
-            }
+
             if (SaveLogToFile.Checked && LogFile.CanWrite)
             {
                 Task.Run(() =>{
-                    byte[] Byte = Encoding.Default.GetBytes(Str);
                     lock (this)
                     {
+                        byte[] Byte = Encoding.Default.GetBytes(Str);
                         LogFile.Write(Byte, 0, Byte.Length);
                         LogFile.Flush();
                     }
@@ -289,14 +315,16 @@ namespace SocketTool
 
         #region Click&Content-Changed-Event
         //借助openssl工具将.crt&.key文件转换为.pfx格式证书
-        private bool ConvertCrtKeyToPfx(string certificate_pub, string privatekey, out string pfxPath, out string pfxPasswd)
+        private void ConvertCrtKeyToPfx(string certificate_pub, string privatekey, string prikeypasswd,out string pfxPath, out string pfxPasswd)
         {
             if (string.IsNullOrEmpty(certificate_pub) || string.IsNullOrEmpty(privatekey))
             {
-                throw new ArgumentException("证书路径错误");
+                throw new FileNotFoundException();
             }
+
             pfxPasswd = DateTime.Now.Millisecond.ToString();
             string Result = string.Empty;
+            string passinWd = string.Empty;
             string pfxName = $"_TemporaryCert_.pfx";
             string TempPath = Environment.CurrentDirectory;
             Environment.CurrentDirectory += "\\cert";
@@ -304,23 +332,29 @@ namespace SocketTool
             {
                 File.Copy(certificate_pub, Environment.CurrentDirectory + "\\_PubCert.crt", true);
                 File.Copy(privatekey, Environment.CurrentDirectory + "\\_PriKey.key", true);
-                string Cmd = $"openssl pkcs12 -export -out {pfxName} -passout pass:{pfxPasswd} -inkey _PriKey.key -in _PubCert.crt & del _PubCert.crt,_PriKey.key";
+                if (!string.IsNullOrEmpty(prikeypasswd))
+                {
+                    passinWd = prikeypasswd;
+                }
+                string Cmd = $"openssl pkcs12 -export -out {pfxName} -passin pass:{passinWd} -passout pass:{pfxPasswd} " 
+                           + "-inkey _PriKey.key -in _PubCert.crt & del _PubCert.crt,_PriKey.key";
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
+
                 CmdHelper.RunCmd(Cmd, out Result);
                 if (Result.EndsWith($"Loading 'screen' into random state - done{Environment.NewLine}"))
                 {
                     pfxPath = Environment.CurrentDirectory + "\\" + pfxName;
-                    return true;
+                    return;
                 }
                 else
                 {
-                    throw new Exception();
+                    if (Result.Contains("No certificate matches private key"))
+                        throw new Exception("No certificate matches private key");
+                    else if (Result.Contains("unable to load private key"))
+                        throw new Exception("Unable to load private key");
+                    else
+                        throw new Exception("处理证书发生未知错误");
                 }
-            }
-            catch (Exception)
-            {
-                pfxPath = string.Empty;
-                return false;
             }
             finally
             {
@@ -376,23 +410,24 @@ namespace SocketTool
                             string pfxPasswd = string.Empty;
                             string certificate_pub = PubCert.Text;
                             string privatekey = PrvtKey.Text;
-                            if (ConvertCrtKeyToPfx(certificate_pub, privatekey, out pfxPath, out pfxPasswd))
+                            string prikeypasswd = PriKeyPasswd.Text;
+                            try
                             {
+                                ConvertCrtKeyToPfx(certificate_pub, privatekey, prikeypasswd, out pfxPath, out pfxPasswd);
                                 elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
-                                                                 pfxPath, pfxPasswd,
-                                                                 Maumutually, AcceptInvalidCert, TlsVer,
-                                                                 ConnectedFDback,
-                                                                 DisconnectedFDback,
-                                                                 DataReceivedFDback,
-                                                                 PrintPromptMessage);
-                                if(pfxPath != string.Empty)
-                                    File.Delete(pfxPath);
+                                                                    pfxPath, pfxPasswd,
+                                                                    Maumutually, AcceptInvalidCert, TlsVer,
+                                                                    ConnectedFDback,
+                                                                    DisconnectedFDback,
+                                                                    DataReceivedFDback,
+                                                                    PrintPromptMessage);
+                                 File.Delete(pfxPath);
                             }
-                            else
+                            catch (Exception ex)
                             {
                                 if (pfxPath != string.Empty)
                                     File.Delete(pfxPath);
-                                throw new ArgumentException("处理证书发生未知错误。");
+                                throw ex;
                             }
                         }
                         else { throw new Exception("An unknown error occurred"); }
@@ -438,7 +473,7 @@ namespace SocketTool
                     elyTlsServer = null;
                     MessageOutPutHandler($"Stop TLS server[{ListenerIp}:{ListenerPort}] successfully!");
                 }
-                // TODO:取消控件未执行的委托           
+                // TODO:取消控件未执行的委托
                 TcpIpAddr.Enabled = true;
                 TcpPort.Enabled = true;
                 TcpOnoff.Enabled = true;
@@ -480,7 +515,7 @@ namespace SocketTool
                     }
                     else if (DTLSOnoff.Checked)
                     {
-                        throw new Exception("Sorry,DTLS server is not supported now.");
+                        throw new Exception("Sorry, DTLS server is not supported now.");
                     }
                     IsUDPListening = true;
                     StartUdpDtlsServer.Text = "已开启";
@@ -538,18 +573,26 @@ namespace SocketTool
                 {
                     Directory.CreateDirectory(LogDirectory);
                 }
-                lock (this) //解决程序正在向文件流写入数据导致的竞态
-                {
-                    string NewLogFilePath = LogDirectory + $"\\{DateTime.Now.ToString("yyMMddHHmmss")}.txt";
-                    LogFile = File.Create(NewLogFilePath, 512, FileOptions.Asynchronous);
-                }
+                string NewLogFilePath = LogDirectory + $"\\{DateTime.Now.ToString("yyMMddHHmmss")}.txt";
+                LogFile = File.Create(NewLogFilePath, 512, FileOptions.Asynchronous);
+
             }
             else
             {
                 //Close file
                 lock (this)
                 {
-                    LogFile.Dispose();
+                    string LogFilePath = LogFile.Name;
+                    if (LogFile.Length > 0)
+                    {
+                        MessageBox.Show($"已存入文件: {LogFilePath}");
+                        LogFile.Dispose();
+                    }
+                    else
+                    {
+                        LogFile.Dispose();
+                        File.Delete(LogFilePath);
+                    }
                 }
             }
         }
@@ -924,7 +967,17 @@ namespace SocketTool
                 SelfSignedPasswd.PasswordChar = '*';
             }
         }
-
+        private void PemShowPasswd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (PemShowPasswd.Checked)
+            {
+                PriKeyPasswd.PasswordChar = (char)0;
+            }
+            else
+            {
+                PriKeyPasswd.PasswordChar = '*';
+            }
+        }
         private void SelectPfxCert_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -942,7 +995,7 @@ namespace SocketTool
         private void SetPubKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
+            //openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -956,7 +1009,7 @@ namespace SocketTool
         private void SetPrivateKey_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
+            //openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog.Filter = "加密证书文件|*.pem;*.der;*.crt;*.key;*.cer;*.csr;*.pfx;*.p12|所有文件|*.*";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -981,7 +1034,7 @@ namespace SocketTool
                 PassWd = "-po " + SelfSignedPasswd.Text;
             }
             //生成证书时，可以使UI无响应
-            string Cmd = $@"del *.cer *.pfx
+            string Cmd = $@"del CARoot.cer,ServerCert.pfx
                             rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
                             makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
                             + "&& cert2spc CARoot.cer CARoot.spc"
@@ -992,6 +1045,18 @@ namespace SocketTool
             try
             {
                 Environment.CurrentDirectory += "\\cert";
+                if (!Directory.Exists("Backup"))
+                {
+                    Directory.CreateDirectory("Backup");
+                }
+                if (File.Exists("CARoot.cer"))
+                {
+                    File.Copy("CARoot.cer", "Backup\\CARootBackup.cer",true);
+                }
+                if (File.Exists("ServerCert.pfx"))
+                {
+                    File.Copy("ServerCert.pfx", "Backup\\ServerCertBackup.pfx", true);
+                }
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
                 CmdHelper.RunCmd(Cmd, out Result);
                 //MessageBox.Show(Result); //For debug
@@ -1000,6 +1065,14 @@ namespace SocketTool
                     if (Result.Contains("Failed") || Result.Contains("Error") || Result.Contains("ERROR"))
                     {
                         Result = $"生成证书失败！";
+                        if (File.Exists("Backup\\CARootBackup.cer"))
+                        {
+                            File.Move("Backup\\CARootBackup.cer", "CARoot.cer");
+                        }
+                        if (File.Exists("Backup\\ServerCertBackup.pfx"))
+                        {
+                            File.Move("Backup\\ServerCertBackup.pfx", "ServerCert.pfx");
+                        }
                     }
                     else
                     {

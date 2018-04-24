@@ -89,7 +89,7 @@ namespace MySocketServer
             {
                 throw new ArgumentOutOfRangeException();
             }
-
+            
             SslCertificate = null;
             if (string.IsNullOrEmpty(pfxCertkey))
             {

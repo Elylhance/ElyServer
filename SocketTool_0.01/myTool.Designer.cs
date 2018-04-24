@@ -86,6 +86,9 @@
             this.PKCS12 = new System.Windows.Forms.RadioButton();
             this.PEM_DER = new System.Windows.Forms.RadioButton();
             this.CrtAndKey = new System.Windows.Forms.GroupBox();
+            this.PemShowPasswd = new System.Windows.Forms.CheckBox();
+            this.PriKeyPasswd = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SetPrivateKey = new System.Windows.Forms.Button();
             this.SetPubCert = new System.Windows.Forms.Button();
             this.PrvtKey = new System.Windows.Forms.TextBox();
@@ -389,7 +392,8 @@
             this.LogTextbox.ShowSelectionMargin = true;
             this.LogTextbox.Size = new System.Drawing.Size(926, 260);
             this.LogTextbox.TabIndex = 18;
-            this.LogTextbox.Text = "";
+            this.LogTextbox.Text = "支持以[\\0]表示字符串结束符，用于发送数据中输入字符串结束符\\0和接收的数据输出字符串结束符\\0；为避免与字符串\"[\\0]\"本身混淆，可根据数据长度来判断或查看" +
+    "十六进制。\n";
             this.LogTextbox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
             // 
             // label6
@@ -882,6 +886,9 @@
             // 
             // CrtAndKey
             // 
+            this.CrtAndKey.Controls.Add(this.PemShowPasswd);
+            this.CrtAndKey.Controls.Add(this.PriKeyPasswd);
+            this.CrtAndKey.Controls.Add(this.label1);
             this.CrtAndKey.Controls.Add(this.SetPrivateKey);
             this.CrtAndKey.Controls.Add(this.SetPubCert);
             this.CrtAndKey.Controls.Add(this.PrvtKey);
@@ -890,14 +897,44 @@
             this.CrtAndKey.Controls.Add(this.CertPubLable);
             this.CrtAndKey.Location = new System.Drawing.Point(428, 7);
             this.CrtAndKey.Name = "CrtAndKey";
-            this.CrtAndKey.Size = new System.Drawing.Size(500, 89);
+            this.CrtAndKey.Size = new System.Drawing.Size(500, 126);
             this.CrtAndKey.TabIndex = 13;
             this.CrtAndKey.TabStop = false;
             this.CrtAndKey.Text = "PEM/DER 证书配置";
             // 
+            // PemShowPasswd
+            // 
+            this.PemShowPasswd.AutoSize = true;
+            this.PemShowPasswd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.PemShowPasswd.Location = new System.Drawing.Point(409, 92);
+            this.PemShowPasswd.Name = "PemShowPasswd";
+            this.PemShowPasswd.Size = new System.Drawing.Size(80, 18);
+            this.PemShowPasswd.TabIndex = 12;
+            this.PemShowPasswd.Text = "显示密码";
+            this.PemShowPasswd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.PemShowPasswd.UseVisualStyleBackColor = true;
+            this.PemShowPasswd.CheckedChanged += new System.EventHandler(this.PemShowPasswd_CheckedChanged);
+            // 
+            // PriKeyPasswd
+            // 
+            this.PriKeyPasswd.Location = new System.Drawing.Point(106, 90);
+            this.PriKeyPasswd.Name = "PriKeyPasswd";
+            this.PriKeyPasswd.PasswordChar = '*';
+            this.PriKeyPasswd.Size = new System.Drawing.Size(298, 23);
+            this.PriKeyPasswd.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 94);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(105, 14);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "私钥访问密码：";
+            // 
             // SetPrivateKey
             // 
-            this.SetPrivateKey.Location = new System.Drawing.Point(409, 53);
+            this.SetPrivateKey.Location = new System.Drawing.Point(409, 55);
             this.SetPrivateKey.Name = "SetPrivateKey";
             this.SetPrivateKey.Size = new System.Drawing.Size(84, 26);
             this.SetPrivateKey.TabIndex = 7;
@@ -917,7 +954,7 @@
             // 
             // PrvtKey
             // 
-            this.PrvtKey.Location = new System.Drawing.Point(106, 55);
+            this.PrvtKey.Location = new System.Drawing.Point(106, 57);
             this.PrvtKey.MaxLength = 2048;
             this.PrvtKey.Name = "PrvtKey";
             this.PrvtKey.Size = new System.Drawing.Size(298, 23);
@@ -934,7 +971,7 @@
             // PrivateKeyLable
             // 
             this.PrivateKeyLable.AutoSize = true;
-            this.PrivateKeyLable.Location = new System.Drawing.Point(7, 59);
+            this.PrivateKeyLable.Location = new System.Drawing.Point(7, 61);
             this.PrivateKeyLable.Name = "PrivateKeyLable";
             this.PrivateKeyLable.Size = new System.Drawing.Size(105, 14);
             this.PrivateKeyLable.TabIndex = 1;
@@ -953,9 +990,9 @@
             // 
             this.MobiletekInc.Controls.Add(this.Logo);
             this.MobiletekInc.Controls.Add(this.M2M);
-            this.MobiletekInc.Location = new System.Drawing.Point(428, 111);
+            this.MobiletekInc.Location = new System.Drawing.Point(428, 139);
             this.MobiletekInc.Name = "MobiletekInc";
-            this.MobiletekInc.Size = new System.Drawing.Size(500, 413);
+            this.MobiletekInc.Size = new System.Drawing.Size(500, 364);
             this.MobiletekInc.TabIndex = 12;
             this.MobiletekInc.TabStop = false;
             this.MobiletekInc.Text = "MobileTek Inc";
@@ -965,7 +1002,7 @@
             this.Logo.ErrorImage = null;
             this.Logo.Image = ((System.Drawing.Image)(resources.GetObject("Logo.Image")));
             this.Logo.InitialImage = null;
-            this.Logo.Location = new System.Drawing.Point(97, 53);
+            this.Logo.Location = new System.Drawing.Point(97, 36);
             this.Logo.Name = "Logo";
             this.Logo.Size = new System.Drawing.Size(307, 47);
             this.Logo.TabIndex = 1;
@@ -978,9 +1015,9 @@
             this.M2M.ErrorImage = null;
             this.M2M.Image = ((System.Drawing.Image)(resources.GetObject("M2M.Image")));
             this.M2M.InitialImage = null;
-            this.M2M.Location = new System.Drawing.Point(10, 143);
+            this.M2M.Location = new System.Drawing.Point(6, 120);
             this.M2M.Name = "M2M";
-            this.M2M.Size = new System.Drawing.Size(488, 259);
+            this.M2M.Size = new System.Drawing.Size(488, 238);
             this.M2M.TabIndex = 0;
             this.M2M.TabStop = false;
             this.toolTip1.SetToolTip(this.M2M, "点击进入公司主页（www.mobiletek.cn）");
@@ -989,7 +1026,7 @@
             // IgnoreCert
             // 
             this.IgnoreCert.AutoSize = true;
-            this.IgnoreCert.Location = new System.Drawing.Point(283, 43);
+            this.IgnoreCert.Location = new System.Drawing.Point(298, 45);
             this.IgnoreCert.Name = "IgnoreCert";
             this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
@@ -1008,9 +1045,9 @@
             this.TlsConfig.Controls.Add(this.pfxPasswd);
             this.TlsConfig.Controls.Add(this.label17);
             this.TlsConfig.Controls.Add(this.label14);
-            this.TlsConfig.Location = new System.Drawing.Point(7, 111);
+            this.TlsConfig.Location = new System.Drawing.Point(7, 102);
             this.TlsConfig.Name = "TlsConfig";
-            this.TlsConfig.Size = new System.Drawing.Size(415, 413);
+            this.TlsConfig.Size = new System.Drawing.Size(415, 422);
             this.TlsConfig.TabIndex = 11;
             this.TlsConfig.TabStop = false;
             this.TlsConfig.Text = "PKCS12 证书配置";
@@ -1193,15 +1230,15 @@
             "TLS v1.0",
             "TLS v1.1",
             "TLS v1.2"});
-            this.TlsVersion.Location = new System.Drawing.Point(283, 7);
+            this.TlsVersion.Location = new System.Drawing.Point(298, 12);
             this.TlsVersion.Name = "TlsVersion";
-            this.TlsVersion.Size = new System.Drawing.Size(100, 22);
+            this.TlsVersion.Size = new System.Drawing.Size(97, 22);
             this.TlsVersion.TabIndex = 1;
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(205, 45);
+            this.label15.Location = new System.Drawing.Point(220, 47);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(77, 14);
             this.label15.TabIndex = 4;
@@ -1211,7 +1248,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(205, 79);
+            this.label16.Location = new System.Drawing.Point(220, 78);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
@@ -1222,7 +1259,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label13.Location = new System.Drawing.Point(205, 11);
+            this.label13.Location = new System.Drawing.Point(220, 16);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(77, 14);
             this.label13.TabIndex = 0;
@@ -1233,7 +1270,7 @@
             this.NoIgnoreCert.AutoSize = true;
             this.NoIgnoreCert.Checked = true;
             this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoIgnoreCert.Location = new System.Drawing.Point(345, 43);
+            this.NoIgnoreCert.Location = new System.Drawing.Point(360, 45);
             this.NoIgnoreCert.Name = "NoIgnoreCert";
             this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.NoIgnoreCert.TabIndex = 5;
@@ -1247,7 +1284,7 @@
             this.NoMutualAuth.AutoSize = true;
             this.NoMutualAuth.Checked = true;
             this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoMutualAuth.Location = new System.Drawing.Point(345, 77);
+            this.NoMutualAuth.Location = new System.Drawing.Point(360, 76);
             this.NoMutualAuth.Name = "NoMutualAuth";
             this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
             this.NoMutualAuth.TabIndex = 7;
@@ -1259,7 +1296,7 @@
             // MutualAuth
             // 
             this.MutualAuth.AutoSize = true;
-            this.MutualAuth.Location = new System.Drawing.Point(283, 77);
+            this.MutualAuth.Location = new System.Drawing.Point(298, 76);
             this.MutualAuth.Name = "MutualAuth";
             this.MutualAuth.Size = new System.Drawing.Size(47, 18);
             this.MutualAuth.TabIndex = 8;
@@ -1282,7 +1319,7 @@
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
-            this.Text = "YKSocketTool V0.02";
+            this.Text = "YKSocketTool v0.02";
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
             this.Server.PerformLayout();
@@ -1404,6 +1441,9 @@
         private System.Windows.Forms.CheckBox NoMutualAuth;
         private System.Windows.Forms.CheckBox ShowHexData;
         private System.Windows.Forms.CheckBox SaveLogToFile;
+        private System.Windows.Forms.CheckBox PemShowPasswd;
+        private System.Windows.Forms.TextBox PriKeyPasswd;
+        private System.Windows.Forms.Label label1;
     }
 }
 
