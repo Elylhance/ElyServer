@@ -566,9 +566,9 @@
             this.sCurrentConnection.Controls.Add(this.SelectAllClient);
             this.sCurrentConnection.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.sCurrentConnection.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.sCurrentConnection.Location = new System.Drawing.Point(573, 6);
+            this.sCurrentConnection.Location = new System.Drawing.Point(570, 6);
             this.sCurrentConnection.Name = "sCurrentConnection";
-            this.sCurrentConnection.Size = new System.Drawing.Size(354, 84);
+            this.sCurrentConnection.Size = new System.Drawing.Size(357, 84);
             this.sCurrentConnection.TabIndex = 0;
             this.sCurrentConnection.TabStop = false;
             this.sCurrentConnection.Text = "当前连接";
@@ -592,7 +592,7 @@
             this.DisconnectSelectedClient.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DisconnectSelectedClient.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.DisconnectSelectedClient.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.DisconnectSelectedClient.Location = new System.Drawing.Point(271, 50);
+            this.DisconnectSelectedClient.Location = new System.Drawing.Point(274, 50);
             this.DisconnectSelectedClient.Name = "DisconnectSelectedClient";
             this.DisconnectSelectedClient.Size = new System.Drawing.Size(77, 25);
             this.DisconnectSelectedClient.TabIndex = 8;
@@ -605,7 +605,7 @@
             this.SelectAllClient.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SelectAllClient.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.SelectAllClient.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.SelectAllClient.Location = new System.Drawing.Point(271, 16);
+            this.SelectAllClient.Location = new System.Drawing.Point(274, 16);
             this.SelectAllClient.Name = "SelectAllClient";
             this.SelectAllClient.Size = new System.Drawing.Size(77, 25);
             this.SelectAllClient.TabIndex = 7;

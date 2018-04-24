@@ -1049,14 +1049,12 @@ namespace SocketTool
                 {
                     Directory.CreateDirectory("Backup");
                 }
-                if (File.Exists("CARoot.cer"))
+                if (File.Exists("CARoot.cer") && File.Exists("ServerCert.pfx"))
                 {
                     File.Copy("CARoot.cer", "Backup\\CARootBackup.cer",true);
-                }
-                if (File.Exists("ServerCert.pfx"))
-                {
                     File.Copy("ServerCert.pfx", "Backup\\ServerCertBackup.pfx", true);
                 }
+
                 CmdHelper.CmdPath = Environment.CurrentDirectory + "\\cmd.exe";
                 CmdHelper.RunCmd(Cmd, out Result);
                 //MessageBox.Show(Result); //For debug
@@ -1065,13 +1063,10 @@ namespace SocketTool
                     if (Result.Contains("Failed") || Result.Contains("Error") || Result.Contains("ERROR"))
                     {
                         Result = $"生成证书失败！";
-                        if (File.Exists("Backup\\CARootBackup.cer"))
+                        if (File.Exists("Backup\\CARootBackup.cer") && File.Exists("Backup\\ServerCertBackup.pfx"))
                         {
-                            File.Move("Backup\\CARootBackup.cer", "CARoot.cer");
-                        }
-                        if (File.Exists("Backup\\ServerCertBackup.pfx"))
-                        {
-                            File.Move("Backup\\ServerCertBackup.pfx", "ServerCert.pfx");
+                            File.Copy("Backup\\CARootBackup.cer", "CARoot.cer",true);
+                            File.Copy("Backup\\ServerCertBackup.pfx", "ServerCert.pfx",true);
                         }
                     }
                     else
