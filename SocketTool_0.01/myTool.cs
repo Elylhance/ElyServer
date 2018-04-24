@@ -119,7 +119,34 @@ namespace SocketTool
             else { }
             return SendResult;
         }
-
+        private void HexStrCheckAndConventer(ref string data)
+        {
+            if (data.StartsWith("[") && data.EndsWith("]"))
+            {
+                // Hex string
+                int i = 0;
+                bool ErrorFlag = false;
+                string TempData = data.TrimStart('[').TrimEnd(']');
+                byte[] bytes = new byte[(TempData.Length + 1) / 3];
+                String[] SplitStr = TempData.Split(' ');
+                foreach (string Char in SplitStr)
+                {
+                    try
+                    {
+                        bytes[i++] = byte.Parse(Char,System.Globalization.NumberStyles.HexNumber);
+                    }
+                    catch
+                    { 
+                        ErrorFlag = true;//Wrong format, stop process
+                        break;
+                    }
+                }
+                if (!ErrorFlag)
+                {
+                    data = Encoding.Default.GetString(bytes);
+                }
+            }
+        }
         private async Task<int> SendDataToClient(string data, decimal SendCount, CancellationToken Token)
         {
             int SentSize = 0;
@@ -131,6 +158,7 @@ namespace SocketTool
                     {
                         break;
                     }
+                    HexStrCheckAndConventer(ref data);
                     byte[] bytedata;
                     if (!data.Contains(@"[\0]"))
                     {
