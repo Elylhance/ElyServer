@@ -119,32 +119,35 @@ namespace SocketTool
             else { }
             return SendResult;
         }
-        private void HexStrCheckAndConventer(ref string data)
+        private bool HexStrCheckAndConventer(ref string data,ref byte[] bytedata)
         {
-            if (data.StartsWith("[") && data.EndsWith("]"))
+            if (data.StartsWith("[") && data.EndsWith("]") && !data.Equals(@"[\0]"))
             {
                 // Hex string
                 int i = 0;
-                bool ErrorFlag = false;
-                string TempData = data.TrimStart('[').TrimEnd(']');
-                byte[] bytes = new byte[(TempData.Length + 1) / 3];
-                String[] SplitStr = TempData.Split(' ');
+                string Tempdata = data.Substring(1,data.Length-2);
+                byte[] bytes = new byte[(Tempdata.Length + 1) / 3];
+                String[] SplitStr = Tempdata.Split(' ');
                 foreach (string Char in SplitStr)
                 {
                     try
                     {
-                        bytes[i++] = byte.Parse(Char,System.Globalization.NumberStyles.HexNumber);
+                        bytes[i++] = byte.Parse(Char, System.Globalization.NumberStyles.HexNumber);
                     }
                     catch
-                    { 
-                        ErrorFlag = true;//Wrong format, stop process
-                        break;
+                    {
+                        return false;
                     }
                 }
-                if (!ErrorFlag)
-                {
-                    data = Encoding.Default.GetString(bytes);
-                }
+                bytedata = bytes;
+                data = Encoding.Default.GetString(bytes);
+                if (data.Contains("\0"))    //data用于回显，需执行替换操作
+                    data = data.Replace("\0",@"[\0]");
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         private async Task<int> SendDataToClient(string data, decimal SendCount, CancellationToken Token)
@@ -158,17 +161,19 @@ namespace SocketTool
                     {
                         break;
                     }
-                    HexStrCheckAndConventer(ref data);
-                    byte[] bytedata;
-                    if (!data.Contains(@"[\0]"))
+                    byte[] bytedata = null;
+                    if (!HexStrCheckAndConventer(ref data, ref bytedata))
                     {
-                        bytedata = Encoding.Default.GetBytes(data);
-                    }
-                    else
-                    {
-                        bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
-                    }
 
+                        if (!data.Contains(@"[\0]"))
+                        {
+                            bytedata = Encoding.Default.GetBytes(data);
+                        }
+                        else
+                        {
+                            bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
+                        }
+                    }
                     object Client = SelectedClientList[i];
                     try
                     {

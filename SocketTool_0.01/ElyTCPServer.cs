@@ -209,13 +209,9 @@ namespace MySocketServer
                 {
                     byte[] data = new byte[1];
                     if (tcpC.TcpHandle.Client.Receive(data, SocketFlags.Peek) == 0)
-                    {
                         return false;
-                    }
                     else
-                    {
                         return true;
-                    }
                 }
                 else
                 {
@@ -247,6 +243,19 @@ namespace MySocketServer
                 Interlocked.Decrement(ref CurrentClientNum);
             }
         }
+        private async Task<bool> MessageWriteAsync(ElyClient ElyC, byte[] data)
+        {
+            try
+            {
+                await ElyC.Nstream.WriteAsync(data, 0, data.Length);
+                await ElyC.Nstream.FlushAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Public-methods
@@ -264,19 +273,6 @@ namespace MySocketServer
             }
         }
 
-        private async Task<bool> MessageWriteAsync(ElyClient ElyC, byte[] data)
-        {
-            try
-            {
-                await ElyC.Nstream.WriteAsync(data, 0, data.Length);
-                await ElyC.Nstream.FlushAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
         public void Disconnect(string IpPort)
         {
             ElyClient ElyC = null;
