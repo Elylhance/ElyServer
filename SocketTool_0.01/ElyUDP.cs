@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace MySocketServer
 {
@@ -110,14 +109,13 @@ namespace MySocketServer
             {
                 try
                 {
-                    IPEndPoint RemoteAddr = new IPEndPoint(IPAddress.Any, 0);
                     UdpReceiveResult UdpReceiveResult = await UdpC.ReceiveAsync();
                     if (UdpReceiveResult != null)
                     {
                         string IpPortStr = $"UDP:{UdpReceiveResult.RemoteEndPoint.Address.ToString()}:{UdpReceiveResult.RemoteEndPoint.Port}";
                         if (!ClientList.ContainsKey(IpPortStr) && iConnectedFDback != null)
                         {
-                            ClientList.TryAdd(IpPortStr, (IPEndPoint)UdpReceiveResult.RemoteEndPoint);
+                            ClientList.TryAdd(IpPortStr, UdpReceiveResult.RemoteEndPoint);
                             Task unwait = Task.Run(() => iConnectedFDback(IpPortStr));
                         }
                         byte[] data = UdpReceiveResult.Buffer;

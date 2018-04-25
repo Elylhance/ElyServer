@@ -150,7 +150,7 @@
             this.TabCtrl.Controls.Add(this.Server);
             this.TabCtrl.Controls.Add(this.SslConfig);
             this.TabCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TabCtrl.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TabCtrl.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.TabCtrl.Location = new System.Drawing.Point(0, 0);
             this.TabCtrl.Name = "TabCtrl";
             this.TabCtrl.SelectedIndex = 0;
@@ -190,10 +190,10 @@
             this.Server.Controls.Add(this.CurrentConnection);
             this.Server.Controls.Add(this.sNetCfg);
             this.Server.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.Server.Location = new System.Drawing.Point(4, 29);
+            this.Server.Location = new System.Drawing.Point(4, 26);
             this.Server.Name = "Server";
             this.Server.Padding = new System.Windows.Forms.Padding(3);
-            this.Server.Size = new System.Drawing.Size(936, 535);
+            this.Server.Size = new System.Drawing.Size(936, 538);
             this.Server.TabIndex = 0;
             this.Server.Text = "服务器";
             this.Server.UseVisualStyleBackColor = true;
@@ -204,6 +204,11 @@
             this.CTimerSpan.Location = new System.Drawing.Point(713, 216);
             this.CTimerSpan.Maximum = new decimal(new int[] {
             999999,
+            0,
+            0,
+            0});
+            this.CTimerSpan.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -226,6 +231,11 @@
             0,
             0,
             0});
+            this.BTimerSpan.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.BTimerSpan.Name = "BTimerSpan";
             this.BTimerSpan.Size = new System.Drawing.Size(48, 21);
             this.BTimerSpan.TabIndex = 32;
@@ -245,6 +255,11 @@
             0,
             0,
             0});
+            this.ATimerSpan.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.ATimerSpan.Name = "ATimerSpan";
             this.ATimerSpan.Size = new System.Drawing.Size(48, 21);
             this.ATimerSpan.TabIndex = 31;
@@ -260,7 +275,7 @@
             this.ShowHexData.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ShowHexData.AutoSize = true;
             this.ShowHexData.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ShowHexData.Location = new System.Drawing.Point(757, 508);
+            this.ShowHexData.Location = new System.Drawing.Point(757, 511);
             this.ShowHexData.Name = "ShowHexData";
             this.ShowHexData.Size = new System.Drawing.Size(99, 21);
             this.ShowHexData.TabIndex = 30;
@@ -272,7 +287,7 @@
             this.SaveLogToFile.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.SaveLogToFile.AutoSize = true;
             this.SaveLogToFile.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.SaveLogToFile.Location = new System.Drawing.Point(673, 508);
+            this.SaveLogToFile.Location = new System.Drawing.Point(673, 511);
             this.SaveLogToFile.Name = "SaveLogToFile";
             this.SaveLogToFile.Size = new System.Drawing.Size(75, 21);
             this.SaveLogToFile.TabIndex = 29;
@@ -347,6 +362,7 @@
             this.ADatablock.Location = new System.Drawing.Point(6, 122);
             this.ADatablock.Multiline = true;
             this.ADatablock.Name = "ADatablock";
+            this.ADatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ADatablock.Size = new System.Drawing.Size(303, 89);
             this.ADatablock.TabIndex = 9;
             this.ADatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
@@ -359,6 +375,7 @@
             this.BDatablock.Location = new System.Drawing.Point(315, 122);
             this.BDatablock.Multiline = true;
             this.BDatablock.Name = "BDatablock";
+            this.BDatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.BDatablock.Size = new System.Drawing.Size(303, 89);
             this.BDatablock.TabIndex = 12;
             this.BDatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
@@ -371,6 +388,7 @@
             this.CDatablock.Location = new System.Drawing.Point(624, 122);
             this.CDatablock.Multiline = true;
             this.CDatablock.Name = "CDatablock";
+            this.CDatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CDatablock.Size = new System.Drawing.Size(303, 89);
             this.CDatablock.TabIndex = 15;
             this.CDatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
@@ -380,7 +398,7 @@
             this.TxRxCounter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TxRxCounter.AutoSize = true;
             this.TxRxCounter.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TxRxCounter.Location = new System.Drawing.Point(55, 511);
+            this.TxRxCounter.Location = new System.Drawing.Point(55, 514);
             this.TxRxCounter.Name = "TxRxCounter";
             this.TxRxCounter.Size = new System.Drawing.Size(245, 14);
             this.TxRxCounter.TabIndex = 20;
@@ -390,7 +408,7 @@
             // 
             this.ClearLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ClearLog.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ClearLog.Location = new System.Drawing.Point(865, 506);
+            this.ClearLog.Location = new System.Drawing.Point(865, 509);
             this.ClearLog.Name = "ClearLog";
             this.ClearLog.Size = new System.Drawing.Size(62, 25);
             this.ClearLog.TabIndex = 19;
@@ -414,7 +432,7 @@
             this.LogTextbox.ReadOnly = true;
             this.LogTextbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.LogTextbox.ShowSelectionMargin = true;
-            this.LogTextbox.Size = new System.Drawing.Size(926, 260);
+            this.LogTextbox.Size = new System.Drawing.Size(926, 263);
             this.LogTextbox.TabIndex = 18;
             this.LogTextbox.Text = "支持以[\\0]表示字符串结束符，用于发送数据中输入字符串结束符\\0和接收的数据输出字符串结束符\\0；为避免与字符串\"[\\0]\"本身混淆，可根据数据长度来判断或查看" +
     "十六进制。\n";
@@ -868,9 +886,9 @@
             this.SslConfig.Controls.Add(this.NoMutualAuth);
             this.SslConfig.Controls.Add(this.MutualAuth);
             this.SslConfig.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.SslConfig.Location = new System.Drawing.Point(4, 29);
+            this.SslConfig.Location = new System.Drawing.Point(4, 26);
             this.SslConfig.Name = "SslConfig";
-            this.SslConfig.Size = new System.Drawing.Size(936, 535);
+            this.SslConfig.Size = new System.Drawing.Size(936, 538);
             this.SslConfig.TabIndex = 2;
             this.SslConfig.Text = "SSL配置";
             this.SslConfig.UseVisualStyleBackColor = true;
