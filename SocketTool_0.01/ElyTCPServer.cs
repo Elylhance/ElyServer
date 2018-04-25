@@ -60,7 +60,7 @@ namespace MySocketServer
             iDisconnectedFDback = DisconnectedFDback;
             iDataReceivedFDback = DataReceivedFDback;
 
-            IPAddress tcpIpaddr = IPAddress.Parse(listenerIp);
+            var tcpIpaddr = IPAddress.Parse(listenerIp);
             if (listenerPort == String.Empty)
             {
                 throw new ArgumentException("请输入端口号");
@@ -90,7 +90,7 @@ namespace MySocketServer
         private bool PortInUse(int port)
         {
             bool inUse = false;
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var ipProperties = IPGlobalProperties.GetIPGlobalProperties();
             IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
 
             foreach (IPEndPoint endPoint in ipEndPoints)
@@ -114,10 +114,8 @@ namespace MySocketServer
                         await Task.Delay(100);
                         continue;
                     }
-                    #region accept-connection
-                    TcpClient tcpClient = await iTcpListener.AcceptTcpClientAsync();
-                    #endregion
 
+                    TcpClient tcpClient = await iTcpListener.AcceptTcpClientAsync();
                     ElyClient tcpC = new ElyClient(tcpClient);
                     Task unwait = Task.Run(() => HandleConnectedClient(tcpC), Token);
                 }

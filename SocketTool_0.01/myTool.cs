@@ -226,8 +226,8 @@ namespace SocketTool
         {
             if (ClientListBox.InvokeRequired)
             {
-                delegateCallBack d = new delegateCallBack(ConnectedFDback);
-                this.Invoke(d, new object[] { newClient });
+                var Cb = new delegateCallBack(ConnectedFDback);
+                this.Invoke(Cb, new object[] { newClient });
             }
             else
             {
@@ -242,8 +242,8 @@ namespace SocketTool
         {
             if (ClientListBox.InvokeRequired)
             {
-                delegateCallBack d = new delegateCallBack(DisconnectedFDback);
-                this.Invoke(d, new object[] { ConnectedClient });
+                var Cb = new delegateCallBack(DisconnectedFDback);
+                this.Invoke(Cb, new object[] { ConnectedClient });
             }
             else
             {
@@ -261,8 +261,8 @@ namespace SocketTool
         {
             if (LogTextbox.InvokeRequired)
             {
-                delegateCallBackWithData d = new delegateCallBackWithData(DataReceivedFDback);
-                this.Invoke(d, new object[] { Sender, Data });
+                var Cb = new delegateCallBackWithData(DataReceivedFDback);
+                this.Invoke(Cb, new object[] { Sender, Data });
             }
             else
             {
@@ -324,7 +324,7 @@ namespace SocketTool
         {
             if (LogTextbox.InvokeRequired)
             {
-                delegateCallBack d = new delegateCallBack(PrintPromptMessage);
+                var d = new delegateCallBack(PrintPromptMessage);
                 this.Invoke(d, new object[] { promptMsg });
             }
             else

@@ -79,7 +79,7 @@ namespace MySocketServer
             iDisconnectedFDback = DisconnectedFDback;
             iDataReceivedFDback = DataReceivedFDback;
 
-            IPAddress tcpIpaddr = IPAddress.Parse(listenerIp);
+            var tcpIpaddr = IPAddress.Parse(listenerIp);
             if (listenerPort == String.Empty)
             {
                 throw new ArgumentException("请输入端口号");
@@ -153,7 +153,7 @@ namespace MySocketServer
                     TcpClient tcpClient = await iTcpListener.AcceptTcpClientAsync();
                     #endregion
 
-                    ElyClient sslClient = new ElyClient(tcpClient);
+                    var sslClient = new ElyClient(tcpClient);
                     if (iAcceptInvalidCert)
                     {
                         sslClient.Sstream = new SslStream(sslClient.Nstream, false, new RemoteCertificateValidationCallback(AcceptInvalidCert));
@@ -244,7 +244,7 @@ namespace MySocketServer
             {
                 // 循环监听&接收数据
                 while (!Token.IsCancellationRequested)
-                {                           
+                {
                     byte[] data = await MessageReadAsync(tcpC);
                     if (data == null)
                     {
@@ -293,7 +293,7 @@ namespace MySocketServer
             {
                 int read = 0;
                 byte[] buffer;
-                long bufferSize = 2048;
+                int bufferSize = 2048;
 
                 buffer = new byte[bufferSize];
                 if ((read = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
@@ -304,11 +304,13 @@ namespace MySocketServer
             }
             #endregion
             if (contentBytes.Length > 0)
+            {
                 return contentBytes;
+            }
             else
             {
                 return null;
-            } 
+            }
         }
         private bool AcceptInvalidCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {

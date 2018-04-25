@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace MySocketServer
 {
-    class ElyUDPClient:IDisposable
+    class ElyUDPClient : IDisposable
     {
         #region private-variable
         private UdpClient UdpC;
         private CancellationTokenSource TokenSource;
         private CancellationToken Token;
-        private ConcurrentDictionary<string,IPEndPoint> ClientList;
+        private ConcurrentDictionary<string, RemoteClient> ClientList;
         private Func<string, bool> iConnectedFDback = null;
         private Func<string, bool> iDisconnectedFDback = null;
         private Func<string, byte[], bool> iDataReceivedFDback = null;
@@ -54,10 +54,10 @@ namespace MySocketServer
             {
                 throw new ArgumentOutOfRangeException();
             }
-            
+
             try
             {
-                IPEndPoint LocalEndPoint = new IPEndPoint(Ipaddr, port);
+                var LocalEndPoint = new IPEndPoint(Ipaddr, port);
                 UdpC = new UdpClient(LocalEndPoint);
                 // 解决当某个UDP客户端不可达时，上报“远程主机强迫关闭了一个现有的连接”异常导致服务器退出的问题
                 uint IOC_IN = 0x80000000;
@@ -69,12 +69,13 @@ namespace MySocketServer
             {
                 throw new Exception("IP 地址不可用或端口已被占用");
             }
-            
+
             TokenSource = new CancellationTokenSource();
             Token = TokenSource.Token;
-            ClientList = new ConcurrentDictionary<string,IPEndPoint>();
+            ClientList = new ConcurrentDictionary<string, RemoteClient>();
             // Loop Receive data form any addr
-            Task.Run(()=>ListenAnyAddrData(), Token);
+            Task.Run(() => ListenAnyAddrData(), Token);
+            Task.Run(() => AutoDisconnectChecker(), Token);
         }
         #endregion
 
@@ -87,11 +88,11 @@ namespace MySocketServer
         {
             try
             {
-                IPEndPoint RemoteAddr;
-                ClientList.TryRemove(IpPortStr, out RemoteAddr);
+                RemoteClient RmClient;
+                ClientList.TryRemove(IpPortStr, out RmClient);
                 if (iDisconnectedFDback != null)
                 {
-                    Task unwait = Task.Run(()=>iDisconnectedFDback(IpPortStr));
+                    Task unwait = Task.Run(() => iDisconnectedFDback(IpPortStr));
                 }
             }
             catch (Exception)
@@ -109,19 +110,31 @@ namespace MySocketServer
             {
                 try
                 {
-                    UdpReceiveResult UdpReceiveResult = await UdpC.ReceiveAsync();
+                    var UdpReceiveResult = await UdpC.ReceiveAsync();
                     if (UdpReceiveResult != null)
                     {
                         string IpPortStr = $"UDP:{UdpReceiveResult.RemoteEndPoint.Address.ToString()}:{UdpReceiveResult.RemoteEndPoint.Port}";
-                        if (!ClientList.ContainsKey(IpPortStr) && iConnectedFDback != null)
+                        if (!ClientList.ContainsKey(IpPortStr))
                         {
-                            ClientList.TryAdd(IpPortStr, UdpReceiveResult.RemoteEndPoint);
-                            Task unwait = Task.Run(() => iConnectedFDback(IpPortStr));
+                            var RmClient = new RemoteClient();
+                            RmClient.RemoteEndPoint = UdpReceiveResult.RemoteEndPoint;
+                            RmClient.ActiveTime = DateTime.Now;
+                            ClientList.TryAdd(IpPortStr, RmClient);
+                            if (iConnectedFDback != null)
+                            {
+                                Task unwait = Task.Run(() => iConnectedFDback(IpPortStr));
+                            }
+                        }
+                        else
+                        {
+                            RemoteClient RmClient;
+                            ClientList.TryGetValue(IpPortStr as string, out RmClient);
+                            RmClient.ActiveTime = DateTime.Now;
                         }
                         byte[] data = UdpReceiveResult.Buffer;
                         if (iDataReceivedFDback != null)
                         {
-                            Task unwait = Task.Run(()=>iDataReceivedFDback(IpPortStr, data));
+                            Task unwait = Task.Run(() => iDataReceivedFDback(IpPortStr, data));
                         }
                     }
                 }
@@ -132,13 +145,32 @@ namespace MySocketServer
             }
             return;
         }
+        private async void AutoDisconnectChecker()
+        {
+            while (!Token.IsCancellationRequested)
+            {
+                if (ClientList.Count > 0)
+                {
+                    foreach (KeyValuePair<string, RemoteClient> RmClientData in ClientList)
+                    {
+                        var TimeSpan = DateTime.Now - RmClientData.Value.ActiveTime;
+                        if (TimeSpan.TotalSeconds > 120) //Two minuts
+                        {
+                            Disconnect(RmClientData.Key);
+                        }
+                    }
+                }
+                await Task.Delay(500);
+            }
+        }
         private async Task<bool> AsyncWrite(string IpPortStr, byte[] data)
-        {     
+        {
             try
             {
-                IPEndPoint RemoteAddr;
-                ClientList.TryGetValue(IpPortStr, out RemoteAddr);
-                await UdpC.SendAsync(data, data.Length, RemoteAddr);
+                RemoteClient RmClient;
+                ClientList.TryGetValue(IpPortStr, out RmClient);
+                await UdpC.SendAsync(data, data.Length, RmClient.RemoteEndPoint);
+                RmClient.ActiveTime = DateTime.Now;
                 return true;
             }
             catch (Exception)
@@ -161,7 +193,7 @@ namespace MySocketServer
                 }
                 if (ClientList != null)
                 {
-                    foreach (KeyValuePair<string, IPEndPoint> CloseItem in ClientList)
+                    foreach (KeyValuePair<string, RemoteClient> CloseItem in ClientList)
                     {
                         Disconnect(CloseItem.Key);
                     }
@@ -184,7 +216,8 @@ namespace MySocketServer
             }
         }
 
-         ~ElyUDPClient() {
+        ~ElyUDPClient()
+        {
             Dispose(false);
         }
 
@@ -194,5 +227,37 @@ namespace MySocketServer
             GC.SuppressFinalize(this);
         }
         #endregion
+    }
+
+    class RemoteClient
+    {
+        private IPEndPoint remoteEndPoint;
+        private DateTime activeTime;
+
+        public IPEndPoint RemoteEndPoint
+        {
+            get
+            {
+                return remoteEndPoint;
+            }
+
+            set
+            {
+                remoteEndPoint = value;
+            }
+        }
+
+        public DateTime ActiveTime
+        {
+            get
+            {
+                return activeTime;
+            }
+
+            set
+            {
+                activeTime = value;
+            }
+        }
     }
 }
