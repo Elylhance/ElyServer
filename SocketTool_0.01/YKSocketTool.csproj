@@ -93,6 +93,12 @@
     <Compile Include="ElyClient.cs" />
     <Compile Include="ElyTLSServer.cs" />
     <Compile Include="ElyUDP.cs" />
+    <Compile Include="HelpMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HelpMsg.Designer.cs">
+      <DependentUpon>HelpMsg.cs</DependentUpon>
+    </Compile>
     <Compile Include="myTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +108,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ElyTCPServer.cs" />
+    <EmbeddedResource Include="HelpMsg.resx">
+      <DependentUpon>HelpMsg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="myTool.resx">
       <DependentUpon>myTool.cs</DependentUpon>
     </EmbeddedResource>

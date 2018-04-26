@@ -26,6 +26,7 @@ namespace SocketTool
         private ElyUDPClient elyDtlsServer;
         private int SequenceNum = 0;
         private FileStream LogFile;
+        private Form myHelpMsgWindow = null;
         private CancellationTokenSource CancellTS;
         private ListBox.SelectedObjectCollection SelectedClientList;
         #endregion
@@ -47,17 +48,16 @@ namespace SocketTool
             TlsVersion.SelectedIndex = 0;
             SignatureAlgorithm.SelectedIndex = 2;
             SelectedClientList = ClientListBox.SelectedItems;
-
             Task.Run(async() =>
             {
                 await Task.Delay(500);
                 if (!File.Exists("init.ini"))
                 {
-                    string ReleaseNote = File.ReadAllText("ReleaseNote.txt");
-                    MessageBox.Show(ReleaseNote, "新版特性");
+                    var myHelpMsgWindow = new HelpMsgWindow();
+                    myHelpMsgWindow.ShowDialog();
                     using (FileStream unUse = File.Create("init.ini")) { ;}
                 }
-                // Tool Chain Check, note the diffirence between x86&x64
+                // Check Tool-Chain
                 string[] ToolList = { "cmd.exe", "makecert.exe", "Cert2Spc.exe", "pvk2pfx.exe", "openssl.exe" };
                 if (!Directory.Exists("cert"))
                 {
@@ -71,7 +71,7 @@ namespace SocketTool
                         if (File.Exists($"cert\\{ToolName}"))
                             continue;
                         else
-                            MessageBox.Show($"Warrning!!! Can not find file [{ToolName}]!");
+                            MessageBox.Show($"Warrning!!! Can not find [{ToolName}]!");
                     }
                 }
             });
@@ -975,6 +975,14 @@ namespace SocketTool
             {
                 textBox.SelectAll();
                 e.Handled = true;
+            }
+        }
+        private void myTool_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F1)
+            {
+                var myHelpMsgWindow = new HelpMsgWindow();
+                myHelpMsgWindow.ShowDialog();
             }
         }
         #endregion

@@ -1366,12 +1366,14 @@
             this.Controls.Add(this.TabCtrl);
             this.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximumSize = new System.Drawing.Size(960, 1080);
             this.MinimumSize = new System.Drawing.Size(960, 38);
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
             this.Text = "YKSocketTool v0.03";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.myTool_KeyDown);
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
             this.Server.PerformLayout();
