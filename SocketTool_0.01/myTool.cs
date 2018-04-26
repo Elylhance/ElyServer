@@ -914,7 +914,7 @@ namespace SocketTool
                 }
                 bytedata = bytes;
                 data = Encoding.Default.GetString(bytes);
-                if (data.Contains("\0"))    //此处data用于回显，需执行替换操作s
+                if (data.Contains("\0"))    //此处data用于回显，需执行替换操作
                     data = data.Replace("\0", @"[\0]");
                 return true;
             }
