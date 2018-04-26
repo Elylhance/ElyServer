@@ -249,7 +249,7 @@
             // ATimerSpan
             // 
             this.ATimerSpan.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ATimerSpan.Location = new System.Drawing.Point(95, 216);
+            this.ATimerSpan.Location = new System.Drawing.Point(96, 216);
             this.ATimerSpan.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -357,6 +357,7 @@
             // 
             // ADatablock
             // 
+            this.ADatablock.AllowDrop = true;
             this.ADatablock.BackColor = System.Drawing.SystemColors.Window;
             this.ADatablock.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ADatablock.Location = new System.Drawing.Point(6, 122);
@@ -365,10 +366,13 @@
             this.ADatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ADatablock.Size = new System.Drawing.Size(303, 89);
             this.ADatablock.TabIndex = 9;
+            this.ADatablock.DragDrop += new System.Windows.Forms.DragEventHandler(this.Datablock_DragDrop);
+            this.ADatablock.DragEnter += new System.Windows.Forms.DragEventHandler(this.Datablock_DragEnter);
             this.ADatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
             // 
             // BDatablock
             // 
+            this.BDatablock.AllowDrop = true;
             this.BDatablock.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.BDatablock.BackColor = System.Drawing.SystemColors.Window;
             this.BDatablock.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -378,10 +382,13 @@
             this.BDatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.BDatablock.Size = new System.Drawing.Size(303, 89);
             this.BDatablock.TabIndex = 12;
+            this.BDatablock.DragDrop += new System.Windows.Forms.DragEventHandler(this.Datablock_DragDrop);
+            this.BDatablock.DragEnter += new System.Windows.Forms.DragEventHandler(this.Datablock_DragEnter);
             this.BDatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
             // 
             // CDatablock
             // 
+            this.CDatablock.AllowDrop = true;
             this.CDatablock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CDatablock.BackColor = System.Drawing.SystemColors.Window;
             this.CDatablock.Font = new System.Drawing.Font("Consolas", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -391,6 +398,8 @@
             this.CDatablock.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.CDatablock.Size = new System.Drawing.Size(303, 89);
             this.CDatablock.TabIndex = 15;
+            this.CDatablock.DragDrop += new System.Windows.Forms.DragEventHandler(this.Datablock_DragDrop);
+            this.CDatablock.DragEnter += new System.Windows.Forms.DragEventHandler(this.Datablock_DragEnter);
             this.CDatablock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
             // 
             // TxRxCounter
@@ -1349,6 +1358,7 @@
             // 
             // myTool
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;

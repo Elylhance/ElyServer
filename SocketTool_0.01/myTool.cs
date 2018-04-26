@@ -20,15 +20,14 @@ namespace SocketTool
         private bool IsTCPListening;
         private bool IsUDPListening;
         private bool IsSending;
-        private CancellationTokenSource CancellTS;
-        private ListBox.SelectedObjectCollection SelectedClientList;
         private ElyTCPServer elyTcpServer;
         private ElyTLSServer elyTlsServer;
         private ElyUDPClient elyUdpServer;
         private ElyUDPClient elyDtlsServer;
-        private int SendTimerSpanMs = 0;
         private int SequenceNum = 0;
         private FileStream LogFile;
+        private CancellationTokenSource CancellTS;
+        private ListBox.SelectedObjectCollection SelectedClientList;
         #endregion
 
         #region InitMyTool
@@ -48,6 +47,7 @@ namespace SocketTool
             TlsVersion.SelectedIndex = 0;
             SignatureAlgorithm.SelectedIndex = 2;
             SelectedClientList = ClientListBox.SelectedItems;
+
             Task.Run(async() =>
             {
                 await Task.Delay(500);
@@ -97,130 +97,6 @@ namespace SocketTool
         #region ConstrutorCallBack
         delegate bool delegateCallBack(string newClient);
         delegate bool delegateCallBackWithData(string Sender, byte[] Data);
-        private async Task<bool> WriteData(string Client, byte[] bytedata)
-        {
-            bool SendResult = false;
-            if (elyTcpServer != null && Client.StartsWith("TCP"))
-            {
-                SendResult = await elyTcpServer.Send(Client, bytedata);
-            }
-            else if (elyTlsServer != null && Client.StartsWith("TLS"))
-            {
-                SendResult = await elyTlsServer.Send(Client, bytedata);
-            }
-            else if (elyUdpServer != null && Client.StartsWith("UDP"))
-            {
-                SendResult = await elyUdpServer.Send(Client, bytedata);
-            }
-            else if (elyDtlsServer != null && Client.StartsWith("DTLS"))
-            {
-                SendResult = await elyDtlsServer.Send(Client, bytedata);
-            }
-            else { }
-            return SendResult;
-        }
-        private bool HexStrCheckAndConventer(ref string data,ref byte[] bytedata)
-        {
-            if (data.StartsWith("[") && data.EndsWith("]") && !data.Equals(@"[\0]"))
-            {
-                // Hex string
-                int i = 0;
-                string Tempdata = data.Substring(1,data.Length-2);
-                byte[] bytes = new byte[(Tempdata.Length + 1) / 3];
-                String[] SplitStr = Tempdata.Split(' ');
-                foreach (string Char in SplitStr)
-                {
-                    try
-                    {
-                        bytes[i++] = byte.Parse(Char, System.Globalization.NumberStyles.HexNumber);
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }
-                bytedata = bytes;
-                data = Encoding.Default.GetString(bytes);
-                if (data.Contains("\0"))    //data用于回显，需执行替换操作
-                    data = data.Replace("\0",@"[\0]");
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private async Task<int> SendDataToClient(string data, decimal SendCount, CancellationToken Token)
-        {
-            int SentSize = 0;
-            while (SelectedClientList.Count > 0 && SendCount-- > 0)
-            {
-                for (int i = 0; i < SelectedClientList.Count; i++)
-                {
-                    if (Token.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    byte[] bytedata = null;
-                    if (!HexStrCheckAndConventer(ref data, ref bytedata))
-                    {
-
-                        if (!data.Contains(@"[\0]"))
-                        {
-                            bytedata = Encoding.Default.GetBytes(data);
-                        }
-                        else
-                        {
-                            bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
-                        }
-                    }
-                    object Client = SelectedClientList[i];
-                    try
-                    {
-                        if (Client.ToString() != string.Empty)
-                        {
-                            bool SendResult = await WriteData(Client.ToString(), bytedata);
-                            if (SendResult)
-                            {
-                                /// Report sent data successfully. 
-                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytedata.Length} >--[OK]{Environment.NewLine}{data}";
-                                if (ShowHexData.Checked)
-                                {
-                                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
-                                    SendInfo += Hexstr;
-                                }
-                                MessageOutPutHandler(SendInfo);
-                                SentSize += bytedata.Length;
-                                TxBytes += bytedata.Length;
-                                TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
-                                TxRxCounter.Update();
-                            }
-                            else
-                            {
-                                throw new SocketException();
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        /// Report sent data failed.
-                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytedata.Length} >--[ERROR]{Environment.NewLine}{data}";
-                        if (ShowHexData.Checked)
-                        {
-                            string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
-                            SendInfo += Hexstr;
-                        }
-                        MessageOutPutHandler(SendInfo);
-                        continue;
-                    }
-                }
-                if (SendCount > 0)  ///延时 SendTimerSpanMs
-                {
-                    await Task.Delay(SendTimerSpanMs);
-                }
-            }
-            return SentSize;
-        }
 
         private bool ConnectedFDback(string newClient)
         {
@@ -647,187 +523,6 @@ namespace SocketTool
             SelectedClientList = ClientListBox.SelectedItems;
         }
 
-        private async void ASendDataReq_Click(object sender, EventArgs e)
-        {
-            if (!IsSending)
-            {
-                if (SelectedClientList.Count == 0)
-                    return;
-                if (ADatablock.Text == string.Empty)
-                    return;
-                string InputData = ADatablock.Text;
-                SendTimerSpanMs = Convert.ToInt32(ATimerSpan.Text);
-                if (SendTimerSpanMs == 0 && ASendCount.Value > 1)
-                {
-                    ATimerSpan.Focus();
-                    return;
-                }
-                try
-                {
-                    IsSending = true;
-                    /// 禁止修改一些参数及触发按钮
-                    BSendButton.Enabled = false;
-                    CSendButton.Enabled = false;
-
-                    ASendButton.BackColor = Color.SkyBlue;
-                    ATimerSpan.Enabled = false;
-                    ADatablock.Enabled = false;
-                    ASendCount.Enabled = false;
-
-                    CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, ASendCount.Value, CancellTS.Token);
-                }
-                finally
-                {
-                    BSendButton.Enabled = true;
-                    CSendButton.Enabled = true;
-
-                    ATimerSpan.Enabled = true;
-                    ADatablock.Enabled = true;
-                    ASendCount.Enabled = true;
-                    ASendButton.BackColor = TransparencyKey;
-                    IsSending = false;
-                }
-            }
-            else
-            {
-                if (CancellTS != null)
-                {
-                    CancellTS.Cancel();
-                }
-                BSendButton.Enabled = true;
-                CSendButton.Enabled = true;
-
-                ATimerSpan.Enabled = true;
-                ADatablock.Enabled = true;
-                ASendCount.Enabled = true;
-                ASendButton.BackColor = TransparencyKey;
-                IsSending = false;
-            }
-
-        }
-
-        private async void BSendDataReq_Click(object sender, EventArgs e)
-        {
-            if (!IsSending)
-            {
-                if (SelectedClientList.Count == 0)
-                    return;
-                if (BDatablock.Text == string.Empty)
-                    return;
-
-                string InputData = BDatablock.Text;
-                SendTimerSpanMs = Convert.ToInt32(BTimerSpan.Text);
-                if (SendTimerSpanMs == 0 && BSendCount.Value > 1)
-                {
-                    BTimerSpan.Focus();
-                    return;
-                }
-                try
-                {
-                    IsSending = true;
-                    // 开启互斥
-                    ASendButton.Enabled = false;
-                    CSendButton.Enabled = false;
-
-                    BSendButton.BackColor = Color.SkyBlue;
-                    BTimerSpan.Enabled = false;
-                    BDatablock.Enabled = false;
-                    BSendCount.Enabled = false;
-
-                    CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, BSendCount.Value, CancellTS.Token);
-                }
-                finally
-                {
-                    // 取消互斥
-                    ASendButton.Enabled = true;
-                    CSendButton.Enabled = true;
-                    // 反转状态
-                    BTimerSpan.Enabled = true;
-                    BDatablock.Enabled = true;
-                    BSendCount.Enabled = true;
-                    BSendButton.BackColor = TransparencyKey;
-                    IsSending = false;
-                }
-            }
-            else
-            {
-                if (CancellTS != null)
-                {
-                    CancellTS.Cancel();
-                }
-                ASendButton.Enabled = true;
-                CSendButton.Enabled = true;
-
-                BTimerSpan.Enabled = true;
-                BDatablock.Enabled = true;
-                BSendCount.Enabled = true;
-                BSendButton.BackColor = TransparencyKey;
-                IsSending = false;
-            }
-        }
-
-        private async void CSendDataReq_Click(object sender, EventArgs e)
-        {
-            if (!IsSending)
-            {
-                if (SelectedClientList.Count == 0)
-                    return;
-                if (CDatablock.Text == string.Empty)
-                    return;
-
-                string InputData = CDatablock.Text;
-                SendTimerSpanMs = Convert.ToInt32(CTimerSpan.Text);
-                if (SendTimerSpanMs == 0 && CSendCount.Value > 1)
-                {
-                    CTimerSpan.Focus();
-                    return;
-                }
-                try
-                {
-                    IsSending = true;
-
-                    ASendButton.Enabled = false;
-                    BSendButton.Enabled = false;
-
-                    CSendButton.BackColor = Color.SkyBlue;
-                    CDatablock.Enabled = false;
-                    CTimerSpan.Enabled = false;
-                    CSendCount.Enabled = false;
-
-                    CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(InputData, CSendCount.Value, CancellTS.Token);
-                }
-                finally
-                {
-                    ASendButton.Enabled = true;
-                    BSendButton.Enabled = true;
-
-                    CTimerSpan.Enabled = true;
-                    CDatablock.Enabled = true;
-                    CSendCount.Enabled = true;
-                    CSendButton.BackColor = TransparencyKey;
-                    IsSending = false;
-                }
-            }
-            else
-            {
-                if (CancellTS != null)
-                {
-                    CancellTS.Cancel();
-                }
-                ASendButton.Enabled = true;
-                BSendButton.Enabled = true;
-
-                CTimerSpan.Enabled = true;
-                CDatablock.Enabled = true;
-                CSendCount.Enabled = true;
-                CSendButton.BackColor = TransparencyKey;
-                IsSending = false;
-            }
-        }
-
         private void numericUpDown_Leave(object sender, EventArgs e)
         {
             /* 解决当删除框内字符后，没有输入新值，显示为null，但是value实际为原来的值的问题 */
@@ -880,6 +575,354 @@ namespace SocketTool
             }
         }
 
+        #endregion
+
+        #region SendData
+        private void Datablock_DragDrop(object sender, DragEventArgs e)
+        {
+            TextBox TextObject = sender as TextBox;
+            string path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            FileInfo fil = new FileInfo(path);
+            if (fil.Length > 128 * 1024)  //128k
+            {
+                TextObject.Text = "Error: The file size is too large";
+            }
+            else
+            {
+                TextObject.Text = path;
+                TextObject.Tag = path;
+            }
+            TextObject.Cursor = Cursors.IBeam;
+        }
+
+        private void Datablock_DragEnter(object sender, DragEventArgs e)
+        {
+            TextBox TextObject = sender as TextBox;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                if (path.Length > 1)
+                {
+                    //判断是文件夹吗
+                    FileInfo fil = new FileInfo(path);
+                    if (fil.Attributes == FileAttributes.Directory)//文件夹
+                    {
+                        e.Effect = DragDropEffects.None;
+                    }
+                    else//文件
+                    {
+                        e.Effect = DragDropEffects.Link;
+                        TextObject.Cursor = Cursors.Arrow;
+                    }
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                }
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+        private async void ASendDataReq_Click(object sender, EventArgs e)
+        {
+            if (!IsSending)
+            {
+                if (SelectedClientList.Count == 0)
+                    return;
+                if (ADatablock.Text == string.Empty)
+                    return;
+                try
+                {
+                    IsSending = true;
+                    /// 禁止修改一些参数及触发按钮
+                    BSendButton.Enabled = false;
+                    CSendButton.Enabled = false;
+
+                    ASendButton.BackColor = Color.SkyBlue;
+                    ATimerSpan.Enabled = false;
+                    ADatablock.Enabled = false;
+                    ASendCount.Enabled = false;
+
+                    string InputData = ADatablock.Text;
+                    CancellTS = new CancellationTokenSource();
+                    int unUse = await SendDataToClient(ADatablock, InputData, ASendCount.Value, ATimerSpan.Value, CancellTS.Token);
+                }
+                finally
+                {
+                    BSendButton.Enabled = true;
+                    CSendButton.Enabled = true;
+
+                    ATimerSpan.Enabled = true;
+                    ADatablock.Enabled = true;
+                    ASendCount.Enabled = true;
+                    ASendButton.BackColor = TransparencyKey;
+                    IsSending = false;
+                }
+            }
+            else
+            {
+                if (CancellTS != null)
+                {
+                    CancellTS.Cancel();
+                }
+                BSendButton.Enabled = true;
+                CSendButton.Enabled = true;
+
+                ATimerSpan.Enabled = true;
+                ADatablock.Enabled = true;
+                ASendCount.Enabled = true;
+                ASendButton.BackColor = TransparencyKey;
+                IsSending = false;
+            }
+
+        }
+
+        private async void BSendDataReq_Click(object sender, EventArgs e)
+        {
+            if (!IsSending)
+            {
+                if (SelectedClientList.Count == 0)
+                    return;
+                if (BDatablock.Text == string.Empty)
+                    return;
+                try
+                {
+                    IsSending = true;
+                    // 开启互斥
+                    ASendButton.Enabled = false;
+                    CSendButton.Enabled = false;
+
+                    BSendButton.BackColor = Color.SkyBlue;
+                    BTimerSpan.Enabled = false;
+                    BDatablock.Enabled = false;
+                    BSendCount.Enabled = false;
+
+                    string InputData = BDatablock.Text;
+                    CancellTS = new CancellationTokenSource();
+                    int unUse = await SendDataToClient(BDatablock, InputData, BSendCount.Value, BTimerSpan.Value, CancellTS.Token);
+                }
+                finally
+                {
+                    // 取消互斥
+                    ASendButton.Enabled = true;
+                    CSendButton.Enabled = true;
+                    // 反转状态
+                    BTimerSpan.Enabled = true;
+                    BDatablock.Enabled = true;
+                    BSendCount.Enabled = true;
+                    BSendButton.BackColor = TransparencyKey;
+                    IsSending = false;
+                }
+            }
+            else
+            {
+                if (CancellTS != null)
+                {
+                    CancellTS.Cancel();
+                }
+                ASendButton.Enabled = true;
+                CSendButton.Enabled = true;
+
+                BTimerSpan.Enabled = true;
+                BDatablock.Enabled = true;
+                BSendCount.Enabled = true;
+                BSendButton.BackColor = TransparencyKey;
+                IsSending = false;
+            }
+        }
+
+        private async void CSendDataReq_Click(object sender, EventArgs e)
+        {
+            if (!IsSending)
+            {
+                if (SelectedClientList.Count == 0)
+                    return;
+                if (CDatablock.Text == string.Empty)
+                    return;
+                try
+                {
+                    IsSending = true;
+
+                    ASendButton.Enabled = false;
+                    BSendButton.Enabled = false;
+
+                    CSendButton.BackColor = Color.SkyBlue;
+                    CDatablock.Enabled = false;
+                    CTimerSpan.Enabled = false;
+                    CSendCount.Enabled = false;
+
+                    string InputData = CDatablock.Text;
+                    CancellTS = new CancellationTokenSource();
+                    int unUse = await SendDataToClient(CDatablock, InputData, CSendCount.Value, CTimerSpan.Value, CancellTS.Token);
+                }
+                finally
+                {
+                    ASendButton.Enabled = true;
+                    BSendButton.Enabled = true;
+
+                    CTimerSpan.Enabled = true;
+                    CDatablock.Enabled = true;
+                    CSendCount.Enabled = true;
+                    CSendButton.BackColor = TransparencyKey;
+                    IsSending = false;
+                }
+            }
+            else
+            {
+                if (CancellTS != null)
+                {
+                    CancellTS.Cancel();
+                }
+                ASendButton.Enabled = true;
+                BSendButton.Enabled = true;
+
+                CTimerSpan.Enabled = true;
+                CDatablock.Enabled = true;
+                CSendCount.Enabled = true;
+                CSendButton.BackColor = TransparencyKey;
+                IsSending = false;
+            }
+        }
+        private async Task<int> SendDataToClient(object Sender,string data, decimal SendCount, decimal TimerSpan, CancellationToken Token)
+        {
+            int SentSize = 0;
+            while (SelectedClientList.Count > 0 && SendCount-- > 0)
+            {
+                for (int i = 0; i < SelectedClientList.Count; i++)
+                {
+                    if (Token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    byte[] bytedata = null;
+                    TextBox DataTB = Sender as TextBox;
+                    if (DataTB.Tag == null) //检测文件发送模式
+                    {
+                        if (!HexStrCheckerAndConventer(ref data, ref bytedata)) //检测十六进制发送模式
+                        {
+                            //普通模式
+                            if (!data.Contains(@"[\0]"))
+                            {
+                                bytedata = Encoding.Default.GetBytes(data);
+                            }
+                            else
+                            {
+                                bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        bytedata = File.ReadAllBytes(data);
+                        data = Encoding.Default.GetString(bytedata).Replace("\0",@"[\0]");
+                    }
+                    object Client = SelectedClientList[i];
+                    try
+                    {
+                        if (Client.ToString() != string.Empty)
+                        {
+                            bool SendResult = await WriteData(Client.ToString(), bytedata);
+                            if (SendResult)
+                            {
+                                /// Report sent data successfully. 
+                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytedata.Length} >--[OK]{Environment.NewLine}{data}";
+                                if (ShowHexData.Checked)
+                                {
+                                    string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
+                                    SendInfo += Hexstr;
+                                }
+                                if (DataTB.Tag != null)
+                                {
+                                    DataTB.Text = $"文件『{DataTB.Tag}』发送完毕";
+                                    DataTB.Tag = null;
+                                }
+                                MessageOutPutHandler(SendInfo);
+                                SentSize += bytedata.Length;
+                                TxBytes += bytedata.Length;
+                                TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
+                                TxRxCounter.Update();
+                            }
+                            else
+                            {
+                                throw new SocketException();
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        /// Report sent data failed.
+                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytedata.Length} >--[ERROR]{Environment.NewLine}{data}";
+                        if (ShowHexData.Checked)
+                        {
+                            string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
+                            SendInfo += Hexstr;
+                        }
+                        MessageOutPutHandler(SendInfo);
+                        continue;
+                    }
+                }
+                if (SendCount > 0)  ///延时 SendTimerSpanMs
+                {
+                    await Task.Delay((int)TimerSpan);
+                }
+            }
+            return SentSize;
+        }
+        private async Task<bool> WriteData(string Client, byte[] bytedata)
+        {
+            bool SendResult = false;
+            if (elyTcpServer != null && Client.StartsWith("TCP"))
+            {
+                SendResult = await elyTcpServer.Send(Client, bytedata);
+            }
+            else if (elyTlsServer != null && Client.StartsWith("TLS"))
+            {
+                SendResult = await elyTlsServer.Send(Client, bytedata);
+            }
+            else if (elyUdpServer != null && Client.StartsWith("UDP"))
+            {
+                SendResult = await elyUdpServer.Send(Client, bytedata);
+            }
+            else if (elyDtlsServer != null && Client.StartsWith("DTLS"))
+            {
+                SendResult = await elyDtlsServer.Send(Client, bytedata);
+            }
+            else { }
+            return SendResult;
+        }
+        private bool HexStrCheckerAndConventer(ref string data, ref byte[] bytedata)
+        {
+            if (data.StartsWith("[") && data.EndsWith("]") && !data.Equals(@"[\0]"))
+            {
+                // Hex string
+                int i = 0;
+                string Tempdata = data.Substring(1, data.Length - 2);
+                byte[] bytes = new byte[(Tempdata.Length + 1) / 3];
+                String[] SplitStr = Tempdata.Split(' ');
+                foreach (string Char in SplitStr)
+                {
+                    try
+                    {
+                        bytes[i++] = byte.Parse(Char, System.Globalization.NumberStyles.HexNumber);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+                bytedata = bytes;
+                data = Encoding.Default.GetString(bytes);
+                if (data.Contains("\0"))    //此处data用于回显，需执行替换操作s
+                    data = data.Replace("\0", @"[\0]");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region KeyPressEvent
