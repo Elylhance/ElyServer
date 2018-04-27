@@ -53,9 +53,20 @@ namespace SocketTool
                 await Task.Delay(500);
                 if (!File.Exists("init.ini"))
                 {
+                    //First run application
                     var myHelpMsgWindow = new HelpMsgWindow();
                     myHelpMsgWindow.ShowDialog();
-                    using (FileStream unUse = File.Create("init.ini")) { ;}
+                    using (FileStream unUse = File.Create("init.ini")) {; }
+                }
+                else
+                {
+                    byte[] bytes = File.ReadAllBytes("init.ini");
+                    String UserConfig = Encoding.UTF8.GetString(bytes);
+                    String[] ConfigSet = UserConfig.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var config in ConfigSet)
+                    {
+                        RestoreUserConfigAndData(config);
+                    }
                 }
                 // Check Tool-Chain
                 string[] ToolList = { "cmd.exe", "makecert.exe", "Cert2Spc.exe", "pvk2pfx.exe", "openssl.exe" };
@@ -91,6 +102,147 @@ namespace SocketTool
                 }
             }
             return LocalIP;
+        }
+
+        private void BackupUserConfigAndData()
+        {
+            using (FileStream Fs = new FileStream("init.ini", FileMode.Create))
+            {
+                string UserConfig = string.Empty;
+                UserConfig += $"TcpIpAddr:{TcpIpAddr.SelectedIndex}" + Environment.NewLine;
+                UserConfig += $"TcpPort:{TcpPort.Text}" + Environment.NewLine;
+                UserConfig += $"UdpIpAddr:{UdpIpAddr.SelectedIndex}" + Environment.NewLine;
+                UserConfig += $"UdpPort:{UdpPort.Text}" + Environment.NewLine;
+
+                UserConfig += $"ADataBlock:{ADatablock.Text}" + Environment.NewLine;
+                UserConfig += $"ATimerSpan:{ATimerSpan.Text}" + Environment.NewLine;
+                UserConfig += $"ASendCount:{ASendCount.Text}" + Environment.NewLine;
+
+                UserConfig += $"BDatablock:{BDatablock.Text}" + Environment.NewLine;
+                UserConfig += $"BTimerSpan:{BTimerSpan.Text}" + Environment.NewLine;
+                UserConfig += $"BSendCount:{BSendCount.Text}" + Environment.NewLine;
+
+                UserConfig += $"CDatablock:{CDatablock.Text}" + Environment.NewLine;
+                UserConfig += $"CTimerSpan:{CTimerSpan.Text}" + Environment.NewLine;
+                UserConfig += $"CSendCount:{CSendCount.Text}" + Environment.NewLine;
+
+                //SSL Setup
+                UserConfig += $"PKCS12:{PKCS12.Checked}" + Environment.NewLine;
+                UserConfig += $"TlsVersion:{TlsVersion.SelectedIndex}" + Environment.NewLine;
+                UserConfig += $"IgnoreCert:{IgnoreCert.Checked}" + Environment.NewLine;
+                UserConfig += $"MutualAuth:{MutualAuth.Checked}" + Environment.NewLine;
+                UserConfig += $"pfxFilePath:{pfxFilePath.Text}" + Environment.NewLine;
+                UserConfig += $"pfxPasswd:{pfxPasswd.Text}:{pfxPasswd.PasswordChar}:{ImportShowPasswd.Checked}" + Environment.NewLine;
+                UserConfig += $"PubCert:{PubCert.Text}" + Environment.NewLine;
+                UserConfig += $"PrvtKey:{PrvtKey.Text}" + Environment.NewLine;
+                UserConfig += $"PriKeyPasswd:{PriKeyPasswd.Text}:{PriKeyPasswd.PasswordChar}:{PemShowPasswd.Checked}" + Environment.NewLine;
+                byte[] bytes = Encoding.UTF8.GetBytes(UserConfig);
+                Fs.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        private void RestoreUserConfigAndData(string Config)
+        {
+            string CfgHeader = Config.Substring(0, Config.IndexOf(':')+1);
+            PrintPromptMessage(CfgHeader);
+            PrintPromptMessage($"{ Convert.ToInt32(Config.Substring(Config.IndexOf(':') + 1, Config.Length))}");
+            switch (Config)
+            {
+                case "TcpIpAddr:":
+                    TcpIpAddr.SelectedIndex = Convert.ToInt32(Config.Substring(Config.IndexOf(':')+1, Config.Length));
+                    break;
+                case "TcpPort:":
+                    TcpPort.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "UdpIpAddr:":
+                    UdpIpAddr.SelectedIndex = Convert.ToInt32(Config.Substring(Config.IndexOf(':')+1, Config.Length));
+                    break;
+                case "UdpPort:":
+                    UdpPort.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+
+                case "ADataBlock:":
+                    ADatablock.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "ATimerSpan:":
+                    ATimerSpan.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "ASendCount:":
+                    ASendCount.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+
+                case "BDatablock:":
+                    BDatablock.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "BTimerSpan:":
+                    BTimerSpan.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "BSendCount:":
+                    BSendCount.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+
+                case "CDatablock:":
+                    CDatablock.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "CTimerSpan:":
+                    CTimerSpan.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+                case "CSendCount:":
+                    CSendCount.Text = Config.Substring(Config.IndexOf(':')+1, Config.Length);
+                    break;
+
+                //SSL Setup
+                case "PKCS12:":
+                    if (Config.Substring(Config.IndexOf(':') + 1, Config.Length).Equals("True"))
+                    {
+                        PKCS12.Checked = true;
+                    }
+                    break;
+                case "TlsVersion:":
+                    TlsVersion.SelectedIndex = Convert.ToInt32(Config.Substring(Config.IndexOf(':') + 1, Config.Length));
+                    break;
+                case "IgnoreCert:":
+                    if (Config.Substring(Config.IndexOf(':') + 1, Config.Length).Equals("True"))
+                    {
+                        PKCS12.Checked = true;
+                    }
+                    break;
+                case "MutualAuth:":
+                    if (Config.Substring(Config.IndexOf(':') + 1, Config.Length).Equals("True"))
+                    {
+                        MutualAuth.Checked = true;
+                    }
+                    break;
+                case "pfxFilePath:":
+                    pfxFilePath.Text = Config.Substring(Config.IndexOf(':') + 1, Config.Length);
+                    break;
+                case "pfxPasswd:":
+                    string[] pfxSet = Config.Substring(Config.IndexOf(':') + 1, Config.Length).Split(':');
+                    pfxPasswd.Text = (string)pfxSet.GetValue(0);
+                    pfxPasswd.PasswordChar = (char)pfxSet.GetValue(1);
+                    if (pfxSet.GetValue(2).Equals("True"))
+                    {
+                        ImportShowPasswd.Checked = true;
+                    }
+                    break;
+                case "PubCert:{PubCert.Text}":
+                    PubCert.Text = Config.Substring(Config.IndexOf(':') + 1, Config.Length);
+                    break;
+                case "PrvtKey:{PrvtKey.Text}":
+                    PrvtKey.Text = Config.Substring(Config.IndexOf(':') + 1, Config.Length);
+                    break;
+                case "PriKeyPasswd:":
+                    string[] pemSet = Config.Substring(Config.IndexOf(':') + 1, Config.Length).Split(':');
+                    PriKeyPasswd.Text = (string)pemSet.GetValue(0);
+                    PriKeyPasswd.PasswordChar = (char)pemSet.GetValue(1);
+                    if (pemSet.GetValue(2).Equals("True"))
+                    {
+                        PemShowPasswd.Checked = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
         #endregion
 
