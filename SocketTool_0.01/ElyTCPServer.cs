@@ -295,7 +295,7 @@ namespace MySocketServer
                 /// 断开所有客户端
                 if (ClientList != null)
                 {
-                    foreach (KeyValuePair<string, ElyClient> CloseItem in ClientList)
+                    foreach (var CloseItem in ClientList)
                     {
                         CloseItem.Value.Dispose();
                     }

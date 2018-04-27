@@ -42,7 +42,7 @@ namespace SocketTool
         #region my_init
         private void My_InitFunc()
         {
-            string LocalIP = GetLocalIPAddress();
+            string LocalIP = GetLocalIPAddresses();
             TcpIpAddr.Text = LocalIP;
             UdpIpAddr.Text = LocalIP;
             TlsVersion.SelectedIndex = 0;
@@ -77,7 +77,7 @@ namespace SocketTool
             });
         }
         
-        private string GetLocalIPAddress()
+        private string GetLocalIPAddresses()
         {
             string LocalIP = string.Empty;
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -645,9 +645,8 @@ namespace SocketTool
                     ADatablock.Enabled = false;
                     ASendCount.Enabled = false;
 
-                    string InputData = ADatablock.Text;
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(ADatablock, InputData, ASendCount.Value, ATimerSpan.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(ADatablock, ASendCount.Value, ATimerSpan.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -699,9 +698,8 @@ namespace SocketTool
                     BDatablock.Enabled = false;
                     BSendCount.Enabled = false;
 
-                    string InputData = BDatablock.Text;
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(BDatablock, InputData, BSendCount.Value, BTimerSpan.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(BDatablock, BSendCount.Value, BTimerSpan.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -753,9 +751,8 @@ namespace SocketTool
                     CTimerSpan.Enabled = false;
                     CSendCount.Enabled = false;
 
-                    string InputData = CDatablock.Text;
                     CancellTS = new CancellationTokenSource();
-                    int unUse = await SendDataToClient(CDatablock, InputData, CSendCount.Value, CTimerSpan.Value, CancellTS.Token);
+                    int unUse = await SendDataToClient(CDatablock, CSendCount.Value, CTimerSpan.Value, CancellTS.Token);
                 }
                 finally
                 {
@@ -785,9 +782,33 @@ namespace SocketTool
                 IsSending = false;
             }
         }
-        private async Task<int> SendDataToClient(object Sender,string data, decimal SendCount, decimal TimerSpan, CancellationToken Token)
+
+        private async Task<int> SendDataToClient(object Sender, decimal SendCount, decimal TimerSpan, CancellationToken Token)
         {
             int SentSize = 0;
+            byte[] bytedata = null;
+            TextBox DataTB = Sender as TextBox;
+            string InputData = DataTB.Text;
+            if (DataTB.Tag == null) //检测文件发送模式
+            {
+                if (!HexStrCheckerAndConventer(ref InputData, ref bytedata)) //处理十六进制发送模式
+                {
+                    //普通模式
+                    if (!InputData.Contains(@"[\0]"))
+                    {
+                        bytedata = Encoding.Default.GetBytes(InputData);
+                    }
+                    else
+                    {
+                        bytedata = Encoding.Default.GetBytes(InputData.Replace(@"[\0]", "\0"));
+                    }
+                }
+            }
+            else
+            {
+                bytedata = File.ReadAllBytes(InputData);
+                InputData = Encoding.Default.GetString(bytedata).Replace("\0", @"[\0]");
+            }
             while (SelectedClientList.Count > 0 && SendCount-- > 0)
             {
                 for (int i = 0; i < SelectedClientList.Count; i++)
@@ -795,28 +816,6 @@ namespace SocketTool
                     if (Token.IsCancellationRequested)
                     {
                         break;
-                    }
-                    byte[] bytedata = null;
-                    TextBox DataTB = Sender as TextBox;
-                    if (DataTB.Tag == null) //检测文件发送模式
-                    {
-                        if (!HexStrCheckerAndConventer(ref data, ref bytedata)) //检测十六进制发送模式
-                        {
-                            //普通模式
-                            if (!data.Contains(@"[\0]"))
-                            {
-                                bytedata = Encoding.Default.GetBytes(data);
-                            }
-                            else
-                            {
-                                bytedata = Encoding.Default.GetBytes(data.Replace(@"[\0]", "\0"));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        bytedata = File.ReadAllBytes(data);
-                        data = Encoding.Default.GetString(bytedata).Replace("\0",@"[\0]");
                     }
                     object Client = SelectedClientList[i];
                     try
@@ -827,7 +826,7 @@ namespace SocketTool
                             if (SendResult)
                             {
                                 /// Report sent data successfully. 
-                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytedata.Length} >--[OK]{Environment.NewLine}{data}";
+                                string SendInfo = $"[Send-->{Client.ToString()}] < {bytedata.Length} >--[OK]{Environment.NewLine}{InputData}";
                                 if (ShowHexData.Checked)
                                 {
                                     string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
@@ -842,7 +841,6 @@ namespace SocketTool
                                 SentSize += bytedata.Length;
                                 TxBytes += bytedata.Length;
                                 TxRxCounter.Text = $"数据统计：发送 {TxBytes} 字节, 接收 {RxBytes} 字节";
-                                TxRxCounter.Update();
                             }
                             else
                             {
@@ -853,7 +851,7 @@ namespace SocketTool
                     catch (Exception)
                     {
                         /// Report sent data failed.
-                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytedata.Length} >--[ERROR]{Environment.NewLine}{data}";
+                        string SendInfo = $"[Send-->{Client.ToString()}]< {bytedata.Length} >--[ERROR]{Environment.NewLine}{InputData}";
                         if (ShowHexData.Checked)
                         {
                             string Hexstr = $"{Environment.NewLine}[{BitConverter.ToString(bytedata).Replace("-", " ")}]";
@@ -971,12 +969,13 @@ namespace SocketTool
             TextBox textBox = sender as TextBox;
             if (textBox == null)
                 return;
-            if (e.KeyChar == (char)1)   // Ctrl-A 相当于输入了AscII=1的控制字符
+            if (e.KeyChar == (char)1)  // Ctrl-A 相当于输入了AscII=1的控制字符
             {
                 textBox.SelectAll();
                 e.Handled = true;
             }
         }
+        // 显示帮助窗口
         private void myTool_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F1)

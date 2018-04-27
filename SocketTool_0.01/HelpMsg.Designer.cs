@@ -29,38 +29,40 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpMsgWindow));
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.MsgTbox = new System.Windows.Forms.TextBox();
+            this.ToolName = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // textBox1
+            // MsgTbox
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.textBox1.Location = new System.Drawing.Point(0, 122);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(399, 350);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            this.MsgTbox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.MsgTbox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.MsgTbox.Location = new System.Drawing.Point(0, 32);
+            this.MsgTbox.Multiline = true;
+            this.MsgTbox.Name = "MsgTbox";
+            this.MsgTbox.ReadOnly = true;
+            this.MsgTbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.MsgTbox.Size = new System.Drawing.Size(414, 440);
+            this.MsgTbox.TabIndex = 0;
+            this.MsgTbox.Text = resources.GetString("MsgTbox.Text");
             // 
-            // label1
+            // ToolName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 20);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "YKSocketTool";
+            this.ToolName.AutoSize = true;
+            this.ToolName.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.ToolName.Location = new System.Drawing.Point(9, 6);
+            this.ToolName.Name = "ToolName";
+            this.ToolName.Size = new System.Drawing.Size(364, 20);
+            this.ToolName.TabIndex = 1;
+            this.ToolName.Text = "YKSocketTool v0.03  @2018/04/27  --按 F1 打开本窗口";
             // 
             // HelpMsgWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(399, 472);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
+            this.ClientSize = new System.Drawing.Size(414, 472);
+            this.Controls.Add(this.ToolName);
+            this.Controls.Add(this.MsgTbox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
@@ -76,7 +78,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox MsgTbox;
+        private System.Windows.Forms.Label ToolName;
     }
 }

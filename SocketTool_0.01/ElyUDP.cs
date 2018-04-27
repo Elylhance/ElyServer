@@ -151,7 +151,7 @@ namespace MySocketServer
             {
                 if (ClientList.Count > 0)
                 {
-                    foreach (KeyValuePair<string, RemoteClient> RmClientData in ClientList)
+                    foreach (var RmClientData in ClientList)
                     {
                         var TimeSpan = DateTime.Now - RmClientData.Value.ActiveTime;
                         if (TimeSpan.TotalSeconds > 120) //Two minuts
@@ -193,7 +193,7 @@ namespace MySocketServer
                 }
                 if (ClientList != null)
                 {
-                    foreach (KeyValuePair<string, RemoteClient> CloseItem in ClientList)
+                    foreach (var CloseItem in ClientList)
                     {
                         Disconnect(CloseItem.Key);
                     }

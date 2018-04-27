@@ -15,6 +15,7 @@ namespace SocketTool
         public HelpMsgWindow()
         {
             InitializeComponent();
+            MsgTbox.SelectionStart = MsgTbox.TextLength;
         }
 
         private void HelpMsgWindow_KeyDown(object sender, KeyEventArgs e)

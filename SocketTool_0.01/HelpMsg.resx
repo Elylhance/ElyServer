@@ -117,23 +117,48 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="textBox1.Text" xml:space="preserve">
-    <value>1. 支持以[\0]表示字符串结束符，用于发送数据中输入字符串结束符\0和接收的数据输出字符串结束符\0；为避免与字符串"[\0]"本身混淆，可根据数据长度来判断或查看十六进制。
-2. --YKSocketTool v0.03 新版特性
-  1. 添加支持HEX数据发送
-  2. UDP Cilent 在2 min内若无数据交互，服务器将删除客户端
-  3. 发送数据的文本框支持拖放文件，发送文件内容
-  4. 界面微调
+  <data name="MsgTbox.Text" xml:space="preserve">
+    <value>  感谢使用本工具！
+  数据发送与接收格式说明：
+    1. 支持以[\0]表示字符串结束符，用于发送数据中输入字符串结束符
+       \0和接收的数据输出字符串结束符\0；为避免与字符串"[\0]"本身
+       混淆，可根据数据长度来判断或查看十六进制。
+    2. 支持以HEX格式发送数据，直接将数据放入[]中。例如：[31 32 33
+       00 34 35 36]；请注意前/后/中间都不要多空格！若按照HEX数据解
+       析失败则会直接发送输入的数据。[00]与[\0]均表示字符串结束符；
+    3. 发送数据的输入框支持直接拖放文件，来发送文件内容
+    4. 目前无法直接发送字符串[\0]本身，可发送其对应的HEX数据来达到
+       目的。
+  
+  Ssl配置说明：
+    1. 生成的自签名证书是不安全的，仅限于测试时使用；
+    2. 各密钥窗口均是可选的，需要设置密钥（生成证书时）或证书有访
+       问密码（选择证书时）才需输入；若有密码而密码不正确则无法使
+       用证书创建服务器。
+    3. 请不要移动或删除软件包内的文件或文件夹，即不要改变任何文件
+       的相对路径
+       
+  其他说明：
+    1. 使用定时发送时，时间间隔建议最好大于20ms
+    2. 当Log占用内存过多时，工具会自动开启日志功能，并且Log窗口会
+       停止输出相关信息
+       
+  YKSocketTool v0.03 新版特性
+    1. 添加支持HEX数据发送
+    2. UDP Cilent 在2 min内若无数据交互，服务器将删除客户端
+    3. 发送数据的文本框支持拖放文件，发送文件内容
+    4. 界面微调
 
---YKSocketTool v0.02 新版特性：
-  1. 支持导入.crt和.key证书文件来创建SSL服务器
-  2. 添加支持十六进制显示收发的数据
-  3. 添加将log存入日志文件功能
-  4. 添加超链接到Logo和配图
-  5. 支持以[\0]表示字符串结束符
-  6. 解决32位系统兼容问题
-  7. 添加生成自签名证书时自动备份上次生成的证书并在生成失败时自动恢复
-  8. 修复若干Bug，优化UI</value>
+  YKSocketTool v0.02 新版特性：
+    1. 支持导入.crt和.key证书文件来创建SSL服务器
+    2. 添加支持十六进制显示收发的数据
+    3. 添加将log存入日志文件功能
+    4. 添加超链接到Logo和配图
+    5. 支持以[\0]表示字符串结束符
+    6. 解决32位系统兼容问题
+    7. 添加生成自签名证书时自动备份上次生成的证书
+     并在生成失败时自动恢复
+    8. 修复若干Bug，优化UI</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
