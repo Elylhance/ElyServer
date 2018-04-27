@@ -37,12 +37,12 @@
             // 
             this.MsgTbox.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.MsgTbox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.MsgTbox.Location = new System.Drawing.Point(0, 33);
+            this.MsgTbox.Location = new System.Drawing.Point(0, 35);
             this.MsgTbox.Multiline = true;
             this.MsgTbox.Name = "MsgTbox";
             this.MsgTbox.ReadOnly = true;
             this.MsgTbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.MsgTbox.Size = new System.Drawing.Size(414, 488);
+            this.MsgTbox.Size = new System.Drawing.Size(414, 457);
             this.MsgTbox.TabIndex = 0;
             this.MsgTbox.Text = resources.GetString("MsgTbox.Text");
             // 
@@ -52,15 +52,15 @@
             this.ToolName.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ToolName.Location = new System.Drawing.Point(9, 6);
             this.ToolName.Name = "ToolName";
-            this.ToolName.Size = new System.Drawing.Size(364, 20);
+            this.ToolName.Size = new System.Drawing.Size(367, 20);
             this.ToolName.TabIndex = 1;
-            this.ToolName.Text = "YKSocketTool v0.03  @2018/04/27  --按 F1 打开本窗口";
+            this.ToolName.Text = "YKSocketTool v1.0.0  @2018/04/27  --按 F1 打开本窗口";
             // 
             // HelpMsgWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 521);
+            this.ClientSize = new System.Drawing.Size(414, 492);
             this.Controls.Add(this.ToolName);
             this.Controls.Add(this.MsgTbox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -69,7 +69,7 @@
             this.MinimizeBox = false;
             this.Name = "HelpMsgWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "User Guider";
+            this.Text = "帮助信息";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HelpMsgWindow_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -118,7 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MsgTbox.Text" xml:space="preserve">
-    <value>  感谢使用本工具！
+    <value>  
+  感谢使用本工具！
+  
   数据发送与接收格式说明：
     1. 支持以[\0]表示字符串结束符，用于发送数据中输入字符串结束符
        \0和接收的数据输出字符串结束符\0；为避免与字符串"[\0]"本身
@@ -143,14 +145,15 @@
     2. 当Log占用内存过多时，工具会自动开启日志功能，并且Log窗口会
        停止输出相关信息
        
-  YKSocketTool v0.03 新版特性
+  YKSocketTool v1.0.0 新版特性
     1. 添加支持HEX数据发送
     2. UDP 客户端在 2min 内若无数据交互，服务器将删除客户端
     3. 发送数据的文本框支持拖放文件，发送文件内容
     4. 增加客户端连接与断开时打印提示信息
-    5. UI优化
+    5. 增加支持自动保存设置参数，删除"init.ini"文件可恢复默认设置
+    6. UI优化
 
-  YKSocketTool v0.02 新版特性：
+  YKSocketTool v0.0.2 新版特性：
     1. 支持导入.crt和.key证书文件来创建SSL服务器
     2. 添加支持十六进制显示收发的数据
     3. 添加将log存入日志文件功能
@@ -158,7 +161,7 @@
     5. 支持以[\0]表示字符串结束符
     6. 解决32位系统兼容问题
     7. 添加生成自签名证书时自动备份上次生成的证书
-     并在生成失败时自动恢复
+       并在生成失败时自动恢复
     8. 修复若干Bug，优化UI</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

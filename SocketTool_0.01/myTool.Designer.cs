@@ -1372,7 +1372,7 @@
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
-            this.Text = "YKSocketTool v0.03";
+            this.Text = "YKSocketTool v1.0.0";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.myTool_KeyDown);
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
