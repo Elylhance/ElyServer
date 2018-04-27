@@ -37,12 +37,12 @@
             // 
             this.MsgTbox.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.MsgTbox.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.MsgTbox.Location = new System.Drawing.Point(0, 32);
+            this.MsgTbox.Location = new System.Drawing.Point(0, 33);
             this.MsgTbox.Multiline = true;
             this.MsgTbox.Name = "MsgTbox";
             this.MsgTbox.ReadOnly = true;
             this.MsgTbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.MsgTbox.Size = new System.Drawing.Size(414, 440);
+            this.MsgTbox.Size = new System.Drawing.Size(414, 488);
             this.MsgTbox.TabIndex = 0;
             this.MsgTbox.Text = resources.GetString("MsgTbox.Text");
             // 
@@ -60,7 +60,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 472);
+            this.ClientSize = new System.Drawing.Size(414, 521);
             this.Controls.Add(this.ToolName);
             this.Controls.Add(this.MsgTbox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

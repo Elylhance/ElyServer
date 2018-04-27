@@ -17,7 +17,6 @@ namespace MySocketServer
     class ElyTCPServer:IDisposable
     {
         #region private-variable
-        private bool _debug = false;
         private TcpListener iTcpListener;
         private bool AlreadyDisposed = false; // 要检测冗余调用
         private CancellationTokenSource TokenSource;
@@ -28,6 +27,7 @@ namespace MySocketServer
         private Func<string, bool> iConnectedFDback = null;
         private Func<string, bool> iDisconnectedFDback = null;
         private Func<string, byte[], bool> iDataReceivedFDback = null;
+        private Func<string, bool> iPrintPromptMessage = null;
 
         public int MaxClientNum
         {
@@ -46,19 +46,19 @@ namespace MySocketServer
         /// <param name="DisconnectedFDback"> 客户端断开连接输出信息</param>
         /// <param name="DataReceivedFDback"> 收到客户端的数据输出</param>
         /// <param name="ExceptionCatcher"> 异常信息处理</param>
-        /// <param name="debug"> 输出Debug信息</param>
+        /// <param name="PrintPromptMessage"> 输出Debug信息</param>
         public ElyTCPServer(
             string listenerIp,
             string listenerPort,
             Func<string, bool> ConnectedFDback,
             Func<string, bool> DisconnectedFDback,
             Func<string, byte[], bool> DataReceivedFDback,
-            bool debug)
+            Func<string, bool> PrintPromptMessage)
         {
-            _debug = debug;
             iConnectedFDback = ConnectedFDback;
             iDisconnectedFDback = DisconnectedFDback;
             iDataReceivedFDback = DataReceivedFDback;
+            iPrintPromptMessage = PrintPromptMessage;
 
             var tcpIpaddr = IPAddress.Parse(listenerIp);
             if (listenerPort == String.Empty)

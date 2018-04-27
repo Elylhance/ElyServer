@@ -110,25 +110,26 @@ namespace SocketTool
                 this.ClientListBox.Items.Add(newClient);
                 if (this.SelectedClientList.Count == 0)
                     ClientListBox.SetSelected(0, true);
+                PrintPromptMessage($"A client[{newClient}] is already connected!");
             }
             return true;
         }
 
-        private bool DisconnectedFDback(string ConnectedClient)
+        private bool DisconnectedFDback(string Client)
         {
             if (ClientListBox.InvokeRequired)
             {
                 var Cb = new delegateCallBack(DisconnectedFDback);
-                this.Invoke(Cb, new object[] { ConnectedClient });
+                this.Invoke(Cb, new object[] { Client });
             }
             else
             {
-                this.ClientListBox.Items.Remove(ConnectedClient);
+                this.ClientListBox.Items.Remove(Client);
                 if (this.SelectedClientList.Count == 0 && this.ClientListBox.Items.Count > 0)
                 {
                     ClientListBox.SetSelected(0, true);
                 }
-                this.ClientListBox.Update();
+                PrintPromptMessage($"The client[{Client}] is already disconnected!");
             }
             return true;
         }
@@ -175,7 +176,7 @@ namespace SocketTool
             {
                 if (!SaveLogToFile.Checked)
                 {
-                    string LogHeader = $"{Environment.NewLine}===========内存占用过多，请到Log文件中查看，窗口将停止输出===========";
+                    string LogHeader = $"{Environment.NewLine}===========内存占用过多，信息自动存入Log文件，窗口将停止输出===========";
                     SaveLogToFile.Checked = true;
                     LogTextbox.AppendText(LogHeader);
                     Str = LogHeader + Str;
@@ -297,7 +298,7 @@ namespace SocketTool
                     if (TcpOnoff.Checked)
                     {
                         elyTcpServer = new ElyTCPServer(ListenerIp, ListenerPort, ConnectedFDback, DisconnectedFDback,
-                                                        DataReceivedFDback, false);
+                                                        DataReceivedFDback, PrintPromptMessage);
                         MessageOutPutHandler($"Start TCP server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
                     else if (TLSOnoff.Checked)
@@ -594,7 +595,6 @@ namespace SocketTool
             }
             TextObject.Cursor = Cursors.IBeam;
         }
-
         private void Datablock_DragEnter(object sender, DragEventArgs e)
         {
             TextBox TextObject = sender as TextBox;
@@ -625,6 +625,7 @@ namespace SocketTool
                 e.Effect = DragDropEffects.None;
             }
         }
+
         private async void ASendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
@@ -677,7 +678,6 @@ namespace SocketTool
             }
 
         }
-
         private async void BSendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
@@ -730,7 +730,6 @@ namespace SocketTool
                 IsSending = false;
             }
         }
-
         private async void CSendDataReq_Click(object sender, EventArgs e)
         {
             if (!IsSending)
@@ -789,7 +788,7 @@ namespace SocketTool
             byte[] bytedata = null;
             TextBox DataTB = Sender as TextBox;
             string InputData = DataTB.Text;
-            if (DataTB.Tag == null) //检测文件发送模式
+            if (DataTB.Tag == null) //非文件发送模式
             {
                 if (!HexStrCheckerAndConventer(ref InputData, ref bytedata)) //处理十六进制发送模式
                 {
@@ -804,11 +803,12 @@ namespace SocketTool
                     }
                 }
             }
-            else
+            else //文件发送模式
             {
                 bytedata = File.ReadAllBytes(InputData);
                 InputData = Encoding.Default.GetString(bytedata).Replace("\0", @"[\0]");
             }
+
             while (SelectedClientList.Count > 0 && SendCount-- > 0)
             {
                 for (int i = 0; i < SelectedClientList.Count; i++)

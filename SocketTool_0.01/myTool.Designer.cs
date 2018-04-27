@@ -443,8 +443,7 @@
             this.LogTextbox.ShowSelectionMargin = true;
             this.LogTextbox.Size = new System.Drawing.Size(926, 263);
             this.LogTextbox.TabIndex = 18;
-            this.LogTextbox.Text = "支持以[\\0]表示字符串结束符，用于发送数据中输入字符串结束符\\0和接收的数据输出字符串结束符\\0；为避免与字符串\"[\\0]\"本身混淆，可根据数据长度来判断或查看" +
-    "十六进制。\n";
+            this.LogTextbox.Text = "";
             this.LogTextbox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Ctrl_A_KeyPress);
             // 
             // label6
