@@ -1043,7 +1043,7 @@
             this.MobiletekInc.Controls.Add(this.M2M);
             this.MobiletekInc.Location = new System.Drawing.Point(428, 139);
             this.MobiletekInc.Name = "MobiletekInc";
-            this.MobiletekInc.Size = new System.Drawing.Size(500, 364);
+            this.MobiletekInc.Size = new System.Drawing.Size(500, 385);
             this.MobiletekInc.TabIndex = 12;
             this.MobiletekInc.TabStop = false;
             this.MobiletekInc.Text = "MobileTek Inc";

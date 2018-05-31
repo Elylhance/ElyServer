@@ -214,6 +214,8 @@ namespace MySocketServer
         {
             switch (iTlsVer)
             {
+                case "Default":
+                    return SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
                 case "SSL v2":
                     return SslProtocols.Ssl2;
                 case "SSL v3":
@@ -224,7 +226,6 @@ namespace MySocketServer
                     return SslProtocols.Tls11;
                 case "TLS v1.2":
                     return SslProtocols.Tls12;
-                case "Default":
                 default:
                     return SslProtocols.Default;
             }

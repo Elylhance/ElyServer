@@ -25,8 +25,7 @@ namespace SocketTool
         private ElyUDPClient elyUdpServer;
         private ElyUDPClient elyDtlsServer;
         private int SequenceNum = 0;
-        private FileStream LogFile;
-        private Form myHelpMsgWindow = null;
+        private string NewLogFilePath;
         private CancellationTokenSource CancellTS;
         private ListBox.SelectedObjectCollection SelectedClientList;
         #endregion
@@ -256,7 +255,7 @@ namespace SocketTool
         }
         #endregion
 
-        #region ConstrutorCallBack
+        #region ServerCallBack
         delegate bool delegateCallBack(string newClient);
         delegate bool delegateCallBackWithData(string Sender, byte[] Data);
 
@@ -345,16 +344,9 @@ namespace SocketTool
                 }
             }
 
-            if (SaveLogToFile.Checked && LogFile.CanWrite)
+            if (SaveLogToFile.Checked)
             {
-                Task.Run(() =>{
-                    lock (this)
-                    {
-                        byte[] Byte = Encoding.Default.GetBytes(Str);
-                        LogFile.Write(Byte, 0, Byte.Length);
-                        LogFile.Flush();
-                    }
-                });
+                Task.Run(() =>{ File.AppendAllText(NewLogFilePath, Str, Encoding.Default); });
             }
             return true;
         }
@@ -643,31 +635,25 @@ namespace SocketTool
         {
             if (SaveLogToFile.Checked)
             {
-                //Create and Open flie
-                string LogDirectory = Environment.CurrentDirectory + "\\log";
-                if (!Directory.Exists(LogDirectory))
+                string LogDir = Environment.CurrentDirectory + "\\log";
+                if (!Directory.Exists(LogDir))
                 {
-                    Directory.CreateDirectory(LogDirectory);
+                    Directory.CreateDirectory(LogDir);
                 }
-                string NewLogFilePath = LogDirectory + $"\\{DateTime.Now.ToString("yyMMddHHmmss")}.txt";
-                LogFile = File.Create(NewLogFilePath, 512, FileOptions.Asynchronous);
-
+                NewLogFilePath = LogDir + $"\\{DateTime.Now.ToString("yyMMdd_HHmmss")}.txt";
             }
-            else
+            else if (File.Exists(NewLogFilePath))
             {
-                //Close file
                 lock (this)
                 {
-                    string LogFilePath = LogFile.Name;
-                    if (LogFile.Length > 0)
+                    var FiInfo = new FileInfo(NewLogFilePath);
+                    if (FiInfo.Length > 0)
                     {
-                        MessageBox.Show($"已存入文件: {LogFilePath}");
-                        LogFile.Dispose();
+                        MessageBox.Show($"日志已存入文件: {NewLogFilePath}");
                     }
                     else
                     {
-                        LogFile.Dispose();
-                        File.Delete(LogFilePath);
+                        FiInfo.Delete();
                     }
                 }
             }
