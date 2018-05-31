@@ -1259,7 +1259,7 @@ namespace SocketTool
             //生成证书时，可以使UI无响应
             string Cmd = $@"del CARoot.cer,ServerCert.pfx
                             rem <md5|sha1|sha256|sha384|sha512> L506仅支持md5及sha256算法
-                            makecert -r -pe -n ""CN = localhost"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
+                            makecert -r -pe -n ""CN = www.MobileTek.Test"" -m 24 -a {SA} -sky exchange -ss my CARoot.cer -sv CARoot.pvk"
                             + "&& cert2spc CARoot.cer CARoot.spc"
                             + $"&& pvk2pfx -pvk CARoot.pvk -spc CARoot.spc {PassWd} -pfx ServerCert.pfx"
                             + "&  del *.pvk *.spc";

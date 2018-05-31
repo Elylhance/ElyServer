@@ -1082,7 +1082,7 @@
             this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
             this.IgnoreCert.Text = "YES";
-            this.MyToolTip.SetToolTip(this.IgnoreCert, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.IgnoreCert, "客户端证书无效亦可建立SSL连接");
             this.IgnoreCert.UseVisualStyleBackColor = true;
             this.IgnoreCert.Click += new System.EventHandler(this.IgnoreCert_Click);
             // 
@@ -1294,7 +1294,7 @@
             this.label15.Size = new System.Drawing.Size(77, 14);
             this.label15.TabIndex = 4;
             this.label15.Text = "忽略证书：";
-            this.MyToolTip.SetToolTip(this.label15, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.label15, "双向认证中验证客户端证书时，是否接受无效的客户端证书");
             // 
             // label16
             // 
@@ -1304,7 +1304,7 @@
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
             this.label16.Text = "双向认证：";
-            this.MyToolTip.SetToolTip(this.label16, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.label16, "单向认证：仅客户端验证服务器证书\r\n双向认证：服务器与客户端双方均需验证对方证书");
             // 
             // label13
             // 
@@ -1326,7 +1326,7 @@
             this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.NoIgnoreCert.TabIndex = 5;
             this.NoIgnoreCert.Text = "NO ";
-            this.MyToolTip.SetToolTip(this.NoIgnoreCert, "是否接受无效的证书");
+            this.MyToolTip.SetToolTip(this.NoIgnoreCert, "客户端证书无效时，不可建立连接");
             this.NoIgnoreCert.UseVisualStyleBackColor = true;
             this.NoIgnoreCert.Click += new System.EventHandler(this.NoIgnoreCert_Click);
             // 
@@ -1340,7 +1340,7 @@
             this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
             this.NoMutualAuth.TabIndex = 7;
             this.NoMutualAuth.Text = "NO ";
-            this.MyToolTip.SetToolTip(this.NoMutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.NoMutualAuth, "单向认证：仅客户端验证服务器证书");
             this.NoMutualAuth.UseVisualStyleBackColor = true;
             this.NoMutualAuth.Click += new System.EventHandler(this.NoMutualAuth_Click);
             // 
@@ -1352,7 +1352,7 @@
             this.MutualAuth.Size = new System.Drawing.Size(47, 18);
             this.MutualAuth.TabIndex = 8;
             this.MutualAuth.Text = "YES";
-            this.MyToolTip.SetToolTip(this.MutualAuth, "双向认证 SSL 协议要求服务器和用户双方都有证书，单向认证 SSL 协议不需要客户拥有CA证书");
+            this.MyToolTip.SetToolTip(this.MutualAuth, "双向认证：服务器与客户端双方均需验证对方证书");
             this.MutualAuth.UseVisualStyleBackColor = true;
             this.MutualAuth.Click += new System.EventHandler(this.MutualAuth_Click);
             // 

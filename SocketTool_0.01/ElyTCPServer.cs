@@ -140,6 +140,8 @@ namespace MySocketServer
         {
             try
             {
+                byte[] inValue = new byte[] { 1, 0, 0, 0, 0x10, 0x27, 0, 0, 0xe8, 0x03, 0, 0 };//{1,10000ms,1000ms}
+                tcpC.TcpHandle.Client.IOControl(IOControlCode.KeepAliveValues, inValue, null);
                 // 循环监听&接收数据
                 while (!Token.IsCancellationRequested)
                 {
@@ -163,12 +165,7 @@ namespace MySocketServer
 
         private async Task<byte[]> MessageReadAsync(ElyClient client)
         {
-            byte[] contentBytes;
-
-            if (!isConnected(client))
-            {
-                throw new ArgumentException("客户端已断开");
-            }
+            byte[] ContentBytes = null;
             if (!client.Nstream.CanRead)
             {
                 return null;
@@ -177,50 +174,28 @@ namespace MySocketServer
             #region Read-Data
             using (MemoryStream dataMs = new MemoryStream())
             {
-                int read = 0;
-                byte[] buffer;
-                long bufferSize = 2048;
-
-                buffer = new byte[bufferSize];
+                int recvd = 0;
+                int bufferSize = 2048;
+                byte[] buffer = new byte[bufferSize];
                 //Caller 捕获此函数的异常
-                while (client.Nstream.DataAvailable 
-                    && (read = await client.Nstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((recvd = await client.Nstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    dataMs.Write(buffer, 0, read);
+                    dataMs.Write(buffer, 0, recvd);
+                    if (!client.Nstream.DataAvailable)
+                        break;
                 }
-                contentBytes = dataMs.ToArray(); 
+                //若对端断开了连接，但接收到了一些数据，总是先上报，下次循环再断开连接
+                if (dataMs.Length > 0)
+                {
+                    ContentBytes = dataMs.ToArray();
+                }
+                else if (recvd == 0)
+                {
+                    throw new SocketException();
+                }
             }
-
             #endregion
-            return contentBytes;
-        }
-
-        private bool isConnected(ElyClient tcpC)
-        {
-            if (!tcpC.TcpHandle.Connected)
-            {
-                return false;
-            }
-            try
-            {
-                if (tcpC.TcpHandle.Client.Poll(-1, SelectMode.SelectRead))
-                {
-                    byte[] data = new byte[1];
-                    if (tcpC.TcpHandle.Client.Receive(data, SocketFlags.Peek) == 0)
-                        return false;
-                    else
-                        return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SocketException)
-            {
-                return false;
-            }
-            
+            return ContentBytes;
         }
 
         private void AddClient(ElyClient tcpC)
@@ -245,9 +220,13 @@ namespace MySocketServer
         {
             try
             {
-                await ElyC.Nstream.WriteAsync(data, 0, data.Length);
-                await ElyC.Nstream.FlushAsync();
-                return true;
+                if (ElyC.TcpHandle.Client.Poll(2*1000*1000, SelectMode.SelectWrite))
+                {
+                    await ElyC.Nstream.WriteAsync(data, 0, data.Length);
+                    await ElyC.Nstream.FlushAsync();
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {

@@ -176,8 +176,8 @@ namespace MySocketServer
         {
             try
             {
-                SslProtocols UserProto = GetUserSetProtocalType();
-                await sslC.Sstream.AuthenticateAsServerAsync(SslCertificate, iMaumutually, UserProto, false);
+                SslProtocols SSLVer = GetUserSetProtocalType();
+                await sslC.Sstream.AuthenticateAsServerAsync(SslCertificate, iMaumutually, SSLVer, false);
                 if (!sslC.Sstream.IsEncrypted)
                 {
                     throw new Exception("此连接未进行加密处理");
@@ -239,10 +239,37 @@ namespace MySocketServer
             }
             Task.Run(() => DataReceiver(tcpC), Token);
         }
+        #region KeepAlive
+        /*
+        struct ElyKeepalive
+        {
+            public uint onoff;
+            public uint keepalivetime;
+            public uint keepaliveinterval;
+        };
+        ElyKeepalive KAPram;
+        KAPram.onoff = 1;
+        KAPram.keepalivetime = 10 * 1000;   //10s
+        KAPram.keepaliveinterval = 1000;    //1s
+        byte[] inValue = StructToBytes(KAPram);
+        private static byte[] StructToBytes(object structObj)
+        {
+            int size = Marshal.SizeOf(structObj);
+            byte[] bytes = new byte[size];
+            IntPtr structPtr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(structObj, structPtr, false);
+            Marshal.Copy(structPtr, bytes, 0, size);
+            Marshal.FreeHGlobal(structPtr);
+            return bytes;
+        }
+        */
+        #endregion
         private async Task DataReceiver(ElyClient tcpC)
         {
             try
             {
+                byte[] inValue = new byte[] { 1, 0, 0, 0, 0x10, 0x27, 0, 0, 0xe8, 0x03, 0, 0 };//{1,10000ms,1000ms}
+                tcpC.TcpHandle.Client.IOControl(IOControlCode.KeepAliveValues, inValue, null);
                 // 循环监听&接收数据
                 while (!Token.IsCancellationRequested)
                 {
@@ -258,11 +285,6 @@ namespace MySocketServer
                     }
                 }
             }
-            catch (Exception)
-            {
-                //服务器被关闭或发生异常
-                // Task<bool> unwaited = Task.Run(() => iPromptMsgPrinter(ex.ToString()));
-            }
             finally
             {
                 RemoveClient(tcpC);
@@ -276,77 +298,34 @@ namespace MySocketServer
 
         private async Task<byte[]> MessageReadAsync(ElyClient client)
         {
-            #region Variables
-            byte[] contentBytes;
+            byte[] contentBytes = null;
 
-            if (!isConnected(client))
-            {
-                throw new ArgumentException("客户端已断开");
-            }
             if (!client.Sstream.CanRead)
             {
                 return null;
-            }
-            #endregion        
+            }   
 
             #region Read-Data
             using (MemoryStream dataMs = new MemoryStream())
             {
-                int read = 0;
-                byte[] buffer;
+                int recvd = 0;
                 int bufferSize = 2048;
-
-                buffer = new byte[bufferSize];
-                if ((read = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                byte[] buffer = new byte[bufferSize];
+                if ((recvd = await client.Sstream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    dataMs.Write(buffer, 0, read);
+                    dataMs.Write(buffer, 0, recvd);
                 }
-                contentBytes = dataMs.ToArray();
+                if (dataMs.Length > 0)
+                    contentBytes = dataMs.ToArray();
+                else if (recvd == 0)  //Reach EOF
+                    throw new SocketException();
             }
             #endregion
-            if (contentBytes.Length > 0)
-            {
-                return contentBytes;
-            }
-            else
-            {
-                return null;
-            }
+            return contentBytes;
         }
         private bool AcceptInvalidCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             return iAcceptInvalidCert;
-        }
-        private bool isConnected(ElyClient tcpC)
-        {
-            if (!tcpC.TcpHandle.Connected)
-            {
-                return false;
-            }
-            try
-            {
-                if (tcpC.TcpHandle.Client.Poll(-1, SelectMode.SelectRead))
-                {
-                    byte[] data = new byte[1];
-                    if (tcpC.TcpHandle.Client.Receive(data, SocketFlags.Peek) == 0)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (SocketException)
-            {
-                return false;
-            }
-
         }
 
         private void AddClient(ElyClient tcpC)
@@ -371,9 +350,13 @@ namespace MySocketServer
         {
             try
             {
-                await ElyC.Sstream.WriteAsync(data, 0, data.Length);
-                await ElyC.Sstream.FlushAsync();
-                return true;
+                if (ElyC.TcpHandle.Client.Poll(-1, SelectMode.SelectWrite))
+                {
+                    await ElyC.Sstream.WriteAsync(data, 0, data.Length);
+                    await ElyC.Sstream.FlushAsync();
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {

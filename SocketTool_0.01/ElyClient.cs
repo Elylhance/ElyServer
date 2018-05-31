@@ -59,7 +59,6 @@ namespace MySocketClient
 
                 if (TcpHandle != null)
                 {
-                    TcpHandle.Client.Close();
                     TcpHandle.Client.Dispose();
                     TcpHandle.Close();
                 }
