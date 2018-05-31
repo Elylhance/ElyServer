@@ -888,12 +888,12 @@
             this.SslConfig.Controls.Add(this.IgnoreCert);
             this.SslConfig.Controls.Add(this.TlsConfig);
             this.SslConfig.Controls.Add(this.TlsVersion);
-            this.SslConfig.Controls.Add(this.label15);
             this.SslConfig.Controls.Add(this.label16);
+            this.SslConfig.Controls.Add(this.label15);
             this.SslConfig.Controls.Add(this.label13);
-            this.SslConfig.Controls.Add(this.NoIgnoreCert);
             this.SslConfig.Controls.Add(this.NoMutualAuth);
             this.SslConfig.Controls.Add(this.MutualAuth);
+            this.SslConfig.Controls.Add(this.NoIgnoreCert);
             this.SslConfig.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.SslConfig.Location = new System.Drawing.Point(4, 26);
             this.SslConfig.Name = "SslConfig";
@@ -1077,7 +1077,7 @@
             // IgnoreCert
             // 
             this.IgnoreCert.AutoSize = true;
-            this.IgnoreCert.Location = new System.Drawing.Point(298, 45);
+            this.IgnoreCert.Location = new System.Drawing.Point(298, 74);
             this.IgnoreCert.Name = "IgnoreCert";
             this.IgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.IgnoreCert.TabIndex = 5;
@@ -1281,7 +1281,7 @@
             "TLS v1.0",
             "TLS v1.1",
             "TLS v1.2"});
-            this.TlsVersion.Location = new System.Drawing.Point(298, 12);
+            this.TlsVersion.Location = new System.Drawing.Point(298, 16);
             this.TlsVersion.Name = "TlsVersion";
             this.TlsVersion.Size = new System.Drawing.Size(97, 22);
             this.TlsVersion.TabIndex = 1;
@@ -1289,7 +1289,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(220, 47);
+            this.label15.Location = new System.Drawing.Point(220, 78);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(77, 14);
             this.label15.TabIndex = 4;
@@ -1299,7 +1299,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(220, 78);
+            this.label16.Location = new System.Drawing.Point(220, 49);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(77, 14);
             this.label16.TabIndex = 6;
@@ -1310,7 +1310,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label13.Location = new System.Drawing.Point(220, 16);
+            this.label13.Location = new System.Drawing.Point(220, 20);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(77, 14);
             this.label13.TabIndex = 0;
@@ -1321,7 +1321,7 @@
             this.NoIgnoreCert.AutoSize = true;
             this.NoIgnoreCert.Checked = true;
             this.NoIgnoreCert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoIgnoreCert.Location = new System.Drawing.Point(360, 45);
+            this.NoIgnoreCert.Location = new System.Drawing.Point(360, 74);
             this.NoIgnoreCert.Name = "NoIgnoreCert";
             this.NoIgnoreCert.Size = new System.Drawing.Size(47, 18);
             this.NoIgnoreCert.TabIndex = 5;
@@ -1335,7 +1335,7 @@
             this.NoMutualAuth.AutoSize = true;
             this.NoMutualAuth.Checked = true;
             this.NoMutualAuth.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.NoMutualAuth.Location = new System.Drawing.Point(360, 76);
+            this.NoMutualAuth.Location = new System.Drawing.Point(360, 47);
             this.NoMutualAuth.Name = "NoMutualAuth";
             this.NoMutualAuth.Size = new System.Drawing.Size(47, 18);
             this.NoMutualAuth.TabIndex = 7;
@@ -1347,7 +1347,7 @@
             // MutualAuth
             // 
             this.MutualAuth.AutoSize = true;
-            this.MutualAuth.Location = new System.Drawing.Point(298, 76);
+            this.MutualAuth.Location = new System.Drawing.Point(298, 47);
             this.MutualAuth.Name = "MutualAuth";
             this.MutualAuth.Size = new System.Drawing.Size(47, 18);
             this.MutualAuth.TabIndex = 8;
@@ -1372,7 +1372,7 @@
             this.Name = "myTool";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "";
-            this.Text = "YKSocketTool v1.0.0";
+            this.Text = "YKSocketTool v1.0.1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.myTool_KeyDown);
             this.TabCtrl.ResumeLayout(false);
             this.Server.ResumeLayout(false);
