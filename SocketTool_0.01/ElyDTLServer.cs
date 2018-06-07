@@ -318,7 +318,7 @@ namespace MySocketServer
                 //udp.Close();
                 clean(IntPtr.Zero, ctx);
                 wolfssl.Cleanup();
-                TokenSource.Cancel();
+                if(TokenSource != null) TokenSource.Cancel();
                 // 将大型字段设置为 null。
                 ClientList = null;
                 TokenSource = null;
