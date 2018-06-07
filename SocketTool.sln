@@ -5,6 +5,20 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YKSocketTool", "SocketTool_0.01\YKSocketTool.csproj", "{B44A6F4F-BCEE-493C-91A0-9386E9837F50}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5BEADD8A-57B4-4723-8117-E8502FB15AD3}"
+	ProjectSection(SolutionItems) = preProject
+		SocketTool_0.01\bin\Debug\cert\CARoot.cer = SocketTool_0.01\bin\Debug\cert\CARoot.cer
+		SocketTool_0.01\bin\Debug\cert\Cert2Spc.exe = SocketTool_0.01\bin\Debug\cert\Cert2Spc.exe
+		SocketTool_0.01\bin\Debug\cert\cmd.exe = SocketTool_0.01\bin\Debug\cert\cmd.exe
+		SocketTool_0.01\bin\Debug\cert\CreateServerCert.cmd = SocketTool_0.01\bin\Debug\cert\CreateServerCert.cmd
+		SocketTool_0.01\bin\Debug\cert\makecert.exe = SocketTool_0.01\bin\Debug\cert\makecert.exe
+		SocketTool_0.01\bin\Debug\cert\openssl.exe = SocketTool_0.01\bin\Debug\cert\openssl.exe
+		SocketTool_0.01\bin\Debug\cert\pvk2pfx.exe = SocketTool_0.01\bin\Debug\cert\pvk2pfx.exe
+		SocketTool_0.01\bin\Debug\cert\Readme.txt = SocketTool_0.01\bin\Debug\cert\Readme.txt
+		SocketTool_0.01\bin\Debug\cert\ServerCert.pfx = SocketTool_0.01\bin\Debug\cert\ServerCert.pfx
+		SocketTool_0.01\bin\Debug\wolfssl.dll = SocketTool_0.01\bin\Debug\wolfssl.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

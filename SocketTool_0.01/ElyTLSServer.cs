@@ -89,7 +89,11 @@ namespace MySocketServer
             {
                 throw new ArgumentOutOfRangeException();
             }
-            
+            if (!File.Exists(pfxCertFile))
+            {
+                throw new Exception("Could not find cert or key file");
+            }
+
             SslCertificate = null;
             if (string.IsNullOrEmpty(pfxCertkey))
             {

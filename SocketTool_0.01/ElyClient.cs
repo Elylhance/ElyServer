@@ -73,7 +73,7 @@ namespace MySocketClient
 
         public void Dispose()
         {
-            /// 用户显示调用，释放全部资源（托管+非托管）
+            /// 用户显式调用，释放全部资源（托管+非托管）
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -23,7 +23,7 @@ namespace SocketTool
         private ElyTCPServer elyTcpServer;
         private ElyTLSServer elyTlsServer;
         private ElyUDPClient elyUdpServer;
-        private ElyUDPClient elyDtlsServer;
+        private ElyDTLServer elyDtlsServer;
         private int SequenceNum = 0;
         private string NewLogFilePath;
         private CancellationTokenSource CancellTS;
@@ -385,9 +385,9 @@ namespace SocketTool
         //借助openssl工具将.crt&.key文件转换为.pfx格式证书
         private void ConvertCrtKeyToPfx(string certificate_pub, string privatekey, string prikeypasswd,out string pfxPath, out string pfxPasswd)
         {
-            if (string.IsNullOrEmpty(certificate_pub) || string.IsNullOrEmpty(privatekey))
+            if (!File.Exists(certificate_pub) || !File.Exists(privatekey))
             {
-                throw new FileNotFoundException();
+                throw new Exception("Could not find cert or key file");
             }
 
             pfxPasswd = DateTime.Now.Millisecond.ToString();
@@ -443,12 +443,6 @@ namespace SocketTool
                 }
                 try
                 {
-                    // 开启后不允许修改服务器参数
-                    TcpIpAddr.Enabled = false;
-                    TcpPort.Enabled = false;
-                    TcpOnoff.Enabled = false;
-                    TLSOnoff.Enabled = false;
-
                     if (TcpOnoff.Checked)
                     {
                         elyTcpServer = new ElyTCPServer(ListenerIp, ListenerPort, ConnectedFDback, DisconnectedFDback,
@@ -460,10 +454,15 @@ namespace SocketTool
                         bool Maumutually = MutualAuth.Checked;
                         bool AcceptInvalidCert = IgnoreCert.Checked;
                         string TlsVer = this.TlsVersion.Text;
+
                         if (PKCS12.Checked)
                         {
                             string pfxCertFile = pfxFilePath.Text;
                             string pfxCertkey = pfxPasswd.Text;
+                            if (!File.Exists(pfxCertFile))
+                            {
+                                throw new Exception("Could not find cert or key file");
+                            }
                             elyTlsServer = new ElyTLSServer(ListenerIp, ListenerPort,
                                                              pfxCertFile, pfxCertkey,
                                                              Maumutually, AcceptInvalidCert, TlsVer,
@@ -501,6 +500,11 @@ namespace SocketTool
                         else { throw new Exception("An unknown error occurred"); }
                         MessageOutPutHandler($"Start TLS server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
+                    // 开启后不允许修改服务器参数
+                    TcpIpAddr.Enabled = false;
+                    TcpPort.Enabled = false;
+                    TcpOnoff.Enabled = false;
+                    TLSOnoff.Enabled = false;
                     IsTCPListening = true;
                     StartTcpTlsServer.Text = "已开启";
                     StartTcpTlsServer.BackColor = Color.LightGreen;
@@ -567,12 +571,6 @@ namespace SocketTool
                 }
                 try
                 {
-                    // 开启后不允许修改服务器参数
-                    UdpIpAddr.Enabled = false;
-                    UdpPort.Enabled = false;
-                    UdpOnoff.Enabled = false;
-                    DTLSOnoff.Enabled = false;
-
                     if (UdpOnoff.Checked)
                     {
                         elyUdpServer = new ElyUDPClient(ListenerIp, ListenerPort,
@@ -583,8 +581,24 @@ namespace SocketTool
                     }
                     else if (DTLSOnoff.Checked)
                     {
-                        throw new Exception("Sorry, DTLS server is not supported now.");
+                        string certificate_pub = PubCert.Text;
+                        string privatekey = PrvtKey.Text;
+                        elyDtlsServer = new ElyDTLServer(
+                                                ListenerIp,
+                                                ListenerPort,
+                                                certificate_pub,
+                                                privatekey,
+                                                ConnectedFDback,
+                                                DisconnectedFDback,
+                                                DataReceivedFDback);
+                        MessageOutPutHandler($"Start DTLS server[{ListenerIp}:{ListenerPort}] successfully!");
                     }
+                    // 开启后不允许修改服务器参数
+                    UdpIpAddr.Enabled = false;
+                    UdpPort.Enabled = false;
+                    UdpOnoff.Enabled = false;
+                    DTLSOnoff.Enabled = false;
+
                     IsUDPListening = true;
                     StartUdpDtlsServer.Text = "已开启";
                     StartUdpDtlsServer.BackColor = Color.LightGreen;
@@ -597,7 +611,11 @@ namespace SocketTool
                         elyUdpServer.Dispose();
                         elyUdpServer = null;
                     }
-
+                    if (elyDtlsServer != null)
+                    {
+                        elyDtlsServer.Dispose();
+                        elyDtlsServer = null;
+                    }
                     MessageOutPutHandler($"{ex.Message}");
                     StartUdpDtlsServer.Text = "打开";
                     StartUdpDtlsServer.BackColor = TransparencyKey;
@@ -616,6 +634,11 @@ namespace SocketTool
                 {
                     elyUdpServer.Dispose();
                     elyUdpServer = null;
+                }
+                if (elyDtlsServer != null)
+                {
+                    elyDtlsServer.Dispose();
+                    elyDtlsServer = null;
                 }
                 MessageOutPutHandler($"Stop UDP server[{ListenerIp}:{ListenerPort}] successfully!");
 

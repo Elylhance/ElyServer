@@ -103,6 +103,7 @@ namespace MySocketServer
             }
             return inUse;
         }
+
         private async Task AccecptConnection()
         {
             while (!Token.IsCancellationRequested)
@@ -136,6 +137,7 @@ namespace MySocketServer
             }
             Task.Run(()=> DataReceiver(tcpC),Token);
         }
+
         private async Task DataReceiver(ElyClient tcpC)
         {
             try
