@@ -54,7 +54,7 @@
             this.ToolName.Name = "ToolName";
             this.ToolName.Size = new System.Drawing.Size(367, 20);
             this.ToolName.TabIndex = 1;
-            this.ToolName.Text = "YKSocketTool v1.0.0  @2018/04/27  --按 F1 打开本窗口";
+            this.ToolName.Text = "YKSocketTool v1.0.1  @2018/06/07  --按 F1 打开本窗口";
             // 
             // HelpMsgWindow
             // 
