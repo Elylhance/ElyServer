@@ -174,11 +174,12 @@ namespace MySocketServer
         }
         private void DataReceivedHandler(IntPtr ssl)
         {
+            RemoteClient RmClient = null;
             wolfssl.DTLS_con con = wolfssl.get_dtls_fd(ssl);
             string IpPortStr = $"DTLS:{con.ep.Address.ToString()}:{con.ep.Port.ToString()}";
             var RemoteEndPoint = new IPEndPoint(con.ep.Address, con.ep.Port);
             CilentConnectPrompt(IpPortStr, RemoteEndPoint, ssl);
-
+            
             byte[] buff = new byte[2048];
             while (true)
             {
@@ -191,6 +192,8 @@ namespace MySocketServer
                         throw new Exception("Error reading message");
                     }
                     Console.WriteLine($"Read {recvd} bytes data");
+                    ClientList.TryGetValue(IpPortStr, out RmClient);
+                    RmClient.ActiveTime = DateTime.Now;
                     byte[] data = new byte[recvd];
                     Array.Copy(buff, data, recvd);
                     if (iDataReceivedFDback != null)
@@ -230,7 +233,7 @@ namespace MySocketServer
                     foreach (var RmClientData in ClientList)
                     {
                         var TimeSpan = DateTime.Now - RmClientData.Value.ActiveTime;
-                        if (TimeSpan.TotalSeconds > 30)
+                        if (TimeSpan.TotalSeconds > 120)
                         {
                             Disconnect(RmClientData.Key);
                         }
